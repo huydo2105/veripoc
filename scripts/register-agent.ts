@@ -8,7 +8,8 @@ const REST_BASE = 'https://agent-registry-mcp.concordium.com/v1';
 // Replace via .env before running
 const CONCORDIUM_ACCOUNT = process.env.CONCORDIUM_ACCOUNT!; // Your Base58 Testnet Account
 const EVM_PRIVATE_KEY = process.env.EVM_PRIVATE_KEY as `0x${string}`; // Your Agent's EVM Private Key
-const CARD_PUBLIC_URL = process.env.CARD_PUBLIC_URL || 'https://YOUR-GITHUB-USER.github.io/veripoc/agent-card.json';
+const CARD_PUBLIC_URL =
+  process.env.CARD_PUBLIC_URL || 'https://raw.githubusercontent.com/huydo2105/veripoc/main/agent-card.json';
 const NETWORK = 'testnet'; // Switch to 'mainnet' after Dec 9
 
 async function callMcpTool(name: string, args: Record<string, unknown>) {
