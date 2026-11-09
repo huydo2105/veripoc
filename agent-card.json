@@ -1,0 +1,97 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "VeriPoC Security & Exploit Triage Agent",
+  "description": "Autonomous EVM smart contract pre-flight simulator and deterministic Foundry PoC verifier gated by Concordium identity and x402.",
+  "image": "https://concordium.com/favicon.ico",
+  "version": "1.0.0",
+  "provider": {
+    "organization": "VeriPoC Labs",
+    "url": "https://github.com"
+  },
+  "supportedInterfaces": [
+    {
+      "url": "https://raw.githubusercontent.com/huydo2105/veripoc/main/agent-card.json",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extensions": [
+      {
+        "uri": "https://docs.concordium.com/a2a-extensions/concordium-badge/v1",
+        "description": "Verified by Concordium badge — on-chain agent identity in a CIS-8004 registry",
+        "required": false,
+        "params": {
+          "tokenAddress": "ccd:4221332d34e1694168c2a0c0b3fd0f27/cis-2:JyP9UXdZEugHqroAHnhbn",
+          "owner": {
+            "account": "ccd:4221332d34e1694168c2a0c0b3fd0f27:4kL7NH18ytDXaKsoHZi8mfRC9LfNC9meiATmoqs2n2NnBZskhm"
+          },
+          "agentWallet": "ccd:4221332d34e1694168c2a0c0b3fd0f27:4kL7NH18ytDXaKsoHZi8mfRC9LfNC9meiATmoqs2n2NnBZskhm",
+          "contracts": {
+            "cis8004": "ccd:4221332d34e1694168c2a0c0b3fd0f27:12802.0",
+            "cis8": "ccd:4221332d34e1694168c2a0c0b3fd0f27:12801.0"
+          },
+          "verify": "Resolve tokenAddress via CIS-8004 agent_of; confirm owner + status=Active + card SHA-256 == metadata_hash.",
+          "verification": {
+            "service": "Concordium Agent Registry",
+            "verifyUrl": "https://agent-registry-mcp.concordium.com/v1/badge-check/JyP9UXdZEugHqroAHnhbn",
+            "mcp": "https://agent-registry-mcp.concordium.com/mcp",
+            "docs": "https://docs.concordium.com/en/mainnet/technical-reference/agent-registry/concordium-badge.html"
+          }
+        }
+      }
+    ]
+  },
+  "defaultInputModes": [
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "preflight-scan",
+      "name": "EVM Pre-Flight Simulation & Audit",
+      "description": "Simulates EVM calldata and checks ERC-4626 invariants before execution.",
+      "tags": [
+        "security",
+        "evm",
+        "foundry",
+        "audit"
+      ]
+    },
+    {
+      "id": "verify-exploit-poc",
+      "name": "Verify Foundry Exploit PoC",
+      "description": "Runs deterministic Foundry exploit tests against pinned block forks and settles bounties.",
+      "tags": [
+        "bounty",
+        "poc",
+        "security",
+        "x402"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "name": "A2A",
+      "endpoint": "https://raw.githubusercontent.com/huydo2105/veripoc/main/agent-card.json",
+      "version": "1.0"
+    },
+    {
+      "name": "MCP",
+      "endpoint": "https://agent-registry-mcp.concordium.com/mcp",
+      "version": "2025-06-18"
+    }
+  ],
+  "x402Support": true,
+  "active": true,
+  "registrations": [
+    {
+      "agentId": 1058,
+      "agentRegistry": "ccd:4221332d34e1694168c2a0c0b3fd0f27:12802.0"
+    }
+  ]
+}
