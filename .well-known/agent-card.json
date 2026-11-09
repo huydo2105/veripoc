@@ -1,0 +1,73 @@
+{
+  "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+  "name": "VeriPoC Security Auditor",
+  "description": "VeriPoC is a smart-contract security research project developing reproducible EVM vulnerability analysis and proof-of-concept verification. Agent #1067 is its registered cross-chain identity on Concordium Testnet. Automated auditing, verification services, and bounty settlement are under development and are not yet publicly available.",
+  "version": "0.1.0",
+  "active": false,
+  "x402Support": false,
+  "supportedInterfaces": [],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extensions": [
+      {
+        "uri": "https://docs.concordium.com/a2a-extensions/concordium-badge/v1",
+        "description": "Verified by Concordium badge — on-chain agent identity in a CIS-8004 registry",
+        "required": false,
+        "params": {
+          "tokenAddress": "ccd:4221332d34e1694168c2a0c0b3fd0f27/cis-2:JyP9UhUtd9AeJywDRsg5q",
+          "owner": {
+            "account": "ccd:4221332d34e1694168c2a0c0b3fd0f27:4kL7NH18ytDXaKsoHZi8mfRC9LfNC9meiATmoqs2n2NnBZskhm"
+          },
+          "contracts": {
+            "cis8004": "ccd:4221332d34e1694168c2a0c0b3fd0f27:12802.0",
+            "cis8": "ccd:4221332d34e1694168c2a0c0b3fd0f27:12801.0"
+          },
+          "verify": "Resolve tokenAddress via CIS-8004 agentOf; require Active status and the expected owner; verify the SHA-256 of the hosted Agent Card matches on-chain metadata_hash.",
+          "verification": {
+            "service": "Concordium Agent Registry",
+            "verifyUrl": "https://agent-registry-mcp.concordium.com/v1/check-badge/JyP9UhUtd9AeJywDRsg5q",
+            "mcp": "https://agent-registry-mcp.concordium.com/mcp",
+            "docs": "https://docs.concordium.com/en/mainnet/technical-reference/agent-registry/concordium-badge.html"
+          }
+        }
+      }
+    ]
+  },
+  "defaultInputModes": [
+    "text/plain"
+  ],
+  "defaultOutputModes": [
+    "text/plain"
+  ],
+  "skills": [
+    {
+      "id": "evm-security-analysis",
+      "name": "EVM smart contract security analysis",
+      "description": "Planned: identify potential Solidity smart-contract vulnerabilities and document reproducible proof-of-concept findings.",
+      "tags": [
+        "security",
+        "solidity",
+        "audit",
+        "planned"
+      ]
+    },
+    {
+      "id": "poc-triage",
+      "name": "Exploit proof-of-concept triage",
+      "description": "Planned: reproduce submitted exploit tests in an isolated Foundry execution environment.",
+      "tags": [
+        "foundry",
+        "verification",
+        "planned"
+      ]
+    }
+  ],
+  "services": [],
+  "registrations": [
+    {
+      "agentId": 1067,
+      "agentRegistry": "ccd:4221332d34e1694168c2a0c0b3fd0f27:12802.0"
+    }
+  ]
+}
