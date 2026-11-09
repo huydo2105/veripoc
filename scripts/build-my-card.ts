@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import { createHash } from 'crypto';
 
-const BADGE = 'JyP9UXdZEugHqroAHnhbn';
+const BADGE = 'JyP9UYj3AwBDfz2yHCMgx';
 const ACCOUNT = '4kL7NH18ytDXaKsoHZi8mfRC9LfNC9meiATmoqs2n2NnBZskhm';
 // IMPORTANT: Set this to the exact public HTTPS URL where you will upload agent-card.json in Step 2!
 const AGENT_URI = process.env.AGENT_URI || 'https://raw.githubusercontent.com/huydo2105/veripoc/main/agent-card.json';
