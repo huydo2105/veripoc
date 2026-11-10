@@ -33,9 +33,13 @@ No blockchain RPC URL, private key, wallet, or funding is needed for this baseli
 ## Pinning / limitations
 - Compiler is pinned to solc **0.8.24**.
 - Slither is pinned to **0.11.6**.
-- Foundry is installed from the **stable** channel (not byte-for-byte pinned yet); record `forge --version` from CI and pin the tested release in a follow-up before comparing benchmark results.
+- CI uses Foundry **v1.9.0** via foundry-toolchain; local setup should install the same version and check `forge --version`.
 - GitHub Actions major-version tags are not SHA-pinned; harden after the baseline is validated.
 - Avoid running code from untrusted repositories in this development environment. A future worker must use stronger execution isolation and fixed trusted verification oracles.
+
+Run the combined orchestrator using `node scripts/baseline.mjs` after installing the listed tools.
+
+A fully version-pinned development container is not yet shipped; for now prefer WSL2 or CI. A future sandbox container must not be confused with this trusted developer setup.
 
 ## Next task
 Issue #3: Add intentionally vulnerable and patched ERC-4626 targets with independent invariant tests. This Counter fixture does not claim to reveal a vulnerability.
