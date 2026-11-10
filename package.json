@@ -6,6 +6,7 @@
     "test": "node --test packages/slither-adapter/test.mjs",
     "scan:fixture": "node packages/slither-adapter/cli.mjs",
     "test:worker": "node --test workers/sandbox/test.mjs",
+    "test:receipt": "node --test packages/core/receipt.test.mjs",
     "run:worker": "node workers/sandbox/cli.mjs"
   },
   "keywords": [],
