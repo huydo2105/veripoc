@@ -11,4 +11,6 @@ The vulnerable vault rounds the victim's deposit to zero shares; the attacker en
 
 Local verification on 2026-11-10: `forge build` compiled with solc 0.8.24 and `forge test -vvv` passed 6 tests (including the existing Counter tests and 256 fuzz runs for the round trip). Local Forge was 1.7.1; CI uses 1.9.0. `bash scripts/run-slither.sh` was attempted but could not complete because `slither` is not installed in this shell. Inspect the PR's pinned Slither CI job before marking Issue #3 complete.
 
+Slither coverage correction: the project-level analyzer skips test imports by default, while these fixtures are imported only by `test/VaultFixture.t.sol`. The analyzer script now requests complete Foundry compilation and fails unless its contract summary contains `VulnerableVault`, `PatchedVault`, and `MockAsset`. A green CI job before this correction did not establish coverage of those contracts.
+
 These contracts and the freely mintable asset must never be used with real funds. No external targets or fork RPC are involved.
