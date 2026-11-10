@@ -7,8 +7,18 @@ mkdir -p artifacts
 echo "Slither version: $(slither --version)"
 echo "Forge version: $(forge --version)"
 forge build
+# Crytic Compile skips test imports by default. These fixtures live outside src/
+# and are reached through test/VaultFixture.t.sol, so include test compilation.
+coverage=$(slither . --foundry-compile-all --print contract-summary 2>&1)
+printf '%s\n' "$coverage"
+for contract in VulnerableVault PatchedVault MockAsset; do
+  if ! printf '%s\n' "$coverage" | grep -Fq "$contract"; then
+    echo "ERROR: Slither compilation omitted $contract" >&2
+    exit 1
+  fi
+done
 status=0
-slither . --json artifacts/slither.json || status=$?
+slither . --foundry-compile-all --json artifacts/slither.json || status=$?
 python3 - <<'PY'
 import json
 from pathlib import Path
