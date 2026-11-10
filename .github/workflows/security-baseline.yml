@@ -29,6 +29,8 @@ jobs:
         run: forge test -vvv
       - name: Adapter unit tests
         run: node --test packages/slither-adapter/test.mjs
+      - name: API request tests
+        run: node --test apps/api/server.test.mjs
       - name: Receipt schema and hashing tests
         run: node --test packages/core/receipt.test.mjs
 
@@ -76,6 +78,8 @@ jobs:
         run: bash workers/sandbox/isolation.sh
       - name: Positive and negative vault runs
         run: node workers/sandbox/cli.mjs
+      - name: Live API positive and negative jobs
+        run: node apps/api/e2e.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
