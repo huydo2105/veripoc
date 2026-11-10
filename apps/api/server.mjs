@@ -8,6 +8,7 @@ import { Worker } from "node:worker_threads";
 const here = dirname(fileURLToPath(import.meta.url));
 const pages = new Map([["/", ["index.html", "text/html; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
+  ["/state.mjs", ["state.mjs", "text/javascript; charset=utf-8"]],
   ["/style.css", ["style.css", "text/css; charset=utf-8"]]]);
 const sha = value => createHash("sha256").update(value).digest("hex");
 const json = (res, code, value) => {
@@ -86,6 +87,12 @@ export function createApiServer({ token, execute = executeJob, now = Date.now, m
       const [file, type] = pages.get(path);
       res.writeHead(200, { "content-type": type, "cache-control": "no-store", "x-content-type-options": "nosniff" });
       res.end(readFileSync(resolve(here, "../web", file)));
+      return;
+    }
+    if (req.method === "GET" && path === "/.well-known/agent-card.json") {
+      res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store",
+        "x-content-type-options": "nosniff" });
+      res.end(readFileSync(resolve(here, "../../.well-known/agent-card.json")));
       return;
     }
     if (!path.startsWith("/v1/")) return json(res, 404, { error: "not found" });

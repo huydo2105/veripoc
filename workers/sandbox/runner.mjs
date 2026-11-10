@@ -32,14 +32,26 @@ function clean(output) {
   return String(output ?? "").replace(/\x1b\[[0-9;]*m/g, "").replace(/[\x00-\x08\x0b-\x1f\x7f]/g, "")
     .slice(0, 65536);
 }
+export function parseFinancialEvidence(output) {
+  const values = {};
+  for (const [field, marker] of [["attackerBefore", "VERIPOC_ATTACKER_BEFORE"],
+    ["attackerAfter", "VERIPOC_ATTACKER_AFTER"], ["victimShares", "VERIPOC_VICTIM_SHARES"]]) {
+    const matches = [...String(output ?? "").matchAll(new RegExp(`^  ${marker}: (0|[1-9][0-9]*)$`, "gm"))];
+    if (matches.length !== 1) return null;
+    values[field] = matches[0][1];
+  }
+  return values;
+}
 export function classifyRun(caseName, result) {
   const selected = CASES[caseName];
   if (!selected) throw new Error("unknown fixture case");
   const timedOut = result.error?.code === "ETIMEDOUT";
   const aborted = result.error?.code === "ABORT_ERR";
+  const output = clean(result.stdout);
   return { case: caseName, status: timedOut || aborted ? "inconclusive" : result.status === 0 ? selected.verdict : "tool_error",
     reason: timedOut ? "timeout" : aborted ? "aborted" : result.status === 0 ? "trusted invariant passed" : "foundry failed",
-    exitCode: result.status, output: clean(result.stdout), errorOutput: clean(result.stderr) };
+    exitCode: result.status, output, errorOutput: clean(result.stderr),
+    financialEvidence: result.status === 0 && !timedOut && !aborted ? parseFinancialEvidence(output) : null };
 }
 export function runFixture(caseName, { invoke = spawnSync, timeoutMs = 30_000 } = {}) {
   if (!CASES[caseName]) throw new Error("unknown fixture case");

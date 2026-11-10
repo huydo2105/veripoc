@@ -28,13 +28,13 @@ contract VaultFixtureTest {
     uint256 internal constant VICTIM_START = 100;
 
     function testDonationAttackReproducesOnlyOnVulnerableVault() public {
-        (uint256 vulnerableVictimShares, uint256 vulnerableAttackerEnd, uint256 vulnerableVictimEnd) =
+        (, uint256 vulnerableVictimShares, uint256 vulnerableAttackerEnd, uint256 vulnerableVictimEnd) =
             _runAttack(false);
         require(vulnerableVictimShares == 0, "victim should receive zero shares");
         require(vulnerableAttackerEnd == 201, "attacker should capture victim deposit");
         require(vulnerableVictimEnd == 0, "victim balance should be lost");
 
-        (uint256 patchedVictimShares, uint256 patchedAttackerEnd, uint256 patchedVictimEnd) =
+        (, uint256 patchedVictimShares, uint256 patchedAttackerEnd, uint256 patchedVictimEnd) =
             _runAttack(true);
         require(patchedVictimShares > 0, "patched vault must issue victim shares");
         require(patchedAttackerEnd <= ATTACKER_START, "patched attacker must not profit");
@@ -60,13 +60,14 @@ contract VaultFixtureTest {
         require(vault.totalSupply() == 0, "shares remain");
     }
 
-    function _runAttack(bool patched) internal returns (uint256, uint256, uint256) {
+    function _runAttack(bool patched) internal returns (uint256, uint256, uint256, uint256) {
         MockAsset token = new MockAsset();
         FixtureVault vault = patched ? FixtureVault(new PatchedVault(token)) : FixtureVault(new VulnerableVault(token));
         VaultActor attacker = new VaultActor();
         VaultActor victim = new VaultActor();
         token.mint(address(attacker), ATTACKER_START);
         token.mint(address(victim), VICTIM_START);
+        uint256 attackerBefore = token.balanceOf(address(attacker));
         attacker.approve(token, vault);
         victim.approve(token, vault);
         require(attacker.deposit(vault, 1) > 0, "seed failed");
@@ -75,6 +76,6 @@ contract VaultFixtureTest {
         uint256 victimShares = victim.deposit(vault, 100);
         require(vault.totalAssets() == 201, "deposit accounting");
         attacker.redeem(vault, vault.balanceOf(address(attacker)));
-        return (victimShares, token.balanceOf(address(attacker)), token.balanceOf(address(victim)));
+        return (attackerBefore, victimShares, token.balanceOf(address(attacker)), token.balanceOf(address(victim)));
     }
 }

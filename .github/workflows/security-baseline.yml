@@ -31,6 +31,8 @@ jobs:
         run: node --test packages/slither-adapter/test.mjs
       - name: API request tests
         run: node --test apps/api/server.test.mjs
+      - name: Judge UI state tests
+        run: node --test apps/web/state.test.mjs
       - name: Receipt schema and hashing tests
         run: node --test packages/core/receipt.test.mjs
 
