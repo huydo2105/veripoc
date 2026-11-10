@@ -1,4 +1,4 @@
-# Codex delivery playbook: issue #3 through hackathon MVP
+# Codex delivery playbook: two-sided VeriPoC MVP
 
 ## Purpose
 Codex should implement as many MVP tasks as requested, **but only ONE PR at a time**. This is an intentionally human-gated process, not an unattended autonomous sprint. The agent cannot receive an answer while the project owner is away; work resumes when the owner explicitly responds and re-invokes Codex.
@@ -15,7 +15,8 @@ codex
 
 Paste the following into Codex as the project instruction:
 
-> Read AGENTS.md, docs/PRODUCT_SCOPE.md, docs/ROADMAP.md, docs/CODEX_WORKFLOW.md, and GitHub Issue #8. Implement Issue #8 on a new feature branch, using the existing Foundry + Slither baseline, with passing tests, honest evidence, and an educational PR description using .github/pull_request_template.md. Open the PR and STOP. Do not merge, close the issue, or work on Issue #12 until I have reviewed this PR, answered the comprehension questions, and explicitly authorized the next step. For subsequent tasks, apply the same PR-by-PR stop-and-teach protocol; independently check dependency order and MVP priority, rather than blindly following issue numbers.
+> Read AGENTS.md, docs/TWO_SIDED_PLATFORM.md, docs/PRODUCT_SCOPE.md, docs/ROADMAP.md, docs/CODEX_WORKFLOW.md. Product has TWO main buttons: "I have a smart contract to audit" and "I want to audit". #8 has open PR #33 — DO NOT merge, overwrite or bypass review. First explain how that PoC console can become the shared verification component for the two-sided platform; STOP and await my decision on PR #33. When I explicitly approve beginning #34, implement the two-role homepage and guided onboarding, following the one-issue-one-PR-review-STOP protocol. Then #35 program scopes, #12 agent auth, #10 anchor, #13 MCP agent integration, #36 team inbox/retest as approved. Never claim unrestricted arbitrary smart-contract uploads or a full autonomous audit.
+
 
 ## At each pull request
 **Codex output to the user:**
@@ -38,17 +39,24 @@ Paste the following into Codex as the project instruction:
 The agent should not confuse 'green tests' with safety guarantees. If CI is unavailable, the PR stays open.
 
 ## MVP prioritization, not an unconditional issue-number march
-**Current state:** #1–#7 are done. Core PoC verification already includes vault fixtures (#3), optional internal Slither helper (#4), Foundry isolated worker (#5), evidence receipts (#6), and a restricted fixture API (#7). **Build #8 as a PoC verification-only UI; no scanner tab or standalone scan CTA.** #12 authentic agent gate should be integrated when API is ready. The identity metadata confirmation is #1 and remains a separate prerequisite.
 
-**Concordium demonstrable value:** #10 real hash audit anchoring and #11 controlled **Testnet** escrow once safeguards and APIs are ready. #13 MCP interface is highly desirable for an AI-agent hackathon. #9 checkpoint and #19 final deliverable are non-optional date gates.
+**Completed and retained:** #1–#7, #20: fixtures, optional Slither adapter, isolated Foundry worker, receipts and local API. #8 has OPEN PR #33 (PoC judge console), pending owner approval. Do not merge it automatically.
 
-**Time-budgeted enhancements:** #14 Echidna/Medusa, #15 AI test suggestions and #16 Mythril/Halmos ONLY if they improve a measurable PoC reproduction case; #17 x402 and #18 Web3ID are stretch. Do not implement a separate contract-scanning product or force Slither on every PoC. Product source of truth: docs/PRODUCT_SCOPE.md. Do not let stretch features prevent an end-to-end real demonstration.
+**New two-sided P0 work:** #34 homepage with two role buttons; #35 explicit authorized program / researcher role / scoped fixture; #9 checkpoint; #12 CIS-8/CIS-8004 signed request gate. Two audiences use the same verification infrastructure and private evidence, not separate products.
+
+**High-value M3:** #10 real Concordium Testnet evidence anchoring; #13 bring-your-own-agent REST/MCP for researcher; #36 team finding inbox / manual triage / patched retest. #11 bounty escrow is optional behind authorized settlement controls.
+
+**Stretch:** #14–#18 only if measurable value and core flows are complete. Slither, fuzzers and external LLMs may help researcher agents discover potential flaws but are not required in the VeriPoC trusted reproduction pipeline.
+
+**Product source:** docs/TWO_SIDED_PLATFORM.md and docs/PRODUCT_SCOPE.md. Every PR must document which persona it helps, which audit-program permissions are enforced, and how it strengthens the judge story.
 
 ## Teaching syllabus for pitch and project management
 
 | Work area | Owner should be able to explain to judges | Operational decision |
 | --- | --- | --- |
 | ERC-4626 fixture | share inflation/invariant and why patched contract resists | What vulnerability means under realistic assumptions |
+| Two-sided programs | sponsor scope and invite-based permission; researcher-owned agents | Who can submit to which audit program? |
+| External researcher agents | investigator proposes, trusted verifier executes | How is researcher autonomy preserved without untrusted PoC execution? |
 | Optional Slither helper | static observations do not reproduce an exploit | Only use if it helps prepare or understand a PoC |
 | Foundry/Anvil | deterministic reproduction and pinned fork | When is a result inconclusive? |
 | Isolated worker | hostile code, trust boundary, limits | Why regex sanitizing is insufficient |
@@ -61,11 +69,11 @@ The agent should not confuse 'green tests' with safety guarantees. If CI is unav
 
 ## What 'done' means
 A real MVP demonstration should show:
-1. Submitted authorized vulnerable vault and patched control.
+1. Homepage with **two main actions** and an authorized demo program shared by team and invited researcher. Researcher submits reviewed vulnerable and patched vault PoC.
 2. Real Foundry PoC reproduction against vulnerable and patched fixture with constrained resources; Slither analysis is optional internal supporting information, NOT a required judge UI screen.
 3. Distinguishable reproduced / not reproduced / inconclusive verdicts with trace/evidence hash.
-4. Agent request authenticated where supported, real UI/API result, no fabricated logs.
-5. One finalized Concordium Testnet hash anchor with independently verifiable chain transaction.
+4. Team sees an authorized researcher's private submission, reviewer sees real UI/API outcome; signed agent auth live where implemented, otherwise clearly marked as pending.
+5. One finalized Concordium Testnet hash anchor with independently verifiable chain transaction; if unavailable, demo must mark anchoring pending, not fake it.
 6. A private reproducible artifact and safe public demo, including limitations.
 7. GitHub Actions green on the checked-in code and a short reproducible judge video.
 
