@@ -53,7 +53,7 @@ WINDOWS = {
 OPTIONAL = {11,14,15,16,17,18}
 P1 = {36}
 TEAM = {34,35,36}
-RESEARCHER = {13,34,35}
+RESEARCHER = {13,14,15,34,35}
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dry-run", action="store_true")
@@ -99,6 +99,44 @@ def sync_milestones():
         for n in spec["issues"]:
             write("api",f"repos/{REPO}/issues/{n}","--method","PATCH","--input","-",input_obj={"milestone":number})
         print(f"  Mapped {len(spec['issues'])} engineering issues; preserved open/closed state.")
+
+# Optional but useful: native issue labels for filtering Table/Board views.
+LABEL_STYLES = {
+    "priority:P0": ("d73a4a","Essential MVP"),
+    "priority:P1": ("e99633","Important but sequenced"),
+    "priority:P2": ("d4c5f9","Optional stretch"),
+    "phase:M1": ("0e8a16","Foundation and identity"),
+    "phase:M2": ("1d76db","Two-sided MVP and checkpoint"),
+    "phase:M3": ("5319e7","BYO agents and Concordium"),
+    "phase:M4": ("0052cc","Final demo"),
+    "kind:core": ("bfd4f2","MVP deliverable"),
+    "kind:optional": ("eeeeee","Not on critical path"),
+    "persona:team": ("f9d0c4","DeFi team workflow"),
+    "persona:researcher": ("c2e0c6","Researcher / agent workflow"),
+    "persona:shared": ("d4c5f9","Shared trust / verification layer"),
+}
+
+def sync_labels():
+    previous=gh("api",f"repos/{REPO}/labels?per_page=100")
+    existing={item["name"] for item in previous}
+    for name,(color,description) in LABEL_STYLES.items():
+        if name not in existing:
+            write("api",f"repos/{REPO}/labels","--method","POST","--input","-",
+                  input_obj={"name":name,"color":color,"description":description})
+    for index,spec in enumerate(MILESTONES):
+        phase=f"phase:M{index+1}"
+        for number in spec["issues"]:
+            priority="priority:P2" if number in OPTIONAL else "priority:P1" if number in P1 else "priority:P0"
+            tags=[phase,priority,"kind:optional" if number in OPTIONAL else "kind:core"]
+            if number in TEAM:
+                tags.append("persona:team")
+            if number in RESEARCHER:
+                tags.append("persona:researcher")
+            if not (number in TEAM or number in RESEARCHER):
+                tags.append("persona:shared")
+            write("api",f"repos/{REPO}/issues/{number}/labels","--method","POST","--input","-",
+                  input_obj={"labels":tags})
+    print("Applied additive priority/phase/persona labels to all 23 engineering issues.")
 
 def sync_project():
     projects=gh("project","list","--owner",OWNER,"--limit","100","--format","json").get("projects",[])
@@ -166,6 +204,7 @@ if __name__=="__main__":
         gh("auth","status")
         if not args.projects_only:
             sync_milestones()
+            sync_labels()
         if not args.milestones_only:
             sync_project()
     except (RuntimeError,KeyError,ValueError) as ex:
