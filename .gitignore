@@ -6,6 +6,7 @@ out/
 cache/
 broadcast/
 artifacts/
+*.call-graph.dot
 coverage/
 lcov.info
 .DS_Store

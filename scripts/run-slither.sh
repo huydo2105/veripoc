@@ -32,3 +32,7 @@ detectors = (report.get("results") or {}).get("detectors") or []
 print(f"Slither completed with {len(detectors)} detector finding(s); report: {p}")
 PY
 echo "Slither process status: $status (nonzero may mean findings; JSON success is checked)"
+# Keep the machine-readable call graph alongside the detector report.
+slither . --foundry-compile-all --print call-graph
+test -s all_contracts.call-graph.dot
+mv all_contracts.call-graph.dot artifacts/call-graph.dot
