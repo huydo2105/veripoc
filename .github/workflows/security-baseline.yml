@@ -69,7 +69,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Worker controller tests
-        run: node --test workers/sandbox/test.mjs
+        run: node --test workers/sandbox/test.mjs workers/sandbox/report.test.mjs
       - name: Build trusted worker image
         run: docker build -f infrastructure/docker/foundry-worker.Dockerfile -t veripoc-foundry-worker:issue-5 .
       - name: Isolation smoke test
