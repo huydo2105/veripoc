@@ -15,7 +15,7 @@ codex
 
 Paste the following into Codex as the project instruction:
 
-> Read AGENTS.md, docs/TWO_SIDED_PLATFORM.md, docs/PRODUCT_SCOPE.md, docs/ROADMAP.md, docs/CODEX_WORKFLOW.md. Product has TWO main buttons: "I have a smart contract to audit" and "I want to audit". #8 has open PR #33 — DO NOT merge, overwrite or bypass review. First explain how that PoC console can become the shared verification component for the two-sided platform; STOP and await my decision on PR #33. When I explicitly approve beginning #34, implement the two-role homepage and guided onboarding, following the one-issue-one-PR-review-STOP protocol. Then #35 program scopes, #12 agent auth, #10 anchor, #13 MCP agent integration, #36 team inbox/retest as approved. Never claim unrestricted arbitrary smart-contract uploads or a full autonomous audit.
+> Read AGENTS.md, docs/TWO_SIDED_PLATFORM.md, docs/PRODUCT_SCOPE.md, docs/ROADMAP.md, docs/CODEX_WORKFLOW.md. Product has TWO main buttons: "I have a smart contract to audit" and "I want to audit". PR #33 for #8 is MERGED with successful CI, and #8 is CLOSED. Reuse its working shared PoC verification console. STOP until I explicitly authorize beginning #34; when approved, implement the two-role homepage and guided onboarding, following the one-issue-one-PR-review-STOP protocol. Then #35 program scopes, #12 agent auth, #10 anchor, #13 MCP agent integration, #36 team inbox/retest as approved. Never claim unrestricted arbitrary smart-contract uploads or a full autonomous audit.
 
 
 ## At each pull request
@@ -40,7 +40,7 @@ The agent should not confuse 'green tests' with safety guarantees. If CI is unav
 
 ## MVP prioritization, not an unconditional issue-number march
 
-**Completed and retained:** #1–#7, #20: fixtures, optional Slither adapter, isolated Foundry worker, receipts and local API. #8 has OPEN PR #33 (PoC judge console), pending owner approval. Do not merge it automatically.
+**Completed and retained:** #1–#7, #20: fixtures, optional Slither adapter, isolated Foundry worker, receipts and local API. #8 is complete: PR #33 merged with green CI. Keep the existing verifier intact. Begin #34 only after a separate explicit request from the owner.
 
 **New two-sided P0 work:** #34 homepage with two role buttons; #35 explicit authorized program / researcher role / scoped fixture; #9 checkpoint; #12 CIS-8/CIS-8004 signed request gate. Two audiences use the same verification infrastructure and private evidence, not separate products.
 
