@@ -1,6 +1,6 @@
 # Evidence receipts (Issue #6)
 
-`receipt.schema.json` defines the private v1 receipt. `receipt.mjs` validates exact fields, creates a receipt from an actual worker result, hashes a canonical JSON representation with a domain separator, and derives a public anchor containing only the receipt digest. Run `npm run test:receipt` for deterministic and negative tests.
+`receipt.schema.json` defines the private v1 receipt. `receipt.mjs` validates exact fields, creates a receipt from an actual worker result, hashes a canonical JSON representation with a domain separator, and derives a public anchor containing only the receipt digest. The execution evidence digest covers status, exit code, stdout, and stderr in an unambiguous JSON object. Run `npm run test:receipt` for deterministic and negative tests.
 
 The worker writes `artifacts/<case>-receipt.private.json` locally and CI uploads only `*-anchor.public.json`. Do not publish the private receipt or raw execution output for a real undisclosed vulnerability. The synthetic fixture is public, but this boundary anticipates confidential jobs. There is no Concordium transaction yet; the public anchor is a candidate payload for a future Testnet anchoring issue.
 

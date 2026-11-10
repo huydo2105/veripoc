@@ -50,11 +50,13 @@ export function publicAnchor(receipt) {
 export function receiptFromWorker(run) {
   if (!run || !Object.hasOwn(fixtures, run.case) || !verdicts.has(run.status)
     || !hex(run.inputHash) || !/^sha256:[a-f0-9]{64}$/.test(run.imageId)) throw new Error("invalid worker result");
+  const executionEvidence = JSON.stringify({ status: run.status, exitCode: run.exitCode ?? null,
+    stdout: String(run.output ?? ""), stderr: String(run.errorOutput ?? "") });
   const receipt = { schemaVersion: 1, fixture: run.case, verdict: run.status,
     input: { sourceSha256: run.inputHash, imageId: run.imageId },
     tools: { forge: "1.9.0", solc: "0.8.24", slither: null },
     chain: { chainId: null, forkBlock: null, forkBlockHash: null },
-    evidence: { executionLogSha256: digest(String(run.output ?? "")), traceSha256: null, slitherReportSha256: null },
+    evidence: { executionLogSha256: digest(executionEvidence), traceSha256: null, slitherReportSha256: null },
     invariant: { name: fixtures[run.case], passed: run.status === "reproduced" || run.status === "not_reproduced" } };
   return validateReceipt(receipt);
 }
