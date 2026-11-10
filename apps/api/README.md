@@ -5,7 +5,11 @@ Issue #7 exposes the reviewed repository fixtures through a loopback-only Node A
 From the repository root, set a fresh token of at least 32 characters and start the server:
 
 ```powershell
-$env:VERIPOC_API_TOKEN = [Convert]::ToHexString([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)).ToLower()
+$tokenBytes = New-Object byte[] 32
+$rng = [Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($tokenBytes)
+$rng.Dispose()
+$env:VERIPOC_API_TOKEN = ([BitConverter]::ToString($tokenBytes)).Replace('-', '').ToLower()
 npm run api:dev
 ```
 
