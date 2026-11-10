@@ -1,0 +1,8 @@
+.git
+node_modules
+artifacts
+out
+cache
+.env
+.venv
+**/*.call-graph.dot
