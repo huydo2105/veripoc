@@ -20,7 +20,7 @@ jobs:
           persist-credentials: false
       - uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          version: v1.9.0
       - name: Toolchain
         run: forge --version
       - name: Build
@@ -38,7 +38,7 @@ jobs:
           persist-credentials: false
       - uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: stable
+          version: v1.9.0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
