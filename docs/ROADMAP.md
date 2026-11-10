@@ -13,7 +13,7 @@ The product does **not** provide a complete push-button autonomous audit, a sepa
 
 ## Current audited implementation status — as of November 10
 - **DONE #20, #1–#7:** CIS-8/CIS-8004 agent identity/metadata verification, foundational Foundry + Slither toolchain, synthetic vulnerable and patched ERC-4626 vaults, optional Slither analysis adapter, isolated fixed-fixture worker, private/public receipt digest, and loopback-only Node verification API.
-- **OPEN PR #33 for #8:** the PoC verification judge console has been proposed and must be **reviewed by the owner**; do not merge automatically. Both role flows will reuse this verification screen.
+- **DONE #8:** PR #33 for the PoC verification console is merged with passing CI. Both role flows should reuse this tested verification screen.
 - **NOT YET DONE:** dual-persona homepage and program authorization model (#34–#35), actual team finding inbox and patch retest (#36), API agent signing (#12), Concordium Testnet evidence anchoring (#10), researcher MCP tools (#13), public hosted ingestion of arbitrary contracts or PoCs, and payouts.
 
 ## Demonstrable user journeys
@@ -47,7 +47,7 @@ Authorized submission + pinned execution inputs -> validation/permissions -> iso
 - [x] #5 controlled Foundry worker
 - [x] #6 confidential verification receipt and safe digest
 - [x] #7 loopback-only fixed-fixture verification API
-- [ ] #8 review/open PR #33 for **real-data PoC verification console**; no auto-merge
+- [x] #8 real-data shared PoC console, PR #33 merged and CI passed
 - [ ] **#34** two homepage buttons and persona-specific views (reuse #8 console)
 - [ ] **#35** demo authorized audit program, scope checks, invited researcher role
 - [ ] #9 Encode checkpoint submission with honest architecture/progress
