@@ -1,3 +1,11 @@
 node_modules/
 .env
-
+.venv/
+__pycache__/
+out/
+cache/
+broadcast/
+artifacts/
+coverage/
+lcov.info
+.DS_Store
