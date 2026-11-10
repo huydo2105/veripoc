@@ -30,9 +30,9 @@ Both converge on **Submit finding -> Verify PoC -> Evidence -> Team review -> Pa
 No standalone scanner homepage, general audit score or unqualified "fully audited by AI" badge.
 
 ## Genuine current state vs proposed
-**Completed:** #1–#7 and #20: registered agent, local fixtures, optional Slither adapter, restricted isolated worker, receipt digest and loopback-only verification API.
-**Existing PR awaiting owner review:** #33 (Issue #8) builds the PoC console; do not auto-merge. It may be reused for both roles.
-**Next:** #34 two-role homepage, #35 program/permission model, #36 team triage and patch retest; #12 request signatures, #10 Concordium Testnet anchors, #13 agent MCP gateway. See [ROADMAP.md](ROADMAP.md).
+**Completed:** #1–#8 and #20: registered agent, local fixtures, optional Slither adapter, restricted isolated worker, receipt digest and loopback-only verification API.
+**Merged:** PR #33 (Issue #8) delivers the shared PoC console and has passing CI; Issue #8 is closed. It is reused for both roles.
+**Next:** #34 two-role homepage, #35 program/permission model, #9 checkpoint, #12 request signatures; then #10 Concordium Testnet anchors, #13 agent MCP gateway and #36 team triage/retest. See [ROADMAP.md](ROADMAP.md).
 **Not yet working:** arbitrary customer contract upload, generic arbitrary PoC execution, trusted multi-tenant hosted service, complete AI-automated audit, real B2B partner integration, reward escrow and verifiable receipt anchoring.
 
 ## Boundaries
