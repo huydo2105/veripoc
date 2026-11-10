@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/huydo2105/veripoc/packages/core/receipt.schema.json",
+  "title": "VeriPoC private verification receipt v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "fixture", "verdict", "input", "tools", "chain", "evidence", "invariant"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "fixture": { "enum": ["vulnerable", "patched"] },
+    "verdict": { "enum": ["identified", "reproduced", "not_reproduced", "inconclusive", "tool_error"] },
+    "input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceSha256", "imageId"],
+      "properties": {
+        "sourceSha256": { "$ref": "#/$defs/sha256" },
+        "imageId": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" }
+      }
+    },
+    "tools": {
+      "type": "object", "additionalProperties": false,
+      "required": ["forge", "solc", "slither"],
+      "properties": {
+        "forge": { "type": "string", "minLength": 1 },
+        "solc": { "type": "string", "minLength": 1 },
+        "slither": { "type": ["string", "null"] }
+      }
+    },
+    "chain": {
+      "type": "object", "additionalProperties": false,
+      "required": ["chainId", "forkBlock", "forkBlockHash"],
+      "properties": {
+        "chainId": { "type": ["integer", "null"], "minimum": 1 },
+        "forkBlock": { "type": ["integer", "null"], "minimum": 0 },
+        "forkBlockHash": { "type": ["string", "null"], "pattern": "^0x[a-f0-9]{64}$" }
+      }
+    },
+    "evidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["executionLogSha256", "traceSha256", "slitherReportSha256"],
+      "properties": {
+        "executionLogSha256": { "$ref": "#/$defs/sha256" },
+        "traceSha256": { "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] },
+        "slitherReportSha256": { "anyOf": [{ "$ref": "#/$defs/sha256" }, { "type": "null" }] }
+      }
+    },
+    "invariant": {
+      "type": "object", "additionalProperties": false,
+      "required": ["name", "passed"],
+      "properties": {
+        "name": { "enum": ["testVulnerableDonationReproduces", "testPatchedDonationDoesNotReproduce"] },
+        "passed": { "type": "boolean" }
+      }
+    }
+  },
+  "allOf": [
+    { "if": { "properties": { "fixture": { "const": "vulnerable" } } },
+      "then": { "properties": { "invariant": { "properties": { "name": { "const": "testVulnerableDonationReproduces" } } },
+        "verdict": { "not": { "const": "not_reproduced" } } } } },
+    { "if": { "properties": { "fixture": { "const": "patched" } } },
+      "then": { "properties": { "invariant": { "properties": { "name": { "const": "testPatchedDonationDoesNotReproduce" } } },
+        "verdict": { "not": { "const": "reproduced" } } } } },
+    { "if": { "properties": { "verdict": { "enum": ["reproduced", "not_reproduced"] } } },
+      "then": { "properties": { "invariant": { "properties": { "passed": { "const": true } } } } },
+      "else": { "properties": { "invariant": { "properties": { "passed": { "const": false } } } } } }
+  ],
+  "$defs": { "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+}

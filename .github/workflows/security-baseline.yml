@@ -29,6 +29,8 @@ jobs:
         run: forge test -vvv
       - name: Adapter unit tests
         run: node --test packages/slither-adapter/test.mjs
+      - name: Receipt schema and hashing tests
+        run: node --test packages/core/receipt.test.mjs
 
   slither:
     name: Slither static analysis
@@ -74,3 +76,9 @@ jobs:
         run: bash workers/sandbox/isolation.sh
       - name: Positive and negative vault runs
         run: node workers/sandbox/cli.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: public-worker-anchors
+          path: artifacts/*-anchor.public.json
+          if-no-files-found: warn
