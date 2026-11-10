@@ -13,11 +13,16 @@
 | [M3 — Concordium + MCP](../issues/26) | Nov 23–29 | #10, #11, #13, #14, #15 | Testnet audit anchors, authorized escrow, agent tools, extensions | Independently verified on-chain receipt and Testnet flow |
 | [M4 — Demo + submission](../issues/27) | Nov 30–Dec 9 | #16, #17, #18, #19 | Reliable demo; stretch tooling if feasible | CI + genuine on-chain links + submission before 23:59 UTC |
 
-### Current progress
-- Completed: #20 (registered identity and public card), #2 (merged Foundry + Slither baseline with passing CI).
-- Outstanding: #1 verification of metadata anchor; #3 onward implementation tasks.
-- The **four milestone tracking issues are open**; each contains a checkbox list and definition of done. They summarize work but do **not** bypass PR-by-PR review.
-- Issues #14–18 include enhancements or stretch goals. MVP can be ready without all stretch features, as specified in docs/ROADMAP.md.
+### Current progress (reconciled November 10, 2026)
+
+- **M1 COMPLETE**: #20, #2, #1, #3, #4 are closed. Tracking issue #24 closed.
+- **M2 IN PROGRESS (3/6)**: #5, #6, #7 are closed with merged PRs, including corrective fixes; #8, #12, #9 remain open. Tracking issue #25 remains open.
+- **M3 NOT STARTED (0/5)**: #10, #11, #13, #14, #15 remain open.
+- **M4 NOT STARTED (0/4)**: #16, #17, #18, #19 remain open; #16–18 are optional stretch goals.
+- Latest PR #32 is merged; CI [run 42889270719](https://github.com/huydo2105/veripoc/actions/runs/42889270719) passed Foundry, Slither, and isolated worker jobs. The API from #7 is **loopback-only and restricted to reviewed fixtures**, not a public upload/production service.
+- Current next essential work: #8 judge UI, #12 CIS-8/CIS-8004 signed gate, and #9 submission; plan #10 Concordium audit anchors in parallel only after clarifying interfaces.
+- **Do not confuse closed issue status with a production security guarantee.** The API, sandbox, and receipts have local/CI scope. Native GitHub milestones might still need setup by running the script below.
+
 
 ## Activate native GitHub Milestones
 
