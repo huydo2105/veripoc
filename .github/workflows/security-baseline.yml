@@ -27,6 +27,8 @@ jobs:
         run: forge build
       - name: Test
         run: forge test -vvv
+      - name: Adapter unit tests
+        run: node --test packages/slither-adapter/test.mjs
 
   slither:
     name: Slither static analysis
@@ -44,11 +46,14 @@ jobs:
           python-version: "3.11"
       - name: Install pinned analyzer
         run: python -m pip install slither-analyzer==0.11.6
-      - name: Run Slither and validate JSON
-        run: bash scripts/run-slither.sh
+      - name: Run Slither and normalize findings
+        run: node packages/slither-adapter/cli.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: slither-report
-          path: artifacts/slither.json
+          path: |
+            artifacts/slither.json
+            artifacts/call-graph.dot
+            artifacts/normalized-slither.json
           if-no-files-found: warn
