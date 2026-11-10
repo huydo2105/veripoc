@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VeriPoC · Local verification console</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar"><div class="brand"><span class="brandmark">V</span><span>VeriPoC <small>LOCAL CONSOLE</small></span></div><span class="environment">● Local fixtures only</span></header>
+    <section class="intro"><p class="eyebrow">VERIFICATION LAB / ISSUE #7</p><h1>See what the tools actually did.</h1><p>This is a small inspection page for the checked-in vault fixtures. Every result below comes from a local API job. A scanner warning, an executed exploit test, and a receipt are different kinds of evidence.</p></section>
+    <section class="access panel"><div><h2>Connect to the local API</h2><p>Start the server, then enter its token. The token stays in this page's memory and is never stored by the browser.</p></div><label>API token <input id="token" type="password" autocomplete="off" placeholder="Paste VERIPOC_API_TOKEN"></label></section>
+    <section class="grid">
+      <article class="panel action"><span class="step">01 / STATIC ANALYSIS</span><h2>Scan the reviewed vaults</h2><p>Slither looks for code patterns and reports source locations. A finding is a lead, not an exploit verdict.</p><button data-kind="scan">Run Slither scan <span>↗</span></button></article>
+      <article class="panel action"><span class="step">02 / EXECUTION</span><h2>Reproduce the vulnerable case</h2><p>The fixed Foundry oracle checks whether the donation attack takes the victim's deposit.</p><button data-kind="verify" data-fixture="vulnerable">Run vulnerable fixture <span>↗</span></button></article>
+      <article class="panel action"><span class="step">03 / CONTROL</span><h2>Test the patched case</h2><p>The same attack setup should issue victim shares and leave the attacker without a profit.</p><button data-kind="verify" data-fixture="patched">Run patched fixture <span>↗</span></button></article>
+    </section>
+    <section class="results"><div class="section-heading"><div><p class="eyebrow">LIVE JOB RECORDS</p><h2>Recent runs</h2></div><p>Polling the API while this tab is open</p></div><div id="jobs" class="job-list"><div class="empty">No jobs yet. Choose a fixture above to start a real local run.</div></div></section>
+    <footer><span>Badge read: not connected</span><span>Concordium anchor: not submitted</span><span>Payment: not implemented</span></footer>
+  </main>
+</body>
+</html>
