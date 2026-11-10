@@ -1,70 +1,178 @@
-const jobs = document.querySelector("#jobs");
-const token = document.querySelector("#token");
-const active = new Map();
-const label = status => ({ reproduced: "Reproduced", not_reproduced: "Not reproduced",
-  identified: "Static findings", analyzed_no_findings: "No static findings", tool_error: "Tool error",
-  inconclusive: "Inconclusive" })[status] ?? status;
-function element(name, className, value) {
-  const node = document.createElement(name);
-  if (className) node.className = className;
-  if (value !== undefined) node.textContent = value;
-  return node;
+import { FIXTURES, VERDICTS, parseAcceptance, parseJob, stageStates, financialEvidence, receiptDigest, apiError } from "./state.mjs";
+
+const $ = selector => document.querySelector(selector);
+const jobs = new Map();
+const lastByFixture = new Map();
+const pendingKeys = new Map();
+let selectedFixture = "vulnerable";
+let currentId = null;
+let submitting = false;
+
+function setText(selector, value) { $(selector).textContent = value; }
+function showError(message, canRetryStatus = false) {
+  const alert = $("#run-alert");
+  alert.textContent = message;
+  alert.hidden = !message;
+  $("#retry-status").hidden = !canRetryStatus;
 }
-function render() {
-  jobs.replaceChildren();
-  if (!active.size) { jobs.append(element("div", "empty", "No jobs yet. Choose a fixture above to start a real local run.")); return; }
-  for (const entry of [...active.values()].reverse()) {
-    const card = element("article", "job panel");
-    const top = element("div", "job-top");
-    top.append(element("strong", "", entry.title), element("span", `pill ${entry.result?.status ?? entry.state}`, label(entry.result?.status ?? entry.state)));
-    card.append(top, element("p", "job-id", `Job ${entry.id}`));
-    if (entry.error) card.append(element("p", "error", entry.error));
-    if (entry.result) {
-      card.append(element("p", "", entry.result.reason ?? (entry.result.report ? `${entry.result.report.findings.length} normalized finding(s)` : "")));
-      if (entry.result.anchor) card.append(element("p", "digest", `Receipt SHA-256  ${entry.result.anchor.receiptSha256}`));
-      if (entry.result.receipt) { const details = element("details"); details.append(element("summary", "", "Receipt fields"),
-        element("pre", "", JSON.stringify(entry.result.receipt, null, 2))); card.append(details); }
-      if (entry.result.report?.findings) for (const finding of entry.result.report.findings.slice(0, 8)) {
-        const place = finding.primaryLocation;
-        card.append(element("p", "finding", `${finding.severity} · ${finding.rule} · ${place ? `${place.file}:${place.startLine ?? "?"}` : "location unavailable"}`));
-      }
-      if (entry.result.output) { const details = element("details"); details.append(element("summary", "", "Foundry output"), element("pre", "", entry.result.output)); card.append(details); }
-      if (!entry.result.anchor && entry.kind === "verify") card.append(element("p", "note", "Receipt unavailable for this result."));
-    }
-    jobs.append(card);
+
+function renderSubmission() {
+  const fixture = FIXTURES[selectedFixture];
+  for (const button of document.querySelectorAll(".fixture-option")) {
+    const selected = button.dataset.fixture === selectedFixture;
+    button.classList.toggle("selected", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  }
+  setText("#claim-title", fixture.title);
+  setText("#claim-description", fixture.description);
+  setText("#contract-name", fixture.contract);
+  setText("#oracle-name", fixture.oracle);
+  setText("#expected-result", fixture.expected);
+  setText("#invariant", fixture.invariant);
+  $("#verify-button").disabled = submitting;
+}
+
+function renderComparison() {
+  for (const fixture of ["vulnerable", "patched"]) {
+    const job = jobs.get(lastByFixture.get(fixture));
+    const verdict = job?.state === "finished" ? VERDICTS[job.result.status].label : job?.state === "running" ? "Running" : job?.state === "queued" ? "Queued" : "Not run";
+    setText(`#compare-${fixture}`, verdict);
+    setText(`#compare-${fixture}-hash`, receiptDigest(job?.result) ?? "No receipt digest");
   }
 }
-async function request(path, options = {}) {
-  const response = await fetch(path, { ...options, headers: { ...(options.headers ?? {}), Authorization: `Bearer ${token.value}` } });
-  const body = await response.json();
-  if (!response.ok) throw new Error(body.error ?? `HTTP ${response.status}`);
-  return body;
+
+function renderRun() {
+  const job = jobs.get(currentId);
+  const fixture = job && FIXTURES[job.fixture];
+  const result = job?.result;
+  setText("#current-job", job ? job.id : "No job submitted");
+  setText("#run-status", job ? job.state.toUpperCase() : "AWAITING SUBMISSION");
+  setText("#run-summary", !job ? "Choose a reviewed fixture and press Verify PoC." : job.state === "finished"
+    ? `Foundry run finished for ${fixture.name}. Inspect the verdict and private evidence below.`
+    : job.state === "queued" ? "The API accepted the reviewed fixture; execution is waiting in the local queue."
+      : "The worker is running the trusted Foundry oracle. Stage details are reported after completion.");
+  const stages = stageStates(job);
+  for (const node of document.querySelectorAll(".stage")) {
+    const state = stages[Number(node.dataset.stage)];
+    node.dataset.state = state;
+    node.querySelector(".stage-state").textContent = ({ done: "Complete", active: "Running", failed: "Failed", unavailable: "Unavailable", pending: "Pending" })[state];
+  }
+  const verdict = result && VERDICTS[result.status];
+  setText("#verdict", verdict?.label ?? "Awaiting run");
+  $("#verdict").className = `verdict ${verdict?.tone ?? "neutral"}`;
+  setText("#verdict-explanation", verdict ? `${verdict.explanation}${result.reason ? ` Worker reason: ${result.reason}.` : ""}`
+    : "A verdict appears only after the API returns a finished job.");
+  const numbers = financialEvidence(result);
+  const metricNodes = document.querySelectorAll("#financial-metrics strong");
+  [numbers?.attackerBefore, numbers?.attackerAfter, numbers?.victimShares].forEach((value, index) => {
+    metricNodes[index].textContent = value ?? "Not captured";
+  });
+  setText("#metrics-note", numbers ? "Values returned by this job's structured execution evidence."
+    : "Measured values are unavailable for this job. Inspect the trusted invariant and raw Foundry output in the private evidence JSON.");
 }
-async function poll(entry) {
-  try { Object.assign(entry, await request(`/v1/jobs/${entry.id}`)); }
-  catch (error) { entry.error = error.message; }
-  render();
-  if (entry.state !== "finished" && !entry.error) setTimeout(() => poll(entry), 1000);
+
+function renderEvidence() {
+  const job = jobs.get(currentId);
+  const receipt = job?.result?.receipt;
+  const fixture = job && FIXTURES[job.fixture];
+  setText("#report-id", job?.id ?? "—");
+  setText("#report-status", job?.state === "finished" ? VERDICTS[job.result.status].label : job?.state ?? "Awaiting run");
+  setText("#report-claim", fixture?.title ?? "—");
+  setText("#report-target", fixture ? `${fixture.contract} / ${job.fixture}` : "—");
+  setText("#report-invariant", receipt?.invariant ? `${receipt.invariant.passed ? "Passed" : "Not passed"} / ${receipt.invariant.name}` : "Not evaluated");
+  setText("#report-chain", receipt?.chain?.chainId ? `Chain ${receipt.chain.chainId}, block ${receipt.chain.forkBlock}` : "Local EVM; no fork");
+  setText("#report-image", receipt?.input?.imageId ?? "Not available");
+  setText("#report-input", receipt?.input?.sourceSha256 ?? "Not available");
+  setText("#report-tools", receipt?.tools ? `Forge ${receipt.tools.forge} / solc ${receipt.tools.solc}` : "Not available");
+  setText("#report-log", receipt?.evidence?.executionLogSha256 ?? "Not available");
+  setText("#report-digest", receiptDigest(job?.result) ?? "No receipt yet");
+  setText("#evidence-json", job?.state === "finished" ? JSON.stringify(job, null, 2) : "No finished evidence yet.");
+  $("#copy-evidence").disabled = job?.state !== "finished";
+  $("#copy-evidence").textContent = "Copy private evidence JSON";
 }
-for (const button of document.querySelectorAll("button[data-kind]")) button.addEventListener("click", async () => {
-  const kind = button.dataset.kind;
-  const fixture = button.dataset.fixture;
-  const title = kind === "scan" ? "Slither · reviewed vaults" : `Foundry · ${fixture} vault`;
-  const entry = { id: crypto.randomUUID(), title, kind, state: "requesting" };
-  active.set(entry.id, entry);
-  button.disabled = true;
-  render();
+
+function render() { renderSubmission(); renderRun(); renderEvidence(); renderComparison(); }
+
+async function apiRequest(path, options = {}) {
+  let response;
   try {
-    const body = kind === "scan" ? { artifactFormat: "repo-fixture-v1", target: "local-vaults" }
-      : { artifactFormat: "repo-fixture-v1", fixture };
-    const accepted = await request(kind === "scan" ? "/v1/scan" : "/v1/verify-poc", {
-      method: "POST", headers: { "Content-Type": "application/json", "Idempotency-Key": entry.id }, body: JSON.stringify(body)
-    });
-    active.delete(entry.id);
-    entry.id = accepted.id;
-    entry.state = accepted.state;
-    active.set(entry.id, entry);
-    poll(entry);
-  } catch (error) { entry.error = error.message; render(); }
-  finally { button.disabled = false; }
+    response = await fetch(path, { ...options, credentials: "omit", cache: "no-store",
+      headers: { ...(options.headers ?? {}), Authorization: `Bearer ${$("#token").value}` } });
+  } catch { throw new Error("The local API is unavailable. Start it and retry."); }
+  let data;
+  try { data = await response.json(); } catch { throw new Error("The API returned an unreadable response."); }
+  if (!response.ok) throw new Error(apiError(response.status, data.error));
+  return data;
+}
+
+async function poll(id) {
+  const previous = jobs.get(id);
+  if (!previous || previous.state === "finished") return;
+  try {
+    const data = await apiRequest(`/v1/jobs/${id}`);
+    const job = parseJob(data, id, previous.fixture);
+    jobs.set(id, job);
+    if (id === currentId) { showError(""); render(); }
+    else renderComparison();
+    if (job.state !== "finished") setTimeout(() => poll(id), 2000);
+  } catch (error) {
+    if (id === currentId) showError(`${error.message} The job may still be running. Retry status lookup.`, true);
+  }
+}
+
+async function submit() {
+  if (submitting) return;
+  const token = $("#token").value;
+  if (!token) { showError("Enter the local API token before verifying a PoC."); $("#token").focus(); return; }
+  submitting = true;
+  renderSubmission();
+  showError("");
+  const fixture = selectedFixture;
+  const key = pendingKeys.get(fixture) ?? crypto.randomUUID();
+  pendingKeys.set(fixture, key);
+  try {
+    const accepted = parseAcceptance(await apiRequest("/v1/verify-poc", { method: "POST", headers: {
+      "Content-Type": "application/json", "Idempotency-Key": key },
+      body: JSON.stringify({ artifactFormat: "repo-fixture-v1", fixture }) }));
+    const initial = accepted.state === "finished"
+      ? parseJob(await apiRequest(`/v1/jobs/${accepted.id}`), accepted.id, fixture)
+      : { id: accepted.id, kind: "verify", fixture, state: accepted.state, result: null };
+    pendingKeys.delete(fixture);
+    currentId = accepted.id;
+    jobs.set(accepted.id, initial);
+    lastByFixture.set(fixture, accepted.id);
+    render();
+    $("#verification").scrollIntoView({ behavior: "smooth", block: "start" });
+    if (initial.state !== "finished") poll(accepted.id);
+  } catch (error) {
+    showError(`${error.message} Press Verify PoC to retry this fixture.`);
+    $("#verification").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+  finally { submitting = false; renderSubmission(); }
+}
+
+for (const button of document.querySelectorAll(".fixture-option")) button.addEventListener("click", () => {
+  selectedFixture = button.dataset.fixture;
+  renderSubmission();
 });
+$("#verify-button").addEventListener("click", submit);
+$("#retry-status").addEventListener("click", () => { if (currentId) { showError(""); poll(currentId); } });
+$("#copy-evidence").addEventListener("click", async () => {
+  const job = jobs.get(currentId);
+  if (job?.state !== "finished") return;
+  try { await navigator.clipboard.writeText(JSON.stringify(job, null, 2)); $("#copy-evidence").textContent = "Copied — share only with authorized reviewers"; }
+  catch { $("#copy-evidence").textContent = "Clipboard failed — copy JSON manually"; }
+});
+
+async function readIdentity() {
+  try {
+    const response = await fetch("/.well-known/agent-card.json", { cache: "no-store" });
+    if (!response.ok) throw new Error("card unavailable");
+    const card = await response.json();
+    if (!card.registrations?.some(item => item.agentId === 1067)) throw new Error("card mismatch");
+    setText("#identity-state", "Agent #1067 is listed in the published card. Open the registry link for a current read-only check; this session has no signed request authentication.");
+  } catch { setText("#identity-state", "The published card could not be read. Registry status and request identity are unverified in this session."); }
+}
+
+render();
+readIdentity();

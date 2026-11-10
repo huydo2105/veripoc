@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
+import { readFileSync } from "node:fs";
 import { createApiServer } from "./server.mjs";
 
 const token = "test-token-with-at-least-thirty-two-characters";
@@ -68,4 +69,15 @@ test("scan route accepts only the reviewed target", async () => {
     assert.equal(job.kind, "scan");
     assert.equal(job.result.status, "analyzed_no_findings");
   }, { execute: async () => ({ status: "analyzed_no_findings", report: { findings: [] } }) });
+});
+
+test("public Agent Card is served byte-for-byte and UI module is available", async () => {
+  await withServer(async base => {
+    const card = await fetch(`${base}/.well-known/agent-card.json`);
+    assert.equal(card.status, 200);
+    assert.equal(await card.text(), readFileSync(new URL("../../.well-known/agent-card.json", import.meta.url), "utf8"));
+    const module = await fetch(`${base}/state.mjs`);
+    assert.equal(module.status, 200);
+    assert.match(module.headers.get("content-type"), /javascript/);
+  });
 });

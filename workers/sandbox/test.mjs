@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { runArgs, manifestArgs, classifyRun, runFixture, CASES } from "./runner.mjs";
+import { runArgs, manifestArgs, classifyRun, runFixture, parseFinancialEvidence, CASES } from "./runner.mjs";
 
 const id = `sha256:${"a".repeat(64)}`;
 test("fixed cases have distinct honest verdicts", () => {
@@ -49,4 +49,14 @@ test("reported hash comes from the inspected image, never host checkout", () => 
   const result = runFixture("patched", { invoke });
   assert.equal(result.status, "not_reproduced");
   assert.equal(result.inputHash, baked);
+});
+
+test("measured financial evidence is parsed only from one complete successful trusted log", () => {
+  const log = "[PASS] testVulnerableDonationReproduces()\nLogs:\n  VERIPOC_ATTACKER_BEFORE: 101\n  VERIPOC_ATTACKER_AFTER: 201\n  VERIPOC_VICTIM_SHARES: 0\n";
+  assert.deepEqual(parseFinancialEvidence(log), { attackerBefore: "101", attackerAfter: "201", victimShares: "0" });
+  assert.deepEqual(classifyRun("vulnerable", { status: 0, stdout: log }).financialEvidence,
+    { attackerBefore: "101", attackerAfter: "201", victimShares: "0" });
+  assert.equal(classifyRun("vulnerable", { status: 1, stdout: log }).financialEvidence, null);
+  assert.equal(parseFinancialEvidence(log.replace("  VERIPOC_VICTIM_SHARES: 0\n", "")), null);
+  assert.equal(parseFinancialEvidence(log + "  VERIPOC_ATTACKER_AFTER: 999\n"), null);
 });

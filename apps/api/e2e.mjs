@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { randomBytes, randomUUID } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { createApiServer } from "./server.mjs";
 
 const token = randomBytes(32).toString("hex");
@@ -22,7 +22,19 @@ try {
     }
     assert.equal(job.state, "finished");
     assert.equal(job.result.status, fixture === "vulnerable" ? "reproduced" : "not_reproduced");
+    assert.equal(job.result.financialEvidence?.attackerBefore, "101");
+    if (fixture === "vulnerable") {
+      assert.equal(job.result.financialEvidence.attackerAfter, "201");
+      assert.equal(job.result.financialEvidence.victimShares, "0");
+    } else {
+      assert.ok(BigInt(job.result.financialEvidence.attackerAfter) <= 101n);
+      assert.ok(BigInt(job.result.financialEvidence.victimShares) > 0n);
+    }
     assert.equal(job.result.receipt?.fixture, fixture);
+    const executionEvidence = JSON.stringify({ status: job.result.status, exitCode: job.result.exitCode,
+      stdout: job.result.output, stderr: job.result.errorOutput });
+    assert.equal(job.result.receipt.evidence.executionLogSha256,
+      createHash("sha256").update(executionEvidence).digest("hex"));
     assert.match(job.result.anchor?.receiptSha256 ?? "", /^[a-f0-9]{64}$/);
     console.log(`${fixture}: ${job.result.status}; receipt ${job.result.anchor.receiptSha256}`);
   }

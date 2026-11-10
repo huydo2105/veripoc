@@ -9,7 +9,8 @@
     "test:receipt": "node --test packages/core/receipt.test.mjs",
     "run:worker": "node workers/sandbox/cli.mjs",
     "api:dev": "node apps/api/start.mjs",
-    "test:api": "node --test apps/api/server.test.mjs"
+    "test:api": "node --test apps/api/server.test.mjs",
+    "test:web": "node --test apps/web/state.test.mjs"
   },
   "keywords": [],
   "author": "",

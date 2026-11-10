@@ -14,8 +14,9 @@ try {
     let anchor = null;
     try { receipt = receiptFromWorker(run); anchor = publicAnchor(receipt); } catch { /* missing provenance */ }
     parentPort.postMessage({ ok: true, value: { status: run.status, reason: run.reason,
-      fixture: run.case, output: run.output, imageId: run.imageId ?? null,
-      inputHash: run.inputHash ?? null, receipt, anchor } });
+      fixture: run.case, exitCode: run.exitCode ?? null, output: run.output,
+      errorOutput: run.errorOutput, imageId: run.imageId ?? null,
+      inputHash: run.inputHash ?? null, financialEvidence: run.financialEvidence ?? null, receipt, anchor } });
   } else if (workerData.kind === "scan") {
     const run = spawnSync(process.execPath, [resolve(root, "packages/slither-adapter/cli.mjs")],
       { cwd: root, encoding: "utf8", timeout: 130_000, maxBuffer: 65536 });
