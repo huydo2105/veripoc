@@ -25,13 +25,15 @@ export function parseCallGraph(dot = "") {
 }
 
 export function normalizeSlither(raw, { version, sourceHash, callGraph = "" } = {}) {
-  if (!raw || raw.success !== true || !Array.isArray(raw.results?.detectors)) {
-    throw new Error("Slither JSON missing successful detector results");
+  const results = raw?.results;
+  if (raw?.success !== true || !results || typeof results !== "object" || Array.isArray(results)
+    || (results.detectors !== undefined && !Array.isArray(results.detectors))) {
+    throw new Error("invalid successful Slither JSON results");
   }
   if (!version || !/^0\.11\.6(?:\b|$)/.test(version)) throw new Error("unexpected Slither version");
   if (!/^[a-f0-9]{64}$/.test(sourceHash ?? "")) throw new Error("source SHA-256 required");
   const findings = new Map();
-  for (const detector of raw.results.detectors) {
+  for (const detector of results.detectors ?? []) {
     const rule = text(detector?.check);
     if (!rule) throw new Error("detector missing rule");
     const locations = (Array.isArray(detector.elements) ? detector.elements : [])

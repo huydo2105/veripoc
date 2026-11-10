@@ -16,11 +16,15 @@ test("normalizes and deduplicates with stable source-based IDs", () => {
   assert.equal(result.findings[0].findingId, normalizeSlither(input, provenance).findings[0].findingId);
 });
 test("empty successful result is not an error", () => {
-  assert.deepEqual(normalizeSlither({ success: true, results: { detectors: [] } }, provenance).findings, []);
+  const report = normalizeSlither({ success: true, results: {} }, provenance);
+  assert.equal(report.status, "analyzed");
+  assert.deepEqual(report.findings, []);
 });
 test("rejects failed and malformed reports", () => {
   assert.throws(() => normalizeSlither({ success: false }, provenance));
-  assert.throws(() => normalizeSlither({ success: true, results: {} }, provenance));
+  assert.throws(() => normalizeSlither({ success: true }, provenance));
+  assert.throws(() => normalizeSlither({ success: true, results: { detectors: null } }, provenance));
+  assert.throws(() => normalizeSlither({ success: true, results: { detectors: {} } }, provenance));
   assert.throws(() => normalizeSlither({ success: true, results: { detectors: [] } }, { ...provenance, sourceHash: "x" }));
 });
 test("classifies compile failures and timeouts without inventing findings", () => {
