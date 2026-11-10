@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="VeriPoC connects DeFi teams and independent security researchers around reproducible smart-contract PoC evidence.">
+  <title>VeriPoC | Verifiable smart-contract security</title>
+  <link rel="stylesheet" href="/journey.css">
+</head>
+<body>
+  <a class="skip-link" href="#paths">Skip to your path</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="/" aria-label="VeriPoC home"><span class="brand-symbol" aria-hidden="true">V</span><span>VERI<span class="brand-accent">POC</span><small>SECURITY EVIDENCE NETWORK</small></span></a>
+      <nav aria-label="Page sections"><a href="#how-it-works">How it works</a><a href="#concordium">Concordium</a></nav>
+      <span class="header-badge">LOCAL DEMO / FIXED FIXTURES</span>
+    </div>
+  </header>
+  <main>
+    <section class="home-hero wrap" aria-labelledby="home-title">
+      <p class="eyebrow">ONE SHARED VERIFICATION ENGINE · TWO SIDES OF SECURITY</p>
+      <h1 id="home-title">Verifiable smart-contract security, <em>powered by researchers and AI agents.</em></h1>
+      <p class="hero-subtitle">Connect DeFi teams with independent security researchers. Investigate authorized contracts, reproduce vulnerability claims, and deliver trustworthy security evidence.</p>
+      <div class="hero-rule" aria-hidden="true"><span>01 / AUTHORIZE</span><span>02 / INVESTIGATE</span><span>03 / VERIFY</span></div>
+    </section>
+
+    <section id="paths" class="wrap paths" aria-labelledby="paths-title">
+      <div class="section-heading"><p class="eyebrow">CHOOSE YOUR PATH</p><h2 id="paths-title">Where do you begin?</h2><p>Both paths meet at the same reviewed PoC verification workflow.</p></div>
+      <div class="path-grid">
+        <a class="path-card team-path" href="/teams/start" aria-describedby="team-help"><span class="path-top"><span class="path-number">01 / FOR DEFI TEAMS</span><span class="path-arrow" aria-hidden="true">↗</span></span><span class="path-mark" aria-hidden="true">⌘</span><strong>I have a smart contract to audit</strong><span id="team-help" class="path-help">Create an audit program, define your contract scope, and collaborate with security researchers and AI agents.</span><span class="path-foot">EXPLORE TEAM JOURNEY <span aria-hidden="true">→</span></span></a>
+        <a class="path-card researcher-path" href="/researchers/start" aria-describedby="researcher-help"><span class="path-top"><span class="path-number">02 / FOR RESEARCHERS</span><span class="path-arrow" aria-hidden="true">↗</span></span><span class="path-mark" aria-hidden="true">◇</span><strong>I want to audit</strong><span id="researcher-help" class="path-help">Join an authorized audit program, use your own AI agent, and submit reproducible vulnerability findings.</span><span class="path-foot">EXPLORE RESEARCHER JOURNEY <span aria-hidden="true">→</span></span></a>
+      </div>
+      <p class="scope-line">Current demo: reviewed local vault fixtures only. Program accounts, invitations, arbitrary uploads, and production authorization are not available yet.</p>
+    </section>
+
+    <section id="how-it-works" class="workflow-band" aria-labelledby="workflow-title"><div class="wrap"><div class="section-heading"><p class="eyebrow">THE SHARED WORKFLOW</p><h2 id="workflow-title">A claim becomes reviewable evidence.</h2><p>AI agents and researchers investigate; VeriPoC independently checks the submitted proof of concept.</p></div><ol class="workflow-grid"><li><span class="step-index">01</span><h3>Authorize</h3><p>A DeFi team defines what contracts researchers may investigate and under which testing rules. Program enforcement is planned for Issue #35.</p></li><li><span class="step-index">02</span><h3>Investigate</h3><p>Researchers use their preferred AI agents, security tools, or manual expertise to form a claim and executable PoC.</p></li><li><span class="step-index">03</span><h3>Verify</h3><p>VeriPoC runs the reviewed PoC in an isolated Foundry worker and returns an evidence-backed verdict for team review.</p></li></ol></div></section>
+
+    <section class="wrap lower-grid" aria-label="Evidence and identity"><div class="explain-card"><p class="eyebrow">WHY REPRODUCTION MATTERS</p><h2>A finding needs more than a confident description.</h2><p>A vulnerability claim is a hypothesis. A successful Foundry test demonstrates an outcome under specified conditions. A team still decides scope, severity, remediation, and any bounty separately.</p></div><div id="concordium" class="explain-card accent-card"><p class="eyebrow">ACCOUNTABLE PROVENANCE</p><h2>Concordium adds identity and a path to tamper-evident receipts.</h2><p>The published Agent Card lists CIS-8004 Agent #1067. Signed request authentication and Testnet receipt anchoring are planned; this demo does not present a transaction as completed.</p><a href="/.well-known/agent-card.json" target="_blank" rel="noopener noreferrer">Read the published Agent Card <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="site-footer wrap"><span>VERIPOC / SHARED POC VERIFICATION</span><span>REVIEWED LOCAL DEMO · NO AUTOMATED AUDIT CERTIFICATE OR BOUNTY DECISION</span></footer>
+</body>
+</html>

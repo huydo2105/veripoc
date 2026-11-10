@@ -6,7 +6,11 @@ import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const pages = new Map([["/", ["index.html", "text/html; charset=utf-8"]],
+const pages = new Map([["/", ["home.html", "text/html; charset=utf-8"]],
+  ["/teams/start", ["teams.html", "text/html; charset=utf-8"]],
+  ["/researchers/start", ["researchers.html", "text/html; charset=utf-8"]],
+  ["/verify", ["index.html", "text/html; charset=utf-8"]],
+  ["/journey.css", ["journey.css", "text/css; charset=utf-8"]],
   ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
   ["/state.mjs", ["state.mjs", "text/javascript; charset=utf-8"]],
   ["/style.css", ["style.css", "text/css; charset=utf-8"]]]);
