@@ -15,7 +15,7 @@ codex
 
 Paste the following into Codex as the project instruction:
 
-> Read AGENTS.md, docs/ROADMAP.md, docs/CODEX_WORKFLOW.md, and GitHub Issue #3. Implement Issue #3 on a new feature branch, using the existing Foundry + Slither baseline, with passing tests, honest evidence, and an educational PR description using .github/pull_request_template.md. Open the PR and STOP. Do not merge, close the issue, or work on Issue #4 until I have reviewed this PR, answered the comprehension questions, and explicitly authorized the next step. For subsequent tasks, apply the same PR-by-PR stop-and-teach protocol; independently check dependency order and MVP priority, rather than blindly following issue numbers.
+> Read AGENTS.md, docs/PRODUCT_SCOPE.md, docs/ROADMAP.md, docs/CODEX_WORKFLOW.md, and GitHub Issue #8. Implement Issue #8 on a new feature branch, using the existing Foundry + Slither baseline, with passing tests, honest evidence, and an educational PR description using .github/pull_request_template.md. Open the PR and STOP. Do not merge, close the issue, or work on Issue #12 until I have reviewed this PR, answered the comprehension questions, and explicitly authorized the next step. For subsequent tasks, apply the same PR-by-PR stop-and-teach protocol; independently check dependency order and MVP priority, rather than blindly following issue numbers.
 
 ## At each pull request
 **Codex output to the user:**
@@ -38,18 +38,18 @@ Paste the following into Codex as the project instruction:
 The agent should not confuse 'green tests' with safety guarantees. If CI is unavailable, the PR stays open.
 
 ## MVP prioritization, not an unconditional issue-number march
-**First core reproducibility:** #3 vulnerable + patched ERC-4626, #4 Slither adapter, #5 isolated worker, #6 evidence/receipt, #7 API, #8 live UI. #12 authentic agent gate should be integrated when API is ready. The identity metadata confirmation is #1 and remains a separate prerequisite.
+**Current state:** #1–#7 are done. Core PoC verification already includes vault fixtures (#3), optional internal Slither helper (#4), Foundry isolated worker (#5), evidence receipts (#6), and a restricted fixture API (#7). **Build #8 as a PoC verification-only UI; no scanner tab or standalone scan CTA.** #12 authentic agent gate should be integrated when API is ready. The identity metadata confirmation is #1 and remains a separate prerequisite.
 
 **Concordium demonstrable value:** #10 real hash audit anchoring and #11 controlled **Testnet** escrow once safeguards and APIs are ready. #13 MCP interface is highly desirable for an AI-agent hackathon. #9 checkpoint and #19 final deliverable are non-optional date gates.
 
-**Time-budgeted enhancements:** #14 Echidna or Medusa and #15 AI hypothesis generation can improve the product; #16 Mythril/Halmos, #17 x402, and #18 Web3ID ZKP are stretch features. Do not let stretch features prevent an end-to-end real demonstration.
+**Time-budgeted enhancements:** #14 Echidna/Medusa, #15 AI test suggestions and #16 Mythril/Halmos ONLY if they improve a measurable PoC reproduction case; #17 x402 and #18 Web3ID are stretch. Do not implement a separate contract-scanning product or force Slither on every PoC. Product source of truth: docs/PRODUCT_SCOPE.md. Do not let stretch features prevent an end-to-end real demonstration.
 
 ## Teaching syllabus for pitch and project management
 
 | Work area | Owner should be able to explain to judges | Operational decision |
 | --- | --- | --- |
 | ERC-4626 fixture | share inflation/invariant and why patched contract resists | What vulnerability means under realistic assumptions |
-| Slither | static finding vs false positive | How to prioritize reports |
+| Optional Slither helper | static observations do not reproduce an exploit | Only use if it helps prepare or understand a PoC |
 | Foundry/Anvil | deterministic reproduction and pinned fork | When is a result inconclusive? |
 | Isolated worker | hostile code, trust boundary, limits | Why regex sanitizing is insufficient |
 | Receipt & hashes | integrity, provenance and privacy | What goes on-chain vs stays confidential |
@@ -62,7 +62,7 @@ The agent should not confuse 'green tests' with safety guarantees. If CI is unav
 ## What 'done' means
 A real MVP demonstration should show:
 1. Submitted authorized vulnerable vault and patched control.
-2. Real Slither static report and Foundry invariant test running with constrained resources.
+2. Real Foundry PoC reproduction against vulnerable and patched fixture with constrained resources; Slither analysis is optional internal supporting information, NOT a required judge UI screen.
 3. Distinguishable reproduced / not reproduced / inconclusive verdicts with trace/evidence hash.
 4. Agent request authenticated where supported, real UI/API result, no fabricated logs.
 5. One finalized Concordium Testnet hash anchor with independently verifiable chain transaction.
