@@ -169,10 +169,10 @@ MVP DOES NOT require: automated discovery of unknown bugs, arbitrary public cont
 **Teams initiate a scoped audit; researchers bring any agent; VeriPoC validates actual PoCs and preserves provenance.** Our product is **not** a "push button, fully audited" service.
 
 ## 10. Prioritization and milestones
-**Completed and preserve:** #1–#7 and #20, including initial Slither analysis adapter and fixed-fixture local API. Existing #8 PR may be open; review and update rather than silently merging.
+**Completed and preserve:** #1–#8 and #20, including the fixed-fixture PoC console delivered in merged PR #33 with successful CI. Reuse it for both product personas; do not rebuild from scratch.
 
 **M2 (through Nov 22):**
-- Update #8 to implement dual-persona home + role-based paths and real common verification view; retain existing PoC console work and require a revision PR if current PR lacks the entry points.
+- [x] #8 shared real PoC verification console is complete; build two-persona navigation in separate #34.
 - Add a small **Demo Audit Program + role/scope model** (new issue, P0) using strictly predefined local fixtures, no arbitrary uploads or fake permissions.
 - #9 checkpoint submission.
 - #12 minimum feasible agent identity proof. Signed request verification is needed before production, even if hackathon demo uses registry read-only identity.
