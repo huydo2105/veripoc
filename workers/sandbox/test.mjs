@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { runArgs, classifyRun, runFixture, CASES } from "./runner.mjs";
+import { runArgs, manifestArgs, classifyRun, runFixture, CASES } from "./runner.mjs";
 
 const id = `sha256:${"a".repeat(64)}`;
 test("fixed cases have distinct honest verdicts", () => {
@@ -15,6 +15,7 @@ test("Docker arguments enforce isolation and fixed harness", () => {
   assert.ok(!args.join(" ").includes("docker.sock"));
   assert.throws(() => runArgs(id, "arbitrary"));
   assert.throws(() => runArgs("untrusted:latest", CASES.vulnerable.test));
+  assert.ok(manifestArgs(id).includes("/workspace/input.sha256"));
 });
 test("timeout is inconclusive and strips control characters", () => {
   const result = classifyRun("vulnerable", { status: null, error: { code: "ETIMEDOUT" }, stdout: "\x1b[31mbad\x1b[0m\x00" });
@@ -32,10 +33,20 @@ test("timed-out Docker run triggers container kill", () => {
   const invoke = (_command, args) => {
     calls.push(args);
     if (args[0] === "image") return { status: 0, stdout: id };
+    if (args.includes("/workspace/input.sha256")) return { status: 0, stdout: "b".repeat(64) };
     if (args[0] === "run") return { status: null, error: { code: "ETIMEDOUT" } };
     return { status: 0 };
   };
   assert.equal(runFixture("vulnerable", { invoke }).status, "inconclusive");
-  assert.equal(calls[2][0], "kill");
-  assert.equal(calls[2][1], calls[1][calls[1].indexOf("--name") + 1]);
+  assert.equal(calls[3][0], "kill");
+  assert.equal(calls[3][1], calls[2][calls[2].indexOf("--name") + 1]);
+});
+test("reported hash comes from the inspected image, never host checkout", () => {
+  const baked = "c".repeat(64);
+  const invoke = (_command, args) => args[0] === "image" ? { status: 0, stdout: id }
+    : args.includes("/workspace/input.sha256") ? { status: 0, stdout: baked }
+    : { status: 0, stdout: "[PASS]" };
+  const result = runFixture("patched", { invoke });
+  assert.equal(result.status, "not_reproduced");
+  assert.equal(result.inputHash, baked);
 });

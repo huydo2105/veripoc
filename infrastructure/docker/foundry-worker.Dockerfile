@@ -14,6 +14,9 @@ COPY foundry.toml ./
 COPY src/ ./src/
 COPY contracts/evm/ ./contracts/evm/
 COPY test/ ./test/
+RUN sha256sum foundry.toml src/Counter.sol contracts/evm/MockAsset.sol \
+    contracts/evm/FixtureVault.sol test/Counter.t.sol test/VaultFixture.t.sol \
+    test/TrustedVaultWorker.t.sol | sha256sum | cut -d ' ' -f1 > /workspace/input.sha256
 RUN forge --version && forge build && forge test --match-contract TrustedVaultTest
 RUN chmod -R a+rX /workspace
 USER 10001:10001

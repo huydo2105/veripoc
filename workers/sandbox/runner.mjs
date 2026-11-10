@@ -1,6 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { createHash, randomUUID } from "node:crypto";
-import { readFileSync } from "node:fs";
+import { randomUUID } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -10,12 +9,11 @@ export const CASES = Object.freeze({
   patched: { test: "testPatchedDonationDoesNotReproduce", verdict: "not_reproduced" }
 });
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const inputs = ["foundry.toml", "src/Counter.sol", "contracts/evm/MockAsset.sol",
-  "contracts/evm/FixtureVault.sol", "test/Counter.t.sol", "test/VaultFixture.t.sol",
-  "test/TrustedVaultWorker.t.sol", "infrastructure/docker/foundry-worker.Dockerfile"];
-const sha = data => createHash("sha256").update(data).digest("hex");
-export function inputHash() {
-  return sha(inputs.map(path => `${path}\0${sha(readFileSync(resolve(root, path)))}\n`).join(""));
+export function manifestArgs(imageId) {
+  if (!/^sha256:[a-f0-9]{64}$/.test(imageId)) throw new Error("invalid image ID");
+  return ["run", "--rm", "--network", "none", "--read-only", "--cap-drop", "ALL",
+    "--security-opt", "no-new-privileges", "--user", "10001:10001",
+    "--entrypoint", "cat", imageId, "/workspace/input.sha256"];
 }
 export function runArgs(imageId, test, containerName = "veripoc-fixture-00000000-0000-0000-0000-000000000000") {
   if (!/^sha256:[a-f0-9]{64}$/.test(imageId)) throw new Error("invalid image ID");
@@ -49,6 +47,12 @@ export function runFixture(caseName, { invoke = spawnSync, timeoutMs = 30_000 } 
     { cwd: root, encoding: "utf8", timeout: 5000, maxBuffer: 65536 });
   if (inspect.status !== 0) return classifyRun(caseName, inspect);
   const imageId = String(inspect.stdout).trim();
+  const manifest = invoke("docker", manifestArgs(imageId),
+    { cwd: root, encoding: "utf8", timeout: 5000, maxBuffer: 65536 });
+  const imageInputHash = String(manifest.stdout ?? "").trim();
+  if (manifest.status !== 0 || !/^[a-f0-9]{64}$/.test(imageInputHash)) {
+    return { ...classifyRun(caseName, { status: 1, stderr: "image input manifest unavailable" }), imageId };
+  }
   const containerName = `veripoc-fixture-${randomUUID()}`;
   const result = invoke("docker", runArgs(imageId, CASES[caseName].test, containerName),
     { cwd: root, encoding: "utf8", timeout: timeoutMs, maxBuffer: 65536 });
@@ -56,7 +60,7 @@ export function runFixture(caseName, { invoke = spawnSync, timeoutMs = 30_000 } 
     const cleanup = invoke("docker", ["kill", containerName],
       { cwd: root, encoding: "utf8", timeout: 5000, maxBuffer: 65536 });
     if (cleanup.status !== 0) return { ...classifyRun(caseName, result), status: "tool_error",
-      reason: "container cleanup failed", imageId, inputHash: inputHash() };
+      reason: "container cleanup failed", imageId, inputHash: imageInputHash };
   }
-  return { ...classifyRun(caseName, result), imageId, inputHash: inputHash() };
+  return { ...classifyRun(caseName, result), imageId, inputHash: imageInputHash };
 }
