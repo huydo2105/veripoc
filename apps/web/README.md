@@ -1,6 +1,8 @@
 # VeriPoC web app
 
-The Next.js App Router serves `/`, `/workflow`, `/teams/start`, `/researchers/start`, and `/verify`. The homepage and workflow page share an interactive walkthrough. Its vault example runs entirely in the browser and submits no jobs. Both role pages lead to the same live verifier.
+The Next.js App Router serves `/`, `/get-started`, `/teams/start`, `/researchers/start`, `/teams/new`, and `/verify`. The legacy `/workflow` link redirects to Get started. The homepage explains the shared product; Get started opens the role paths. The researcher path shows one runnable local vault demo and clearly unavailable opportunity previews. The team draft form is a local, unsaved preview and does not create or publish an audit program. Both roles lead to the same real verification route.
+
+The site has light and dark themes. The theme toggle stores only a display preference in local storage; tokens, evidence, and project drafts are never saved there. Each role page presents scroll-assisted steps with excerpts from the checked-in vault contract and trusted test. Switching the shown code does not execute Foundry. The verifier remains the Client Component that performs actual authenticated job submission and polling.
 
 ## Local setup
 
@@ -28,7 +30,7 @@ Build the trusted Docker image first if you want the vulnerable/patched Foundry 
 docker build -f infrastructure/docker/foundry-worker.Dockerfile -t veripoc-foundry-worker:issue-5 .
 ```
 
-Enter the token in `/verify`. It stays in page memory and is lost on reload. The browser sends it to the same-origin proxy, which forwards it to the API; the token is never bundled into client JavaScript, saved to browser storage, or put into a URL. The proxy allows only the two verification endpoints. The API still enforces its bearer token, idempotency, fixed-fixture validation, rate limits, and job limits. The UI does not grant team/researcher permissions; the workflow shows an illustrative program while scoped permissions are pending in Issue #35.
+Enter the token in `/verify`. It stays in page memory and is lost on reload. The browser sends it to the same-origin proxy, which forwards it to the API; the token is never bundled into client JavaScript, saved to browser storage, or put into a URL. The proxy allows only the two verification endpoints. The API still enforces its bearer token, idempotency, fixed-fixture validation, rate limits, and job limits. The UI does not grant team/researcher permissions; the program cards and draft are illustrative while scoped permissions are pending in Issue #35.
 
 For a deployment with a separate backend, configure `VERIPOC_API_ORIGIN` as a **server-only HTTPS origin**. Production builds reject HTTP, credentials, paths, queries, and fragments. The current API binds only to loopback, so a remote deployment additionally needs a secured, private API hosting arrangement; this issue does not create one. Do not expose the Docker-capable Node process directly to the internet. The Next server does not run Foundry or Docker.
 
@@ -42,6 +44,6 @@ npm run web:build
 npm run test:e2e --workspace @veripoc/web
 ```
 
-Playwright checks 1440, 1024, 390, and 320 pixel layouts, navigation, keyboard focus, desktop scroll, no-JavaScript fallback, and the no-backend error state. It uses installed Chrome locally and downloads Chromium in CI. Set `CAPTURE_SCREENSHOTS=1` for local screenshots in the Playwright test output. For real positive/negative fixture execution, run `node apps/api/e2e.mjs` after building the Docker image; that exercise is also in CI.
+Playwright checks 1440, 1024, 390, and 320 pixel layouts, role tabs, the opportunity statuses, unsaved draft behavior, source-code selection, theme persistence, keyboard focus, desktop scroll, no-JavaScript fallback, and the no-backend error state. It uses installed Chrome locally and downloads Chromium in CI. Set `CAPTURE_SCREENSHOTS=1` for local screenshots in the Playwright test output. For real positive/negative fixture execution, run `node apps/api/e2e.mjs` after building the Docker image; that exercise is also in CI.
 
-The published Agent Card is copied byte-for-byte into `public/.well-known/agent-card.json` for the web origin. Concordium request signing and evidence anchoring are planned work, not features of this frontend migration. A reproduced result applies only to the tested fixture and environment.
+The published Agent Card is copied byte-for-byte into `public/.well-known/agent-card.json` for the web origin. Concordium request signing and evidence anchoring are planned work. A reproduced result applies only to the tested fixture and environment.

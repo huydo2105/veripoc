@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export function SiteHeader() {
   return (
@@ -8,13 +8,12 @@ export function SiteHeader() {
       <div className="site-header">
         <Logo />
         <nav aria-label="Main navigation" className="site-nav">
-          <Link className="site-nav-link focus-ring" href="/workflow">Workflow</Link>
+          <Link className="site-nav-link focus-ring" href="/#how-it-works">How it works</Link>
+          <Link className="site-nav-link focus-ring" href="/get-started">Opportunities</Link>
           <Link className="site-nav-link focus-ring" href="/teams/start">Teams</Link>
           <Link className="site-nav-link focus-ring" href="/researchers/start">Researchers</Link>
         </nav>
-        <Link className="site-action site-action-dark focus-ring" href="/verify">
-          Verify PoC <ArrowUpRight size={15} aria-hidden="true" />
-        </Link>
+        <ThemeToggle />
       </div>
     </header>
   );

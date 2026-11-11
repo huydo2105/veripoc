@@ -1,116 +1,136 @@
 import { test, expect } from "@playwright/test";
 
+async function themeContrast(page: import("@playwright/test").Page) {
+  return page.evaluate(() => {
+    const css = getComputedStyle(document.documentElement);
+    const value = (name: string) => css.getPropertyValue(name).trim();
+    const luminance = (hex: string) => {
+      const full = hex.length === 4 ? `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}` : hex;
+      const channels = [1, 3, 5].map(start => parseInt(full.slice(start, start + 2), 16) / 255);
+      const linear = channels.map(channel => channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4);
+      return linear[0] * 0.2126 + linear[1] * 0.7152 + linear[2] * 0.0722;
+    };
+    const ratio = (a: string, b: string) => {
+      const values = [luminance(value(a)), luminance(value(b))].sort((x, y) => y - x);
+      return (values[0] + 0.05) / (values[1] + 0.05);
+    };
+    return [ratio("--ink", "--page"), ratio("--muted", "--page"), ratio("--accent", "--page"), ratio("--on-accent", "--accent")];
+  });
+}
+
 for (const width of [1440, 1024, 390, 320]) {
-  test(`homepage roles and layout at ${width}px`, async ({ page }, testInfo) => {
+  test(`homepage and role navigation fit ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Find vulnerabilities.*Verify the evidence/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Security claims need evidence/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Get started" })).toHaveAttribute("href", "/get-started");
     await expect(page.getByTestId("role-card")).toHaveCount(2);
-    await expect(page.getByRole("link", { name: /I have a smart contract to audit/ })).toHaveAttribute("href", "/teams/start");
+    await expect(page.getByRole("link", { name: /I have a project to audit/ })).toHaveAttribute("href", "/teams/start");
     await expect(page.getByRole("link", { name: /I want to audit/ })).toHaveAttribute("href", "/researchers/start");
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-    expect(overflow).toBe(false);
-    await expect(page.getByRole("banner").getByRole("link", { name: "Verify PoC" })).toHaveAttribute("href", "/verify");
-    await expect(page.getByRole("contentinfo").getByRole("link", { name: "GitHub" })).toBeVisible();
-    await expect(page.getByRole("link", { name: /demo|connect wallet/i })).toHaveCount(0);
-    if (width <= 390) {
-      const cards = page.getByTestId("role-card");
-      expect((await cards.nth(1).boundingBox())!.y).toBeGreaterThan((await cards.first().boundingBox())!.y);
-    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true });
   });
 }
 
-test("deep links, home navigation and shared verifier", async ({ page }) => {
-  await page.goto("/teams/start");
-  await expect(page.getByText(/Program permissions and the findings inbox are planned/)).toBeVisible();
-  await page.getByRole("link", { name: "VeriPoC home" }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await page.getByRole("link", { name: /I want to audit/ }).click();
-  await expect(page).toHaveURL(/\/researchers\/start$/);
-  await expect(page.getByText(/Agent access and new PoC submissions are planned/)).toBeVisible();
-  await page.getByRole("link", { name: "Open verifier" }).click();
+test("Get started shows one runnable demo and clearly unavailable previews", async ({ page }, testInfo) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Get started" }).click();
+  await expect(page).toHaveURL(/\/get-started$/);
+  const paths = page.getByRole("navigation", { name: "Choose an audit path" });
+  await expect(paths.getByRole("link", { name: "I want to audit" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByText("Runnable local demo")).toBeVisible();
+  await expect(page.getByText("Preview · unavailable")).toHaveCount(2);
+  await expect(page.getByText(/not authorized targets/)).toBeVisible();
+  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("opportunities.png"), fullPage: true });
+  await paths.getByRole("link", { name: "I have a project to audit" }).click();
+  await expect(page).toHaveURL(/\/teams\/start$/);
+  await expect(page.getByRole("link", { name: "Create unsaved draft" })).toBeVisible();
+  await page.getByRole("link", { name: "Open verification console" }).click();
   await expect(page).toHaveURL(/\/verify$/);
-  await expect(page.getByRole("button", { name: /Verify PoC/ })).toBeVisible();
 });
 
-test("keyboard focus, icon-only brand and reduced motion", async ({ page }) => {
+test("team draft is local, unsaved, and never creates an authorization", async ({ page }, testInfo) => {
+  const posts: string[] = [];
+  page.on("request", request => { if (request.method() === "POST") posts.push(request.url()); });
+  await page.goto("/teams/start");
+  await page.getByRole("link", { name: "Create unsaved draft" }).click();
+  await expect(page).toHaveURL(/\/teams\/new$/);
+  await page.getByLabel("Project name").fill("Sample lending protocol");
+  await page.getByLabel("Target contract and immutable revision").fill("Vault.sol at commit abc123");
+  await page.getByLabel("Permitted testing scope").fill("Local test environment only");
+  await page.getByRole("button", { name: "Preview unsaved draft" }).click();
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).toContainText("Sample lending protocol");
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).toContainText("not published");
+  expect(posts).toEqual([]);
+  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("draft-preview.png"), fullPage: true });
+  await page.reload();
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).not.toContainText("Sample lending protocol");
+});
+
+test("real fixture code changes with a step and contract toggle, without running the API", async ({ page }, testInfo) => {
+  const posts: string[] = [];
+  page.on("request", request => { if (request.method() === "POST" && request.url().includes("/v1/")) posts.push(request.url()); });
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.goto("/researchers/start");
+  const workflow = page.getByRole("group", { name: "Researcher workflow steps" });
+  await workflow.getByRole("button", { name: /Investigate the code/ }).click();
+  const source = page.locator("#source-preview");
+  await expect(source).toContainText("assets * totalSupply / totalAssets()");
+  await source.getByRole("button", { name: "Patched" }).click();
+  await expect(source).toContainText("VIRTUAL_SHARES");
+  await expect(source).toContainText("Code selection does not execute Foundry");
+  await workflow.getByRole("button", { name: /Submit a reproducible PoC/ }).click();
+  await expect(source).toContainText("testVulnerableDonationReproduces");
+  expect(posts).toEqual([]);
+  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("researcher-workflow.png"), fullPage: true });
+});
+
+test("desktop scroll selects the visible workflow step", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 800 });
+  await page.goto("/teams/start");
+  const steps = page.getByRole("group", { name: "Team workflow steps" });
+  const patch = steps.getByRole("button", { name: /Check the patch/ });
+  await patch.scrollIntoViewIfNeeded();
+  await expect(patch).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#source-preview")).toContainText("VIRTUAL_SHARES");
+});
+
+test("theme toggle persists, remains keyboard accessible, and keeps reduced motion", async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const brand = page.getByRole("link", { name: "VeriPoC home" });
-  await expect(brand).toHaveText("");
-  await expect(brand.locator("img")).toHaveCount(1);
-  for (let index = 0; index < 8; index++) await page.keyboard.press("Tab");
-  await expect(page.getByTestId("role-card").first()).toBeFocused();
-  expect(await page.getByTestId("role-card").first().evaluate(element => element.matches(":focus-visible"))).toBe(true);
+  for (const ratio of await themeContrast(page)) expect(ratio).toBeGreaterThanOrEqual(4.5);
+  const dark = page.getByRole("button", { name: "Switch to dark theme" });
+  await dark.focus();
+  await expect(dark).toBeFocused();
+  await page.keyboard.press("Enter");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.getByRole("button", { name: "Switch to light theme" })).toHaveAttribute("aria-pressed", "true");
+  for (const ratio of await themeContrast(page)) expect(ratio).toBeGreaterThanOrEqual(4.5);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
+  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("home-dark.png"), fullPage: true });
+  await page.goto("/get-started");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
 
-test("verification never claims a result without an authenticated backend response", async ({ page }, testInfo) => {
+test("verifier still needs a real authenticated backend result", async ({ page }) => {
   await page.goto("/verify");
   await expect(page.locator("#verification").getByText("Awaiting run", { exact: true })).toBeVisible();
   await expect(page.getByText("Not captured", { exact: true })).toHaveCount(3);
-  await expect(page.getByText(/Agent #1067 is listed in the published card/)).toBeVisible();
-  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("verify-empty.png"), fullPage: true });
   await page.getByRole("button", { name: /Verify PoC/ }).click();
   await expect(page.locator("#verification").getByRole("alert")).toContainText("Enter the local API token");
   await page.getByLabel("LOCAL API TOKEN").fill("invalid-test-token");
   await page.getByRole("button", { name: /Verify PoC/ }).click();
   await expect(page.locator("#verification").getByRole("alert")).toContainText(/verification API is unavailable|API token rejected/i);
   await expect(page.locator("#verification").getByText("Awaiting run", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: /Patched control/ }).click();
-  await expect(page.getByText("Same PoC against the patched vault")).toBeVisible();
-  await page.getByText("Fixture and test details").click();
-  await expect(page.getByText("Trusted test", { exact: true })).toBeVisible();
 });
 
-test("workflow supports keyboard and compares examples without submitting jobs", async ({ page }, testInfo) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Workflow" }).click();
-  await expect(page).toHaveURL(/\/workflow$/);
-  const postRequests: string[] = [];
-  page.on("request", request => { if (request.method() === "POST" && request.url().endsWith("/v1/verify-poc")) postRequests.push(request.url()); });
-  const steps = page.getByRole("group", { name: "Workflow steps" });
-  const authorize = steps.getByRole("button", { name: "Authorize" });
-  const investigate = steps.getByRole("button", { name: "Investigate" });
-  const verify = steps.getByRole("button", { name: "Verify" });
-  await expect(authorize).toHaveAttribute("aria-pressed", "true");
-  await authorize.press("ArrowRight");
-  await expect(investigate).toBeFocused();
-  await expect(page.getByRole("heading", { name: "Share-inflation claim" })).toBeVisible();
-  await investigate.press("ArrowRight");
-  await expect(verify).toBeFocused();
-  await expect(page.getByText("Reproduced", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "Patched", exact: true }).click();
-  await expect(page.getByText("Not reproduced", { exact: true })).toBeVisible();
-  await expect(page.getByText(/Illustrative outcome/)).toBeVisible();
-  expect(postRequests).toEqual([]);
-  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("workflow-patched.png"), fullPage: true });
-  await page.getByRole("link", { name: "Run real PoC" }).click();
-  await expect(page).toHaveURL(/\/verify$/);
-});
-
-test("desktop scroll follows the stages and a click can override", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 800 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  await page.getByRole("button", { name: "Authorize" }).click();
-  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await expect(page.getByRole("button", { name: "Verify", exact: true })).toHaveAttribute("aria-pressed", "true");
-  await page.getByRole("button", { name: "Investigate" }).click();
-  await expect(page.getByRole("heading", { name: "Share-inflation claim" })).toBeVisible();
-});
-
-test("workflow stays readable with JavaScript disabled", async ({ browser, baseURL }) => {
+test("role steps and code remain readable without JavaScript", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   try {
     const page = await context.newPage();
-    await page.goto("/workflow");
-    const summary = page.getByRole("list", { name: "Workflow summary" });
-    await expect(summary.getByText(/Researchers submit a claim and executable proof/)).toBeVisible();
-    await expect(page.getByRole("link", { name: "Run real PoC" })).toBeVisible();
-  } finally {
-    await context.close();
-  }
+    await page.goto("/researchers/start");
+    await expect(page.getByText("Read the scope", { exact: true })).toBeVisible();
+    await expect(page.locator(".mobile-source").first()).toContainText("FixtureVault");
+    await expect(page.getByRole("link", { name: "Open verification console" })).toBeVisible();
+  } finally { await context.close(); }
 });

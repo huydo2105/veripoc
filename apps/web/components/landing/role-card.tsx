@@ -4,14 +4,14 @@ import { ArrowUpRight, Building2, ScanSearch } from "lucide-react";
 type Role = "team" | "researcher";
 const roles = {
   team: {
-    action: "I have a smart contract to audit",
-    description: "Set the scope and review reproducible findings.",
+    action: "I have a project to audit",
+    description: "Define the scope, bring researchers in, and review evidence before deciding what to fix.",
     href: "/teams/start",
     Icon: Building2,
   },
   researcher: {
     action: "I want to audit",
-    description: "Bring your own tools or AI agent and investigate within scope.",
+    description: "Explore authorized programs, use your own agent, and back each finding with a reproducible PoC.",
     href: "/researchers/start",
     Icon: ScanSearch,
   },

@@ -34,3 +34,20 @@ Headless Chrome rendered the homepage at 1440, 1024, 390, and 320 CSS pixels. At
 Captured from the actual local server: [desktop](screenshots/issue-34/home-1440.png), [laptop](screenshots/issue-34/home-1024.png), [mobile](screenshots/issue-34/home-390.png), [narrow mobile](screenshots/issue-34/home-320.png), [team mobile](screenshots/issue-34/teams-390.png), and [researcher mobile](screenshots/issue-34/researchers-390.png). The existing `/verify` console retains its Issue #8 styling and execution logic; this redesign does not change its API or result rendering.
 
 Actual user interviews or usability tests with DeFi teams and researchers are still needed to validate whether the wording and sequence meet their expectations.
+
+## Issue #39 revision: product overview and opportunities (2026-11-11)
+
+The owner requested a broader product introduction, separate role detail, an opportunities view, and light/dark themes. This revision uses observed public patterns as inspiration, not as evidence of VeriPoC user preferences.
+
+| Reference | Observed pattern | VeriPoC adaptation |
+| --- | --- | --- |
+| [Orchid](https://orchid.ai/) and its [gallery capture](https://www.a1.gallery/websites/minimal-landing) | A concise general-purpose hero, one Get Started action, an illustrative product panel, and airy feature sections on a light blue/white palette. | The homepage now states VeriPoC's purpose first and shows a labeled three-part product illustration. A single Get started action opens the role paths. The indigo-blue theme is our own accessible interpretation, with an optional dark variant; no Orchid assets or page copy are reused. |
+| [Cantina opportunities](https://cantina.xyz/opportunities) | A separate browse page groups audit opportunities with status, category, search/filter controls, and explicit program cards. | The researcher path uses a directory-card layout with status and scope. Only the reviewed Demo Vault card is actionable; other cards are conspicuously unavailable previews. We omit reward figures, customer logos, and live-program claims. |
+
+Role-specific pages explain the complete journey in steps. The code panel displays excerpts from `contracts/evm/FixtureVault.sol` and `test/TrustedVaultWorker.t.sol`; its vulnerable/patched control changes **displayed source only**. It does not call the API or simulate a successful run. Scroll position updates the active explanation without taking focus or submitting a job. On narrow screens each step includes its own readable code excerpt.
+
+The team path includes a local draft preview for a future bug bounty program. The form sends no request, stores nothing, and clears on reload. Program ownership, authorization, invitations, persistence, and external target support remain Issue #35 work. The actual `/verify` route still accepts only reviewed local fixtures and still requires a real authenticated backend result.
+
+The theme switch stores only a display preference. Light and dark colors use semantic tokens so the homepage, role pages, and existing verifier can share a coherent palette. The interface keeps visible focus and reduced-motion behavior. Automated layout and interaction checks are useful but do not replace research interviews or manual screen-reader testing.
+
+Current browser captures: [desktop homepage](screenshots/issue-39-revision/home-1440.png), [320 px homepage](screenshots/issue-39-revision/home-320.png), [dark homepage](screenshots/issue-39-revision/home-dark.png), [opportunities](screenshots/issue-39-revision/opportunities.png), [researcher code workflow](screenshots/issue-39-revision/researcher-workflow.png), and [unsaved team draft](screenshots/issue-39-revision/draft-preview.png). The revised Playwright suite passed all 11 checks at 1440, 1024, 390, and 320 CSS pixels, including navigation, keyboard controls, no horizontal overflow, no-JavaScript fallback, unavailable-backend state, and core text contrast in both themes.

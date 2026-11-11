@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const variants = cva("focus-ring inline-flex min-h-11 items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50", {
   variants: {
     variant: {
-      default: "bg-forest text-white hover:bg-forest-hover",
+      default: "bg-forest text-on-accent hover:bg-forest-hover",
       outline: "border border-line bg-surface text-ink hover:border-forest hover:text-forest",
     },
   },
