@@ -12,4 +12,6 @@ The page polls the authenticated API every two seconds while a job is active. It
 
 The public digest is calculated locally from the private receipt and is **not on-chain**. The Agent Card is served byte-for-byte from `.well-known/agent-card.json`; its registration metadata is a read-only link, not live request authentication. Signed requests and Testnet anchors are separate future issues.
 
+The homepage and role pages use the light Issue #34 design described in [UX research](../../docs/UX_RESEARCH.md). The existing verification console keeps its Issue #8 styling and behavior. Homepage and journey pages are public explanations; opening one does not grant program membership.
+
 Run `npm run test:web` for UI state, route, and negative tests. `npm run test:api` checks the static card route. The Docker-backed real positive/negative API exercise runs in CI via `node apps/api/e2e.mjs` and may also be run locally when Docker is available. Current role pages are explanatory, not authorization controls; do not put private reports into this demo.

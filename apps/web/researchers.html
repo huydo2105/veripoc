@@ -3,23 +3,34 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore the researcher journey through VeriPoC's reviewed local vault demo.">
+  <meta name="description" content="Explore authorized research scope and reproducible PoC evidence in VeriPoC's local demo.">
   <title>For researchers | VeriPoC</title>
   <link rel="stylesheet" href="/journey.css">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
-  <header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="VeriPoC home"><span class="brand-symbol" aria-hidden="true">V</span><span>VERI<span class="brand-accent">POC</span><small>SECURITY EVIDENCE NETWORK</small></span></a><nav aria-label="Main navigation"><a href="/">Home</a><a href="/teams/start">Team path</a></nav><span class="header-badge">LOCAL DEMO / FIXED FIXTURES</span></div></header>
-  <main id="main" class="wrap journey-main">
-    <p class="eyebrow">FOR SECURITY RESEARCHERS / DEMONSTRATION</p>
-    <h1>Investigate within scope. Let the evidence speak.</h1>
-    <p class="hero-subtitle">Bring your own AI agent, analysis tools, and expertise. VeriPoC's shared worker checks a submitted PoC independently; it does not prescribe how you find a vulnerability.</p>
-    <div class="notice" role="note"><strong>Demo Vault Audit Program</strong><p>This illustrative program covers only the reviewed local vulnerable and patched ERC-4626-style vault fixtures. It is not a deployed customer program or a grant of permission to test third-party contracts. Real program scope and researcher authorization are planned for Issue #35.</p></div>
-    <section class="scope-panel" aria-labelledby="demo-scope"><div class="section-heading"><p class="eyebrow">READ BEFORE INVESTIGATION</p><h2 id="demo-scope">Demo scope and rules</h2></div><div class="scope-grid"><div><h3>In scope for this demo</h3><p>Repository vault fixtures and the reviewed ERC-4626 inflation PoC sequence, executed through the local Foundry worker.</p></div><div><h3>Not authorized here</h3><p>External contracts, live networks, arbitrary executable uploads, and testing beyond the reviewed fixtures.</p></div><div><h3>Confidentiality</h3><p>Keep unpatched exploit details and private receipts in an authorized channel. The local console does not provide a multi-tenant confidential finding inbox.</p></div></div></section>
-    <section class="journey-section" aria-labelledby="research-workflow"><div class="section-heading"><p class="eyebrow">YOUR WORKFLOW</p><h2 id="research-workflow">From investigation to evidence</h2></div><ol class="journey-grid"><li><span class="step-index">01</span><h3>Open an authorized program</h3><p>Review explicit scope and testing rules before you investigate. Program membership is planned for Issue #35.</p></li><li><span class="step-index">02</span><h3>Use your own agent and tools</h3><p>Investigate manually or with your preferred coding agent, Slither, or fuzzers. No specific model or scanner is required.</p></li><li><span class="step-index">03</span><h3>Form a claim and PoC</h3><p>Describe the security invariant and a reproducible exploit. This demo only selects a pre-reviewed PoC fixture; free-form submissions are unavailable.</p></li><li><span class="step-index">04</span><h3>Verify and inspect</h3><p>Use the shared console to run the reviewed PoC, then inspect its actual verdict and private evidence receipt.</p></li></ol></section>
-    <section class="demo-panel" aria-labelledby="research-demo"><div><p class="eyebrow">AVAILABLE NOW / SHARED VERIFICATION</p><h2 id="research-demo">Run the reviewed vault proof of concept.</h2><p>Compare vulnerable and patched fixture outcomes in the same console used by the team. REST/MCP access for researcher-owned agents is planned for Issue #13; the current local REST API is a loopback demo, not a public agent gateway.</p></div><a class="action-link" href="/verify">Open PoC verification console <span aria-hidden="true">&rarr;</span></a></section>
-    <p class="limitation">A reproduced PoC demonstrates behavior under tested conditions. It does not guarantee bounty eligibility or replace the team's manual triage.</p>
+  <header class="site-header"><div class="shell header-inner"><a class="brand" href="/" aria-label="VeriPoC home"><span class="brand-icon" aria-hidden="true">V</span>VeriPoC</a><nav class="site-nav" aria-label="Main navigation"><a href="/">Home</a><a href="/teams/start">For teams</a><a href="/verify">Demo</a></nav></div></header>
+  <main id="main" class="shell journey-main">
+    <p class="eyebrow">FOR SECURITY RESEARCHERS</p>
+    <h1>Investigate within scope. Submit evidence that can be reproduced.</h1>
+    <p class="intro">Bring your own agent and tools. You can explore the local demo without configuring an agent or connecting a wallet.</p>
+
+    <section class="program-card" aria-labelledby="program-title">
+      <div class="program-top"><div><p class="eyebrow">ILLUSTRATIVE LOCAL PROGRAM</p><h2 id="program-title">Demo Vault Audit Program</h2></div><span class="status-label">Demo only</span></div>
+      <p>This is a reviewed fixture demonstration, not a real customer program or authorization to test third-party contracts. Program membership and permissions are planned for Issue #35.</p>
+      <dl class="fact-grid">
+        <div><dt>Permitted demo scope</dt><dd>Local vulnerable and patched ERC-4626-style vault fixtures only</dd></div>
+        <div><dt>Testing rules</dt><dd>Use the reviewed repository PoC; no live networks, external targets, or arbitrary uploads</dd></div>
+        <div><dt>Your tools</dt><dd>Manual work or your own AI agent, Slither, fuzzers, and other tools; no model is required</dd></div>
+        <div><dt>Finding and evidence</dt><dd>Select a reviewed claim in the console; inspect its actual verdict and private receipt</dd></div>
+      </dl>
+    </section>
+
+    <section class="journey-section" aria-labelledby="research-steps"><p class="eyebrow">RESEARCHER WORKFLOW</p><h2 id="research-steps">From scope to verified result</h2><ol class="compact-steps"><li><strong>Read the program</strong><span>Confirm target, source revision, allowed environment, and disclosure rules before investigation.</span></li><li><strong>Investigate your way</strong><span>Use your preferred agent or tools. REST/MCP access for external agents is planned in Issue #13.</span></li><li><strong>Submit a claim and PoC</strong><span>The current demo selects a pre-reviewed fixture; free-form finding submission is not available.</span></li><li><strong>Inspect evidence</strong><span>See the real Foundry verdict and private receipt. Team triage is separate and planned in Issue #36.</span></li></ol></section>
+
+    <section class="next-step" aria-labelledby="research-demo-title"><div><p class="eyebrow">AVAILABLE DEMO</p><h2 id="research-demo-title">Try the reviewed vault PoC</h2><p>Run the vulnerable fixture and patched control in the same console used by teams. Private results should be shared only in an authorized channel.</p></div><a class="action-link" href="/verify">Open verification demo <span aria-hidden="true">&rarr;</span></a></section>
+    <p class="footnote">A reproduced PoC applies only under tested conditions. It does not guarantee severity, contract safety, or bounty eligibility.</p>
   </main>
-  <footer class="site-footer wrap"><span>VERIPOC / DEMO RESEARCHER JOURNEY</span><a href="/">Back to both paths</a></footer>
+  <footer class="site-footer"><div class="shell">VeriPoC <a href="/">Back to home</a></div></footer>
 </body>
 </html>
