@@ -1,6 +1,6 @@
 # VeriPoC UI Design System — Minimal, Evidence-First
-**Decision:** 2026-11-11 | **Stage:** Design specification for Issue #34 / PR #37 and subsequent pages.
-**Not a claim that the deployed UI has been redesigned.** The visual system is to be applied and tested in the open PR, reviewed by the owner before merge.
+**Decision:** 2026-11-11 | **Stage:** Minimalist brand and UI specification, updated for owner-requested Next.js/Tailwind migration and interactive education.
+**Brand mark created in PR #37:** SVG assets `apps/web/logo.svg` and `apps/web/app-icon.svg` replace the text-only header treatment; PR awaits review. Standard Next.js/Tailwind migration is explicitly requested and tracked in Issue #38; interactive scroll storytelling in Issue #39.
 
 ## Research and base templates
 Use a **custom lightweight composition**, not a bulky template transplant.
@@ -33,6 +33,11 @@ Default **light** interface for immediate judge readability, with a dark ink tex
 ```
 All foreground/background pairs need tested WCAG AA contrast; don't use muted low contrast for small essential labels.
 
+### Brand identity
+- Use the original **two paths / one proof** vector mark. Header shows the mark ONLY, with screen-reader `aria-label="VeriPoC home"`; no visible placeholder V or wordmark text.
+- Master icon is `apps/web/logo.svg` (on PR #37 branch), square app icon `apps/web/app-icon.svg`. Keep vector, flat colors, no glow, gradient, shadow or unnecessary animation; next version copies assets into `apps/web/public/brand`.
+- Favicon uses square app icon. Product name remains accessible in document title and alt/label.
+
 ### Typography
 - Primary: **Geist Sans** or system fallback (`Inter, ui-sans-serif, system-ui, sans-serif`).
 - Data only: **Geist Mono** / monospace for hashes, tx ids, job IDs, source references and timestamps.
@@ -49,7 +54,7 @@ All foreground/background pairs need tested WCAG AA contrast; don't use muted lo
 - Each card contains one recognizable icon, headline, one-sentence description, one clear next-step label; full card clickable with visible keyboard focus.
 - Top navigation: logo + How it works + For teams + For researchers. Avoid 5+ CTA buttons.
 - Sequence below hero: **Authorize → Investigate → Verify**. Explain “not a full automated audit.”
-- No custom animations except optional 150–200ms hover and reduced-motion support.
+- Purposeful animation is now **explicitly requested**: keep hover 150–200ms, reveal/stage transitions 250–450ms, and scroll-linked progress only where it teaches the flow. Respect reduced-motion and never hijack scrolling. See `docs/INTERACTIVE_LANDING.md`.
 - Use short, outcome-oriented button labels; show state plainly (`Demo only`, `Running`, `Reproduced`, `Not reproduced`, `Inconclusive`, `Error`).
 - All nonfunctional controls: **remove** or clearly label `Coming later`; never present mock backend behaviors as production.
 - Screenreader headings, skip link, focus rings, semantic navigation and error summaries.
@@ -71,8 +76,12 @@ All foreground/background pairs need tested WCAG AA contrast; don't use muted lo
 - Preserve actual working isolated worker, receipts, local token handling and shared verification route.
 
 ## Code adoption instructions (PR #37 / Issue #34)
-- **Do not migrate the buildless HTML/CSS/JS frontend to React or Next.js solely to install shadcn.** Use design ideas, not the full stack.
+- **Updated decision:** the owner explicitly requests Next.js App Router + TypeScript + Tailwind CSS. Implement in separate Issue #38 after Issue #34 PR review; see `docs/FRONTEND_ARCHITECTURE.md`. Do not add React solely for shadcn; the full stack migration is for maintainable route/components/testing and interactive story.
 - Retheme/recompose the existing PR #37 homepage and both onboarding pages; retain URL contracts, fixed-fixture limitation, role navigation and the existing Issue #8 verifier.
 - Coordinate styling of the verifier minimally so it looks like one product; larger refactor is a separately approved issue.
 - Provide before/after screenshots from an actual browser if available; if unavailable explicitly state this limitation.
 - Keep PR #37 open for human review; follow AGENTS.md stop-after-PR.
+
+
+## Interactive education decision (Issue #39)
+Create a visually guided, **clickable and scroll-assisted** Authorize -> Investigate -> Verify explainer. A judge can click stages to change the preview and choose whether to execute a REAL PoC via /verify. Use Motion for React and disabled/minimized animation for reduced motion. Design details: [INTERACTIVE_LANDING.md](INTERACTIVE_LANDING.md).
