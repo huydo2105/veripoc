@@ -12,7 +12,7 @@
 1. **Hero:** brand mark only in navigation, headline "Find vulnerabilities. Verify the evidence.", one-line subhead, exactly two equal role cards: 
    - **I have a smart contract to audit** -> `/teams/start`
    - **I want to audit** -> `/researchers/start`
-   Clear tertiary link **Explore interactive demo** -> `/demo`. No long hero prose.
+   The tertiary **Explore workflow** link jumps to the interactive panel. The main navigation links to `/workflow`.
 2. **Interactive workflow — sticky split view:** left 3 buttons with <= 10-word descriptions; right graphical preview updates as active step changes:
    - 01 **Authorize**: DeFi team creates Demo Vault Program; show tiny contract + scope card and invited researcher avatar (illustrative state).
    - 02 **Investigate**: external researcher agent submits a **share-inflation claim** and trusted PoC fixture; show compact agent-to-program arrow (illustrative; no fake actual integration).
@@ -24,7 +24,7 @@
 
 ## Animation choreography
 - **On scroll:** section titles reveal with <= 16px translateY and opacity over 250–450ms; stagger role cards <=80ms if necessary. Keep body paragraphs visible by default for reduced-motion/no-JS.
-- **Sticky storyboard:** right preview stays sticky on desktop during three left stages; active stage changes with scroll progress or accessible click. On mobile, use vertically stacked click-to-open panels and remove sticky.
+- **Sticky storyboard:** right preview stays sticky on desktop during three left stages; active stage changes with scroll progress or accessible click. On mobile, put the step buttons above the active panel and remove sticky.
 - **Connector animation:** draw a single SVG connection path from owner -> agent -> verifier when stage changes, 300–450ms; static line for reduced-motion.
 - **Role-card hover:** 2px translateY and gentle border-color transition; focus-visible ring.
 - **Header:** lightweight translucency/border state after first section, never intrusive disappearing nav.
@@ -49,7 +49,7 @@
 
 ## User testing checklist
 - Can a judge understand each persona immediately?
-- Can they reach `/demo` in one click and `/verify` in another?
+- Can they reach `/workflow` in one click and `/verify` in another?
 - Can they click each stage without reading entire paragraphs?
 - Are static examples **explicitly distinct** from live verification status?
 - Can they switch back and forth between team/researcher path?

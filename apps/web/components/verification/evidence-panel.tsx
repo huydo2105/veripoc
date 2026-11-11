@@ -15,7 +15,7 @@ export function EvidencePanel({ job, fixture, copied, onCopy }: { job: Job | nul
   const claim = fixture ? FIXTURES[fixture].title : "No claim submitted";
   const status = job?.state === "finished" && job.result ? VERDICTS[job.result.status].label : job?.state ?? "Awaiting run";
   return <section id="evidence" className="scroll-mt-8" aria-labelledby="evidence-title">
-    <div className="mb-4"><p className="mb-1 text-xs font-semibold tracking-widest text-forest">03 / RESULT</p><h2 id="evidence-title" className="text-2xl font-semibold">Evidence report</h2></div>
+    <div className="mb-4"><h2 id="evidence-title" className="text-2xl font-semibold">Evidence report</h2></div>
     <Card className="p-5 md:p-7">
       <p className="mb-5 text-sm leading-relaxed text-muted">This private receipt binds the reviewed fixture, environment and returned verdict. The digest is local only; no Concordium transaction is claimed.</p>
       <dl className="grid gap-x-6 md:grid-cols-2">
