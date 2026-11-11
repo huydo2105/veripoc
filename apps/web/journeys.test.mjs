@@ -72,6 +72,17 @@ test("assets, accessibility hooks, responsive styles, and unknown routes", async
     const css = await fetch(`${base}/journey.css`);
     assert.equal(css.status, 200);
     assert.match(css.headers.get("content-type"), /text\/css/);
+    for (const logoPath of ["/logo.svg", "/app-icon.svg"]) {
+      const response = await fetch(base + logoPath);
+      assert.equal(response.status, 200);
+      assert.match(response.headers.get("content-type"), /image\/svg\+xml/);
+      assert.match(await response.text(), /<svg[^>]*>/);
+    }
+    for (const route of ["/", "/teams/start", "/researchers/start", "/verify"]) {
+      const html = (await page(base, route)).html;
+      assert.match(html, /class="brand-logo"/);
+      assert.doesNotMatch(html, /class="brand-icon"|class="brand-symbol"/);
+    }
     const stylesheet = await css.text();
     assert.match(stylesheet, /:focus-visible/);
     assert.match(stylesheet, /@media \(max-width: 620px\)/);
