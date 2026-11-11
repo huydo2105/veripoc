@@ -38,3 +38,9 @@ Include:
 
 ## MVP completion gate
 MVP is only complete after: (a) two-button homepage and distinct DeFi team/researcher journeys against the same **authorized demo program**, (b) real vulnerable-vs-patched Foundry test and private evidence, (c) appropriate scoped identity/permission controls or clearly labeled non-production demo role switcher, (d) Concordium Testnet evidence anchor with verifiable transaction, and (e) recorded end-to-end judge demonstration with genuine results. Preserve existing Slither CI, but it is not a product gate. Never claim unrestricted arbitrary submissions are safe. See roadmap for stretch goals.
+
+## Approved frontend direction (2026-11-11)
+- The owner requests a **Next.js App Router + TypeScript + Tailwind CSS** frontend after the open #34 / PR #37 is reviewed; see `docs/FRONTEND_ARCHITECTURE.md` and Issue #38.
+- Use the **icon-only VeriPoC vector mark** (available on PR #37) in the header and app icon. No visible text logo/letter-V placeholder; keep accessible name for the home link.
+- Issue #39 adds an accessible interactive and scroll-assisted **Authorize → Investigate → Verify** explanation. See `docs/INTERACTIVE_LANDING.md`.
+- Do not merge PR #37 automatically or start Issue #38 before the owner's explicit approval. Migration must not change trusted Foundry worker, receipt hashes or API auth contracts.
