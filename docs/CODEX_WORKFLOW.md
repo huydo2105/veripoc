@@ -90,3 +90,9 @@ After merge and closure:
 
 ## Deadline behavior
 If time is short, freeze nice-to-have features. Prefer correctness and demonstrated integration over breadth. Do not represent a prototype as audited or production secure.
+
+## New owner-requested web direction (November 11)
+- PR #37 / Issue #34 is open with two-role homepage, minimal palette and new vector logo. **Keep it open until explicit human approval**. Avoid trying to migrate that same PR mid-review unless the owner explicitly directs a scope change.
+- Next issue **#38:** move `apps/web` to conventional Next.js App Router/TypeScript/Tailwind without changing Foundry/Node API trust boundaries; use `docs/FRONTEND_ARCHITECTURE.md`.
+- Next issue **#39:** interactive three-step landing, clickable storyboard and restrained scroll animation with Motion, mobile and reduced-motion; use `docs/INTERACTIVE_LANDING.md`.
+- Preserve one-issue-one-PR STOP rule. The Nov 22 Encode checkpoint (#9) must not be delayed by frontend polishing.
