@@ -1,17 +1,47 @@
-# Two-sided demo and PoC verification console
+# VeriPoC web app
 
-The buildless, responsive homepage is served by `apps/api` at `http://127.0.0.1:8787`. Choose the DeFi team or researcher journey, then open the same PoC verification console at `/verify`. Both journeys use the illustrative **Demo Vault Audit Program**. No program records, invitation permissions, or user accounts exist yet. The console supports the reviewed vulnerable and patched local vault fixtures only. There is no upload, external target, scanner workflow, or simulated result. See [API setup](../api/README.md) for a local token and server command.
+The four public routes are Next.js App Router pages: `/`, `/teams/start`, `/researchers/start`, and `/verify`. The first three are Server Components. The verifier is an interactive Client Component and uses the same job parser as the previous console. Both roles lead to the same verification route.
 
-1. Start Docker Desktop and build the trusted image: `docker build -f infrastructure/docker/foundry-worker.Dockerfile -t veripoc-foundry-worker:issue-5 .`.
-2. Set `VERIPOC_API_TOKEN` as documented by the API and run `npm run api:dev` from the repository root.
-3. Open `http://127.0.0.1:8787`. Select either role, read the demo scope, and open `/verify`. Paste the token, select the vulnerable fixture, and press **Verify PoC**. Wait for a real `reproduced` result.
-4. Select the patched control and press the same button. The expected honest result is `not_reproduced`. Compare the two job verdicts and receipt digests.
-5. Expand private evidence JSON only in an authorized review setting. The copy button writes the full job result to the clipboard; it does not upload or persist it.
+## Local setup
 
-The page polls the authenticated API every two seconds while a job is active. It does not store the token in browser storage. The trusted Foundry harness emits measured attacker balances and victim shares after its invariant passes; the worker parses exactly one complete set of markers from the successful execution log. If these markers are absent or malformed, the UI explicitly shows **Not captured**. Expected fixture values on the submission screen are claim/oracle context, not measured output.
+Use Node 22.13+ and npm. From the repository root:
 
-The public digest is calculated locally from the private receipt and is **not on-chain**. The Agent Card is served byte-for-byte from `.well-known/agent-card.json`; its registration metadata is a read-only link, not live request authentication. Signed requests and Testnet anchors are separate future issues.
+```powershell
+npm ci
+npm run web:dev
+```
 
-The homepage and role pages use the light Issue #34 design described in [UX research](../../docs/UX_RESEARCH.md). The existing verification console keeps its Issue #8 styling and behavior. Homepage and journey pages are public explanations; opening one does not grant program membership.
+Open `http://127.0.0.1:3000`. The public pages work without the API. The Next server proxies only `POST /v1/verify-poc` and `GET /v1/jobs/:id` to `VERIPOC_API_ORIGIN` (default `http://127.0.0.1:8787` in development). Start the API separately for a real verification:
 
-Run `npm run test:web` for UI state, route, and negative tests. `npm run test:api` checks the static card route. The Docker-backed real positive/negative API exercise runs in CI via `node apps/api/e2e.mjs` and may also be run locally when Docker is available. Current role pages are explanatory, not authorization controls; do not put private reports into this demo.
+```powershell
+$tokenBytes = New-Object byte[] 32
+$rng = [Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($tokenBytes)
+$rng.Dispose()
+$env:VERIPOC_API_TOKEN = ([BitConverter]::ToString($tokenBytes)).Replace('-', '').ToLower()
+npm run api:dev
+```
+
+Build the trusted Docker image first if you want the vulnerable/patched Foundry results:
+
+```powershell
+docker build -f infrastructure/docker/foundry-worker.Dockerfile -t veripoc-foundry-worker:issue-5 .
+```
+
+Enter the token in `/verify`. It stays in page memory and is lost on reload. The browser sends it to the same-origin proxy, which forwards it to the API; the token is never bundled into client JavaScript, saved to browser storage, or put into a URL. The proxy allows only the two verification endpoints. The API still enforces its bearer token, idempotency, fixed-fixture validation, rate limits, and job limits. The UI does not grant team/researcher permissions; the demo program remains illustrative until Issue #35.
+
+For a deployment with a separate backend, configure `VERIPOC_API_ORIGIN` as a **server-only HTTPS origin**. Production builds reject HTTP, credentials, paths, queries, and fragments. The current API binds only to loopback, so a remote deployment additionally needs a secured, private API hosting arrangement; this issue does not create one. Do not expose the Docker-capable Node process directly to the internet. The Next server does not run Foundry or Docker.
+
+## Checks
+
+```powershell
+npm run test:web
+npm run web:typecheck
+npm run web:lint
+npm run web:build
+npm run test:e2e --workspace @veripoc/web
+```
+
+Playwright checks 1440, 1024, 390, and 320 pixel layouts, navigation, keyboard focus, and the no-backend error state. It uses installed Chrome locally and downloads Chromium in CI. Set `CAPTURE_SCREENSHOTS=1` for local screenshots in the Playwright test output. For real positive/negative fixture execution, run `node apps/api/e2e.mjs` after building the Docker image; that exercise is also in CI.
+
+The published Agent Card is copied byte-for-byte into `public/.well-known/agent-card.json` for the web origin. Concordium request signing and evidence anchoring are planned work, not features of this frontend migration. A reproduced result applies only to the tested fixture and environment.

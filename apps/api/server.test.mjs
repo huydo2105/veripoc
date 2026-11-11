@@ -71,13 +71,12 @@ test("scan route accepts only the reviewed target", async () => {
   }, { execute: async () => ({ status: "analyzed_no_findings", report: { findings: [] } }) });
 });
 
-test("public Agent Card is served byte-for-byte and UI module is available", async () => {
+test("public Agent Card is served byte-for-byte and API no longer serves competing pages", async () => {
   await withServer(async base => {
     const card = await fetch(`${base}/.well-known/agent-card.json`);
     assert.equal(card.status, 200);
     assert.equal(await card.text(), readFileSync(new URL("../../.well-known/agent-card.json", import.meta.url), "utf8"));
-    const module = await fetch(`${base}/state.mjs`);
-    assert.equal(module.status, 200);
-    assert.match(module.headers.get("content-type"), /javascript/);
+    for (const path of ["/", "/verify", "/teams/start", "/researchers/start", "/state.mjs"])
+      assert.equal((await fetch(base + path)).status, 404);
   });
 });
