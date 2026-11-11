@@ -8,8 +8,8 @@
 | Milestone / tracking issue | Dates | Core issues | Optional issues | Verified status |
 |---|---|---|---|---|
 | [M1 — Foundation](../issues/24) | Nov 10–15 | #20, #1, #2, #3, #4 | — | **5/5 done, tracker closed** |
-| [M2 — Two-Sided MVP & Checkpoint](../issues/25) | Nov 16–22 | #5, #6, #7, #8, #34, #35, #12, #9 | — | **4/8 done, 4 open** |
-| [M3 — BYO Agents, Concordium & Triage](../issues/26) | Nov 23–29 | #10, #13, #36 | #11, #14, #15 | **0/3 core done** |
+| [M2 — Two-Sided MVP & Checkpoint](../issues/25) | Nov 16–22 | #5, #6, #7, #8, #34, #35, #12, #9, #38 | — | **4/9 done, 5 open** |
+| [M3 — BYO Agents, Concordium & Triage](../issues/26) | Nov 23–29 | #10, #13, #36, #39 | #11, #14, #15 | **0/4 core done** |
 | [M4 — Demo & Submission](../issues/27) | Nov 30–Dec 9 | #19 | #16, #17, #18 | **0/1 core done** |
 
 **Note:** #12 is assigned to M2; if it slips it is an early M3 carry-over, not silently done. Optional items stay open/unscheduled unless individually approved.
@@ -44,3 +44,10 @@ For the timeline matching a Gantt chart, open the Project and create a **Roadmap
 
 ## Codex human review gate
 One issue, one branch, one PR; after opening the PR, stop for the owner's learning, review and explicit approval. Separate approval is required to begin the next issue. Source: [AGENTS.md](../AGENTS.md).
+
+
+## Frontend modernization (November 11)
+- **Logo:** original icon-only SVG created and wired on open PR #37; not yet merged.
+- **#38 (M2 high priority):** Next.js App Router/TypeScript/Tailwind migration, preserving existing Node API and Docker worker. [Architecture](FRONTEND_ARCHITECTURE.md).
+- **#39 (M3 high priority):** interactive, clickable `Authorize → Investigate → Verify` storytelling, accessible scroll animations and self-guided /demo. [Interactive experience](INTERACTIVE_LANDING.md).
+- Checkpoint #9 remains due November 22 regardless of frontend migration status.
