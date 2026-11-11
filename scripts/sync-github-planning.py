@@ -24,11 +24,11 @@ MILESTONES = [
     dict(title="M2 — Two-Sided MVP & Checkpoint", old="M2 — Verified PoC & Checkpoint 1",
          due="2026-11-22T22:59:00Z", tracker=25,
          description="PoC console, two-role homepage, scoped demo audit program, agent auth, checkpoint.",
-         issues=[5,6,7,8,34,35,12,9]),
+         issues=[5,6,7,8,34,35,12,9,38]),
     dict(title="M3 — BYO Agents, Concordium & Triage", old="M3 — Concordium & Agent Integrations",
          due="2026-11-29T22:59:00Z", tracker=26,
          description="Core: Concordium anchor, researcher-agent MCP/REST, team inbox/retest. Optional: escrow, fuzzing and LLM.",
-         issues=[10,13,36,11,14,15]),
+         issues=[10,13,36,39,11,14,15]),
     dict(title="M4 — Live Demo & Final Submission", old="M4 — Demo & Final Submission",
          due="2026-12-09T23:59:00Z", tracker=27,
          description="Core: final integrated two-sided demo and submission. Optional: symbolic, x402, ZKP.",
@@ -47,6 +47,7 @@ WINDOWS = {
     12:("2026-11-19","2026-11-22"), 9:("2026-11-20","2026-11-22"),
     10:("2026-11-23","2026-11-27"), 13:("2026-11-24","2026-11-29"),
     36:("2026-11-27","2026-11-29"),
+    38:("2026-11-15","2026-11-22"), 39:("2026-11-23","2026-11-27"),
     19:("2026-11-30","2026-12-09"),
 }
 
