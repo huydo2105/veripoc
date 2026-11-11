@@ -11,6 +11,16 @@ VeriPoC is a **two-sided, AI-agent-compatible security audit collaboration platf
 
 The product does **not** provide a complete push-button autonomous audit, a separate general-purpose contract scanner, or automatic bounty eligibility.
 
+## Frontend and interactive judge experience — decision Nov 11, 2026
+
+**User-approved direction:** migrate the buildless frontend to **Next.js App Router + TypeScript + Tailwind CSS**, use the new VeriPoC SVG mark instead of a text/V placeholder in the header, and replace long passive explanations with an accessible interactive walkthrough. The Node API/Foundry isolated verification service remains separate and unchanged.
+
+- **PR #37 / #34:** currently OPEN. Two-role homepage and onboarding, with the new icon-only logo committed on the PR branch. Review and merge with owner approval before broader migration.
+- **#38 (P0, after #34):** Next.js/Tailwind migration for `/`, `/teams/start`, `/researchers/start`, `/verify`; preserve real jobs, receipts and token handling. [Architecture](FRONTEND_ARCHITECTURE.md).
+- **#39 (P0, after #38):** clickable, scroll-assisted **Authorize -> Investigate -> Verify** storyboard and self-guided `/demo`, reduced-motion/mobile support. [Interaction spec](INTERACTIVE_LANDING.md).
+- **M2 checkpoint remains Nov 22**: do not let a UI replatforming delay the portal submission; #39 can be completed in M3 if needed.
+- Do not deploy the Docker/Foundry worker to Vercel serverless. Deploy website independently and retain a hardened, authenticated API/worker deployment.
+
 ## Current audited implementation status — as of November 10
 - **DONE #20, #1–#7:** CIS-8/CIS-8004 agent identity/metadata verification, foundational Foundry + Slither toolchain, synthetic vulnerable and patched ERC-4626 vaults, optional Slither analysis adapter, isolated fixed-fixture worker, private/public receipt digest, and loopback-only Node verification API.
 - **DONE #8:** PR #33 for the PoC verification console is merged with passing CI. Both role flows should reuse this tested verification screen.
