@@ -4,26 +4,34 @@ import { readFileSync } from "node:fs";
 
 const read = path => readFileSync(new URL(path, import.meta.url), "utf8");
 
-test("homepage explains the shared product and has one Get started entry", () => {
+test("homepage has a centered product entry and vertical three-step story", () => {
   const home = read("./app/page.tsx");
-  const card = read("./components/landing/role-card.tsx");
-  assert.match(home, /Security claims need/);
+  assert.match(home, /Find the vulnerability/);
   assert.match(home, /href="\/get-started"/);
-  assert.equal((home.match(/<RoleCard role=/g) ?? []).length, 2);
-  assert.match(card, /I have a project to audit/);
-  assert.match(card, /I want to audit/);
-  assert.doesNotMatch(home + card, /Explore workflow|scanner dashboard|scan contract|type="file"/i);
+  assert.match(home, /Authorize/);
+  assert.match(home, /Investigate/);
+  assert.match(home, /Verify/);
+  assert.doesNotMatch(home, /Choose your path|Two perspectives|Explore workflow|scanner dashboard|scan contract|type="file"/i);
 });
 
-test("both role routes use the same verifier and only the vault listing is actionable", () => {
+test("opportunities list all entries and only the reviewed vault opens a detail route", () => {
+  assert.match(read("./app/get-started/page.tsx"), /OpportunityList/);
+  assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney role="researcher"/);
+  const list = read("./components/opportunities/opportunity-list.tsx");
+  assert.match(list, /href="\/opportunities\/demo-vault"/);
+  assert.match(list, /Runnable local demo/);
+  assert.match(list, /Preview · unavailable/);
+  assert.match(list, /No bounty offered/);
+  assert.doesNotMatch(list, /href="\/verify"|type="file"/);
+});
+
+test("both role routes use the same verifier and label authorization limits", () => {
   assert.match(read("./app/teams/start/page.tsx"), /<RoleJourney role="team"/);
   assert.match(read("./app/researchers/start/page.tsx"), /<RoleJourney role="researcher"/);
-  assert.match(read("./app/get-started/page.tsx"), /<RoleJourney role="researcher"/);
   const journey = read("./components/journeys/role-journey.tsx");
   assert.match(journey, /href="\/verify"/);
   assert.match(journey, /Runnable local demo/);
-  assert.match(journey, /Preview · unavailable/);
-  assert.match(journey, /not authorized targets/);
+  assert.match(journey, /no external invitation/);
   assert.match(journey, /Issue #35/);
 });
 

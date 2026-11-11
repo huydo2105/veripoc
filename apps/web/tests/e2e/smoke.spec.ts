@@ -19,32 +19,39 @@ async function themeContrast(page: import("@playwright/test").Page) {
 }
 
 for (const width of [1440, 1024, 390, 320]) {
-  test(`homepage and role navigation fit ${width}px`, async ({ page }, testInfo) => {
+  test(`homepage and vertical story fit ${width}px`, async ({ page }, testInfo) => {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Security claims need evidence/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Find the vulnerability.*Verify the proof/i })).toBeVisible();
     await expect(page.getByRole("link", { name: "Get started" })).toHaveAttribute("href", "/get-started");
-    await expect(page.getByTestId("role-card")).toHaveCount(2);
-    await expect(page.getByRole("link", { name: /I have a project to audit/ })).toHaveAttribute("href", "/teams/start");
-    await expect(page.getByRole("link", { name: /I want to audit/ })).toHaveAttribute("href", "/researchers/start");
+    await expect(page.getByRole("navigation", { name: "Main navigation" }).getByRole("link")).toHaveCount(2);
+    await expect(page.locator(".story-section")).toHaveCount(3);
+    await expect(page.getByRole("heading", { name: "Start with a clear boundary." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Researchers bring their own tools." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Check the claim. Keep the evidence." })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true });
   });
 }
 
-test("Get started shows one runnable demo and clearly unavailable previews", async ({ page }, testInfo) => {
+test("Get started lists all opportunities, then opens the reviewed vault details", async ({ page }, testInfo) => {
   await page.goto("/");
   await page.getByRole("link", { name: "Get started" }).click();
   await expect(page).toHaveURL(/\/get-started$/);
-  const paths = page.getByRole("navigation", { name: "Choose an audit path" });
-  await expect(paths.getByRole("link", { name: "I want to audit" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { name: "Opportunities", exact: true })).toBeVisible();
+  await expect(page.locator(".directory-row")).toHaveCount(3);
   await expect(page.getByText("Runnable local demo")).toBeVisible();
   await expect(page.getByText("Preview · unavailable")).toHaveCount(2);
-  await expect(page.getByText(/not authorized targets/)).toBeVisible();
+  await expect(page.getByText(/public preview does not authorize/i)).toBeVisible();
   if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("opportunities.png"), fullPage: true });
-  await paths.getByRole("link", { name: "I have a project to audit" }).click();
+  await page.getByRole("link", { name: "Open Demo Vault Audit Program details" }).click();
+  await expect(page).toHaveURL(/\/opportunities\/demo-vault$/);
+  await expect(page.getByRole("heading", { name: /What you can investigate/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /From bug report to verification/ })).toBeVisible();
+  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("demo-detail.png"), fullPage: true });
+  await page.getByRole("navigation", { name: "Choose an audit path" }).getByRole("link", { name: "I have a project to audit" }).click();
   await expect(page).toHaveURL(/\/teams\/start$/);
-  await expect(page.getByRole("link", { name: "Create unsaved draft" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Preview unsaved project/ })).toBeVisible();
   await page.getByRole("link", { name: "Open verification console" }).click();
   await expect(page).toHaveURL(/\/verify$/);
 });
@@ -53,7 +60,7 @@ test("team draft is local, unsaved, and never creates an authorization", async (
   const posts: string[] = [];
   page.on("request", request => { if (request.method() === "POST") posts.push(request.url()); });
   await page.goto("/teams/start");
-  await page.getByRole("link", { name: "Create unsaved draft" }).click();
+  await page.getByRole("link", { name: /Preview unsaved project/ }).click();
   await expect(page).toHaveURL(/\/teams\/new$/);
   await page.getByLabel("Project name").fill("Sample lending protocol");
   await page.getByLabel("Target contract and immutable revision").fill("Vault.sol at commit abc123");
@@ -71,7 +78,7 @@ test("real fixture code changes with a step and contract toggle, without running
   const posts: string[] = [];
   page.on("request", request => { if (request.method() === "POST" && request.url().includes("/v1/")) posts.push(request.url()); });
   await page.setViewportSize({ width: 1440, height: 800 });
-  await page.goto("/researchers/start");
+  await page.goto("/opportunities/demo-vault");
   const workflow = page.getByRole("group", { name: "Researcher workflow steps" });
   await workflow.getByRole("button", { name: /Investigate the code/ }).click();
   const source = page.locator("#source-preview");

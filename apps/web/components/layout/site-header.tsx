@@ -10,8 +10,6 @@ export function SiteHeader() {
         <nav aria-label="Main navigation" className="site-nav">
           <Link className="site-nav-link focus-ring" href="/#how-it-works">How it works</Link>
           <Link className="site-nav-link focus-ring" href="/get-started">Opportunities</Link>
-          <Link className="site-nav-link focus-ring" href="/teams/start">Teams</Link>
-          <Link className="site-nav-link focus-ring" href="/researchers/start">Researchers</Link>
         </nav>
         <ThemeToggle />
       </div>

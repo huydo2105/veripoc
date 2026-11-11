@@ -1,6 +1,6 @@
 # VeriPoC web app
 
-The Next.js App Router serves `/`, `/get-started`, `/teams/start`, `/researchers/start`, `/teams/new`, and `/verify`. The legacy `/workflow` link redirects to Get started. The homepage explains the shared product; Get started opens the role paths. The researcher path shows one runnable local vault demo and clearly unavailable opportunity previews. The team draft form is a local, unsaved preview and does not create or publish an audit program. Both roles lead to the same real verification route.
+The Next.js App Router serves `/`, `/get-started`, `/opportunities/demo-vault`, `/teams/start`, `/researchers/start`, `/teams/new`, and `/verify`. The legacy `/workflow` link redirects to Get started. The homepage explains the shared product in three vertically stacked steps. Get started lists all three visible entries: one runnable local vault demo and two unavailable layout previews. The demo opens a detail page with scope, researcher submission guidance, and a path to the real verifier. The team draft form is a local, unsaved preview and does not create or publish an audit program.
 
 The site has light and dark themes. The theme toggle stores only a display preference in local storage; tokens, evidence, and project drafts are never saved there. Each role page presents scroll-assisted steps with excerpts from the checked-in vault contract and trusted test. Switching the shown code does not execute Foundry. The verifier remains the Client Component that performs actual authenticated job submission and polling.
 
@@ -44,6 +44,6 @@ npm run web:build
 npm run test:e2e --workspace @veripoc/web
 ```
 
-Playwright checks 1440, 1024, 390, and 320 pixel layouts, role tabs, the opportunity statuses, unsaved draft behavior, source-code selection, theme persistence, keyboard focus, desktop scroll, no-JavaScript fallback, and the no-backend error state. It uses installed Chrome locally and downloads Chromium in CI. Set `CAPTURE_SCREENSHOTS=1` for local screenshots in the Playwright test output. For real positive/negative fixture execution, run `node apps/api/e2e.mjs` after building the Docker image; that exercise is also in CI.
+Playwright checks 1440, 1024, 390, and 320 pixel layouts, the vertical homepage story, opportunity-to-detail navigation, role tabs, unsaved draft behavior, source-code selection, theme persistence, keyboard focus, desktop scroll, no-JavaScript fallback, and the no-backend error state. It uses installed Chrome locally and downloads Chromium in CI. Set `CAPTURE_SCREENSHOTS=1` for local screenshots in the Playwright test output. For real positive/negative fixture execution, run `node apps/api/e2e.mjs` after building the Docker image; that exercise is also in CI.
 
 The published Agent Card is copied byte-for-byte into `public/.well-known/agent-card.json` for the web origin. Concordium request signing and evidence anchoring are planned work. A reproduced result applies only to the tested fixture and environment.

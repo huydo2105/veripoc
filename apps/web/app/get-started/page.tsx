@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { RoleJourney } from "@/components/journeys/role-journey";
+import { OpportunityList } from "@/components/opportunities/opportunity-list";
 
-export const metadata: Metadata = { title: "Get started" };
+export const metadata: Metadata = { title: "Opportunities" };
 
-export default function GetStartedPage() { return <RoleJourney role="researcher" />; }
+export default function GetStartedPage() { return <OpportunityList />; }
