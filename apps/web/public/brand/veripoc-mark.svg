@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
+  <title id="title">VeriPoC mark</title>
+  <desc id="desc">Two geometric branches meet in a single verified point, forming a V.</desc>
+  <path d="M16 22L42 73" fill="none" stroke="#172B23" stroke-width="16" stroke-linecap="round"/>
+  <path d="M80 22L42 73" fill="none" stroke="#276C55" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="42" cy="73" r="5.5" fill="#F8F9F7"/>
+</svg>

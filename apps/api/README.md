@@ -1,8 +1,8 @@
 # Local verification API
 
-Issue #7 exposes the reviewed repository fixtures through a loopback-only Node API. Issue #8 adds a judge-facing PoC verification page served by the same process. It is not a public upload service. Node 20+ is required.
+The Node API is a separate loopback-only service at `http://127.0.0.1:8787`. The Next.js web app runs separately at `http://127.0.0.1:3000` and forwards only its supported verification requests. See [web setup](../web/README.md). The API no longer serves the public HTML pages. It still serves its original Agent Card bytes at `GET /.well-known/agent-card.json`.
 
-From the repository root, set a fresh token of at least 32 characters and start the server:
+Set a fresh token of at least 32 characters and start from the repository root:
 
 ```powershell
 $tokenBytes = New-Object byte[] 32
@@ -13,18 +13,18 @@ $env:VERIPOC_API_TOKEN = ([BitConverter]::ToString($tokenBytes)).Replace('-', ''
 npm run api:dev
 ```
 
-Open `http://127.0.0.1:8787` for the two-sided homepage. The team and researcher demo journeys are at `/teams/start` and `/researchers/start`; both lead to the existing console at `/verify`. Paste the token there. The token is held in page memory, sent only to the same-origin loopback API, and lost on reload. Do not expose this server through a proxy or public interface. The role pages are explanatory only; there are no program accounts or authorization controls yet.
-
-The internal, backward-compatible `POST /v1/scan` accepts exactly `{"artifactFormat":"repo-fixture-v1","target":"local-vaults"}`. It invokes the pinned local Slither adapter; the judge UI does not call it. The product operation `POST /v1/verify-poc` accepts exactly `{"artifactFormat":"repo-fixture-v1","fixture":"vulnerable"}` or `"patched"`; build the trusted worker image first:
+Build the trusted worker image before running verification jobs:
 
 ```powershell
 docker build -f infrastructure/docker/foundry-worker.Dockerfile -t veripoc-foundry-worker:issue-5 .
 ```
 
-Both POST routes require `Authorization: Bearer <token>`, `Content-Type: application/json`, and a unique `Idempotency-Key` of 8–64 ASCII letters, digits, `_`, or `-`. They return `202` and a job ID. `GET /v1/jobs/:id` with the same authorization returns `queued`, `running`, or `finished` plus the result. A repeated key with the same body returns the same job; reuse with another body returns `409`.
+The product operation `POST /v1/verify-poc` accepts only `{"artifactFormat":"repo-fixture-v1","fixture":"vulnerable"}` or `"patched"`. The internal `POST /v1/scan` remains backward-compatible and accepts only `{"artifactFormat":"repo-fixture-v1","target":"local-vaults"}`; it is not exposed by the web proxy or a product scan page.
 
-For a successful fixture run, the result includes the trusted Foundry stdout, exit code, sanitized stderr, measured financial evidence parsed from three unambiguous oracle log markers, the private receipt, and a local public digest candidate. If the markers are absent or execution fails, `financialEvidence` is `null`; the API does not infer values from expected fixture text. `GET /.well-known/agent-card.json` serves the existing public Agent Card bytes without modifying them. The judge page uses only `verify-poc` and job status; the scan route is retained for internal compatibility.
+Both POST routes require `Authorization: Bearer <token>`, `Content-Type: application/json`, and an `Idempotency-Key` of 8–64 ASCII letters, digits, `_`, or `-`. They return `202` and a job ID. `GET /v1/jobs/:id` with the same authorization returns `queued`, `running`, or `finished` plus the actual result. Reusing a key with the same body returns the same job; reuse with another body returns `409`.
 
-The server limits POST requests to five and GET requests to 120 per minute per client IP, bodies to 4 KiB, retained jobs to 16, and execution to one job at a time. State is in memory and resets on restart. Only fixed fixtures run; arbitrary source, paths, URLs, and shell commands are rejected. The API process can invoke Docker and Slither and therefore must run only on a trusted development machine. It does not submit an anchor to Concordium or issue a badge.
+Successful fixture results include trusted Foundry output, exit code, sanitized stderr, financial evidence parsed from unambiguous oracle markers, the private receipt, and a local public digest candidate. Missing/malformed markers yield no financial values. The digest is **not an on-chain anchor**.
 
-Run request tests with `npm run test:api`. `node apps/api/e2e.mjs` requires the trusted Docker image and checks both actual fixture verdicts and receipt hashes.
+The server limits POST requests to five and GET requests to 120 per minute per client IP, bodies to 4 KiB, retained jobs to 16, and execution to one job at a time. State is in memory and resets on restart. Arbitrary source, paths, URLs, and shell commands are rejected. The API can invoke Docker and Slither, so it must remain on a trusted development machine; a publicly hosted production API requires new security and deployment work.
+
+Run `npm run test:api` for request tests. `node apps/api/e2e.mjs` requires Docker and the trusted image to check both real fixture verdicts and receipt hashes. The Next proxy has its own authorization and rejection regression tests under `apps/web/lib/proxy.test.ts`.

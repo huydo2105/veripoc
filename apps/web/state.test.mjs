@@ -49,12 +49,13 @@ test("errors guide retry without claiming an exploit verdict", () => {
   assert.match(apiError(503), /capacity/i);
 });
 
-test("judge page exposes only the PoC operation and keeps Agent Card read-only", () => {
-  const html = readFileSync(new URL("./index.html", import.meta.url), "utf8");
-  const app = readFileSync(new URL("./app.js", import.meta.url), "utf8");
-  assert.match(html, /Verify a<br><em>Vulnerability Claim<\/em>/);
-  assert.match(html, /Verify PoC/);
-  assert.doesNotMatch(html + app, /\/v1\/scan|Run Slither scan|scanner dashboard/i);
-  assert.match(app, /\/v1\/verify-poc/);
-  assert.match(html, /on-chain anchor exists/);
+test("Next console exposes only real PoC jobs and labels the unanchored receipt", () => {
+  const page = readFileSync(new URL("./components/verification/verification-console.tsx", import.meta.url), "utf8");
+  const evidence = readFileSync(new URL("./components/verification/evidence-panel.tsx", import.meta.url), "utf8");
+  assert.match(page, /Vulnerability Claim/);
+  assert.match(page, /Verify PoC/);
+  assert.doesNotMatch(page + evidence, /\/v1\/scan|Run Slither scan|scanner dashboard/i);
+  assert.match(page, /\/v1\/verify-poc/);
+  assert.match(page, /\/v1\/jobs\//);
+  assert.match(evidence, /No on-chain anchor exists/);
 });

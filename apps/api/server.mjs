@@ -6,16 +6,6 @@ import { fileURLToPath } from "node:url";
 import { Worker } from "node:worker_threads";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const pages = new Map([["/", ["home.html", "text/html; charset=utf-8"]],
-  ["/teams/start", ["teams.html", "text/html; charset=utf-8"]],
-  ["/researchers/start", ["researchers.html", "text/html; charset=utf-8"]],
-  ["/verify", ["index.html", "text/html; charset=utf-8"]],
-  ["/journey.css", ["journey.css", "text/css; charset=utf-8"]],
-  ["/logo.svg", ["logo.svg", "image/svg+xml"]],
-  ["/app-icon.svg", ["app-icon.svg", "image/svg+xml"]],
-  ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
-  ["/state.mjs", ["state.mjs", "text/javascript; charset=utf-8"]],
-  ["/style.css", ["style.css", "text/css; charset=utf-8"]]]);
 const sha = value => createHash("sha256").update(value).digest("hex");
 const json = (res, code, value) => {
   res.writeHead(code, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store",
@@ -89,12 +79,6 @@ export function createApiServer({ token, execute = executeJob, now = Date.now, m
   return createServer(async (req, res) => {
     const path = new URL(req.url, "http://localhost").pathname;
     res.setHeader("content-security-policy", "default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'");
-    if (req.method === "GET" && pages.has(path)) {
-      const [file, type] = pages.get(path);
-      res.writeHead(200, { "content-type": type, "cache-control": "no-store", "x-content-type-options": "nosniff" });
-      res.end(readFileSync(resolve(here, "../web", file)));
-      return;
-    }
     if (req.method === "GET" && path === "/.well-known/agent-card.json") {
       res.writeHead(200, { "content-type": "application/json; charset=utf-8", "cache-control": "no-store",
         "x-content-type-options": "nosniff" });
