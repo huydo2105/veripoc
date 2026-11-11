@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="VeriPoC connects DeFi teams and independent researchers around reproducible smart-contract security evidence.">
+  <title>VeriPoC | Smart-contract security evidence</title>
+  <link rel="icon" href="/app-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/journey.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="/" aria-label="VeriPoC home"><img class="brand-logo" src="/logo.svg" width="44" height="44" alt="" aria-hidden="true"></a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="#how-it-works">How it works</a>
+        <a href="/teams/start">For teams</a>
+        <a href="/researchers/start">For researchers</a>
+        <a href="/verify">Demo</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="shell hero" aria-labelledby="hero-title">
+      <p class="eyebrow">VERIPOC / SECURITY EVIDENCE</p>
+      <h1 id="hero-title">Find vulnerabilities.<br><span>Verify the evidence.</span></h1>
+      <p class="hero-description">A shared smart-contract security workspace for DeFi teams and independent researchers using their own AI agents.</p>
+    </section>
+
+    <section class="shell choices" aria-labelledby="choices-title">
+      <h2 id="choices-title">What would you like to do?</h2>
+      <div class="choice-grid">
+        <a class="choice-card" href="/teams/start">
+          <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V6l8-3 8 3v14M4 20h16M9 20v-5h6v5M8 9h1m6 0h1M8 12h1m6 0h1"/></svg></span>
+          <span class="card-audience">DEFI TEAMS</span>
+          <strong class="card-title">Audit my contract</strong>
+          <span class="card-description">Define your audit scope, invite security researchers, and review reproducible vulnerability findings.</span>
+          <span class="card-action">I have a smart contract to audit <span aria-hidden="true">&rarr;</span></span>
+        </a>
+        <a class="choice-card" href="/researchers/start">
+          <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M8 10.5l1.5 1.5 3-3"/></svg></span>
+          <span class="card-audience">SECURITY RESEARCHERS</span>
+          <strong class="card-title">Find vulnerabilities</strong>
+          <span class="card-description">Join authorized audit programs, bring your own AI agent, and submit findings backed by reproducible evidence.</span>
+          <span class="card-action">I want to audit <span aria-hidden="true">&rarr;</span></span>
+        </a>
+      </div>
+      <p class="demo-note">Exploring the demo requires no account or wallet. The current verifier supports reviewed local vault fixtures only.</p>
+    </section>
+
+    <section id="how-it-works" class="process-section" aria-labelledby="process-title">
+      <div class="shell">
+        <div class="section-heading"><p class="eyebrow">ONE SHARED WORKFLOW</p><h2 id="process-title">How it works</h2></div>
+        <ol class="process-grid">
+          <li><span class="step-number">01</span><h3>Authorize</h3><p>A team defines the contracts and rules researchers may investigate. Program permissions are planned.</p></li>
+          <li><span class="step-number">02</span><h3>Investigate</h3><p>Researchers use their preferred agents and tools to form a vulnerability claim and PoC.</p></li>
+          <li><span class="step-number">03</span><h3>Verify</h3><p>VeriPoC runs a reviewed PoC in isolated Foundry execution and returns evidence for human review.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <aside class="shell provenance" aria-label="Current capability and provenance">
+      <p><strong>Demo today:</strong> one reviewed vault PoC, vulnerable and patched fixtures, and a private local evidence receipt. A reproduced result applies only under tested conditions.</p>
+      <p><strong>Concordium:</strong> the <a href="/.well-known/agent-card.json">published Agent Card</a> identifies Agent #1067. Signed requests and Testnet receipt anchoring are planned; no on-chain receipt is claimed here.</p>
+    </aside>
+  </main>
+  <footer class="site-footer"><div class="shell">VeriPoC <span>Local demo · No automatic audit certification or bounty decision</span></div></footer>
+</body>
+</html>

@@ -13,7 +13,7 @@ $env:VERIPOC_API_TOKEN = ([BitConverter]::ToString($tokenBytes)).Replace('-', ''
 npm run api:dev
 ```
 
-Open `http://127.0.0.1:8787` and paste the token into the local page. The token is held in page memory, sent only to the same-origin loopback API, and lost on reload. Do not expose this server through a proxy or public interface.
+Open `http://127.0.0.1:8787` for the two-sided homepage. The team and researcher demo journeys are at `/teams/start` and `/researchers/start`; both lead to the existing console at `/verify`. Paste the token there. The token is held in page memory, sent only to the same-origin loopback API, and lost on reload. Do not expose this server through a proxy or public interface. The role pages are explanatory only; there are no program accounts or authorization controls yet.
 
 The internal, backward-compatible `POST /v1/scan` accepts exactly `{"artifactFormat":"repo-fixture-v1","target":"local-vaults"}`. It invokes the pinned local Slither adapter; the judge UI does not call it. The product operation `POST /v1/verify-poc` accepts exactly `{"artifactFormat":"repo-fixture-v1","fixture":"vulnerable"}` or `"patched"`; build the trusted worker image first:
 
