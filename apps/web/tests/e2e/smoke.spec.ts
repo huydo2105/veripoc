@@ -29,6 +29,10 @@ for (const width of [1440, 1024, 390, 320]) {
     await expect(page.getByRole("heading", { name: "Start with a clear boundary." })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Researchers bring their own tools." })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Check the claim. Keep the evidence." })).toBeVisible();
+    await expect(page.getByRole("group", { name: "Compare reviewed vault implementations" })).toBeVisible();
+    await expect(page.getByText("Payouts available")).toBeVisible();
+    await expect(page.getByText("SCROLL TO SEE HOW IT WORKS")).toHaveCount(0);
+    await expect(page.getByRole("link", { name: "Explore the demo" })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
     if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true });
   });
@@ -40,27 +44,57 @@ test("Get started lists all opportunities, then opens the reviewed vault details
   await expect(page).toHaveURL(/\/get-started$/);
   await expect(page.getByRole("heading", { name: "Opportunities", exact: true })).toBeVisible();
   await expect(page.locator(".directory-row")).toHaveCount(3);
-  await expect(page.getByText("Runnable local demo")).toBeVisible();
+  await expect(page.getByText("Runnable demo", { exact: true })).toBeVisible();
   await expect(page.getByText("Preview · unavailable")).toHaveCount(2);
-  await expect(page.getByText(/public preview does not authorize/i)).toBeVisible();
+  await expect(page.getByRole("group", { name: "Opportunity category" }).getByRole("button")).toHaveCount(4);
+  await expect(page.getByText("Payouts available")).toBeVisible();
+  await expect(page.getByRole("heading", { name: /High-signal findings/ })).toBeVisible();
+  await expect(page.getByText(/public listing is not permission/i)).toBeVisible();
   if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("opportunities.png"), fullPage: true });
+  await page.getByRole("group", { name: "Opportunity category" }).getByRole("button", { name: /Bounties/ }).click();
+  await expect(page.getByRole("status")).toContainText("There are no live bounties");
+  await page.getByRole("group", { name: "Opportunity category" }).getByRole("button", { name: /All/ }).click();
+  await page.getByRole("searchbox", { name: "Search opportunities" }).fill("vault");
+  await expect(page.locator(".directory-row")).toHaveCount(1);
+  await page.getByRole("searchbox", { name: "Search opportunities" }).clear();
+  await expect(page.locator(".directory-row")).toHaveCount(3);
   await page.getByRole("link", { name: "Open Demo Vault Audit Program details" }).click();
-  await expect(page).toHaveURL(/\/opportunities\/demo-vault$/);
-  await expect(page.getByRole("heading", { name: /What you can investigate/ })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /From bug report to verification/ })).toBeVisible();
+  await expect(page).toHaveURL(/\/opportunities\/demo-vault$/, { timeout: 20000 });
+  await expect(page.getByRole("heading", { name: /What to investigate/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Authorized scope/ })).toBeVisible();
   if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("demo-detail.png"), fullPage: true });
-  await page.getByRole("navigation", { name: "Choose an audit path" }).getByRole("link", { name: "I have a project to audit" }).click();
-  await expect(page).toHaveURL(/\/teams\/start$/);
-  await expect(page.getByRole("link", { name: /Preview unsaved project/ })).toBeVisible();
-  await page.getByRole("link", { name: "Open verification console" }).click();
-  await expect(page).toHaveURL(/\/verify$/);
+  await page.getByRole("link", { name: "Open verifier" }).click();
+  await expect(page).toHaveURL(/\/opportunities\/demo-vault#submission$/);
+  await expect(page.getByRole("button", { name: /Verify PoC/ })).toBeVisible();
+  await expect(page.locator("#verification").getByText("Awaiting run", { exact: true })).toBeVisible();
+  await page.getByRole("button", { name: /Verify PoC/ }).click();
+  await expect(page.locator("#verification").getByRole("alert")).toContainText("Enter the local API token");
+});
+
+test("opportunity rows, filters, and footer fit narrow mobile", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 320, height: 800 });
+  await page.goto("/get-started");
+  await expect(page.locator(".directory-row")).toHaveCount(3);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  const titleEdges = await page.getByRole("heading", { name: "Opportunities", exact: true }).evaluate(node => {
+    const range = document.createRange();
+    range.selectNodeContents(node);
+    const rect = range.getBoundingClientRect();
+    return { left: rect.left, right: rect.right, width: innerWidth };
+  });
+  expect(titleEdges.left).toBeGreaterThanOrEqual(0);
+  expect(titleEdges.right).toBeLessThanOrEqual(titleEdges.width);
+  const footerLink = page.getByRole("navigation", { name: "Explore VeriPoC" }).getByRole("link", { name: "Opportunities" });
+  await footerLink.hover();
+  expect(await footerLink.evaluate(node => getComputedStyle(node).textDecorationLine)).toBe("none");
+  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("opportunities-320.png"), fullPage: true });
 });
 
 test("team draft is local, unsaved, and never creates an authorization", async ({ page }, testInfo) => {
   const posts: string[] = [];
   page.on("request", request => { if (request.method() === "POST") posts.push(request.url()); });
-  await page.goto("/teams/start");
-  await page.getByRole("link", { name: /Preview unsaved project/ }).click();
+  await page.goto("/get-started");
+  await page.getByRole("link", { name: /Preview an unsaved project/ }).click();
   await expect(page).toHaveURL(/\/teams\/new$/);
   await page.getByLabel("Project name").fill("Sample lending protocol");
   await page.getByLabel("Target contract and immutable revision").fill("Vault.sol at commit abc123");
@@ -92,26 +126,38 @@ test("real fixture code changes with a step and contract toggle, without running
   if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("researcher-workflow.png"), fullPage: true });
 });
 
+test("homepage code card changes reviewed source without submitting a verification job", async ({ page }) => {
+  const posts: string[] = [];
+  page.on("request", request => { if (request.method() === "POST" && request.url().includes("/v1/")) posts.push(request.url()); });
+  await page.goto("/");
+  const card = page.getByRole("group", { name: "Compare reviewed vault implementations" });
+  await expect(page.locator(".fixture-editor")).toContainText("assets * totalSupply / totalAssets()");
+  await card.getByRole("button", { name: "PatchedVault.sol" }).click();
+  await expect(page.locator(".fixture-editor")).toContainText("VIRTUAL_SHARES");
+  await expect(card.getByRole("button", { name: "PatchedVault.sol" })).toHaveAttribute("aria-pressed", "true");
+  expect(posts).toEqual([]);
+});
+
 test("desktop scroll selects the visible workflow step", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 800 });
-  await page.goto("/teams/start");
-  const steps = page.getByRole("group", { name: "Team workflow steps" });
-  const patch = steps.getByRole("button", { name: /Check the patch/ });
-  await patch.scrollIntoViewIfNeeded();
-  await expect(patch).toHaveAttribute("aria-pressed", "true");
-  await expect(page.locator("#source-preview")).toContainText("VIRTUAL_SHARES");
+  await page.goto("/opportunities/demo-vault");
+  const steps = page.getByRole("group", { name: "Researcher workflow steps" });
+  const proof = steps.getByRole("button", { name: /Submit a reproducible PoC/ });
+  await proof.scrollIntoViewIfNeeded();
+  await expect(proof).toHaveAttribute("aria-pressed", "true");
+  await expect(page.locator("#source-preview")).toContainText("testVulnerableDonationReproduces");
 });
 
 test("theme toggle persists, remains keyboard accessible, and keeps reduced motion", async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   for (const ratio of await themeContrast(page)) expect(ratio).toBeGreaterThanOrEqual(4.5);
-  const dark = page.getByRole("button", { name: "Switch to dark theme" });
+  const dark = page.getByRole("group", { name: "Color theme" }).getByRole("button", { name: "Charcoal" });
   await dark.focus();
   await expect(dark).toBeFocused();
   await page.keyboard.press("Enter");
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await expect(page.getByRole("button", { name: "Switch to light theme" })).toHaveAttribute("aria-pressed", "true");
+  await expect(dark).toHaveAttribute("aria-pressed", "true");
   for (const ratio of await themeContrast(page)) expect(ratio).toBeGreaterThanOrEqual(4.5);
   expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
   if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("home-dark.png"), fullPage: true });
@@ -120,24 +166,36 @@ test("theme toggle persists, remains keyboard accessible, and keeps reduced moti
 });
 
 test("verifier still needs a real authenticated backend result", async ({ page }) => {
-  await page.goto("/verify");
+  await page.goto("/opportunities/demo-vault#submission");
   await expect(page.locator("#verification").getByText("Awaiting run", { exact: true })).toBeVisible();
   await expect(page.getByText("Not captured", { exact: true })).toHaveCount(3);
   await page.getByRole("button", { name: /Verify PoC/ }).click();
   await expect(page.locator("#verification").getByRole("alert")).toContainText("Enter the local API token");
   await page.getByLabel("LOCAL API TOKEN").fill("invalid-test-token");
   await page.getByRole("button", { name: /Verify PoC/ }).click();
-  await expect(page.locator("#verification").getByRole("alert")).toContainText(/verification API is unavailable|API token rejected/i);
+  await expect(page.locator("#verification").getByRole("alert")).toContainText(/verification API is unavailable|API token rejected/i, { timeout: 20000 });
   await expect(page.locator("#verification").getByText("Awaiting run", { exact: true })).toBeVisible();
+});
+
+test("old journey pages are removed while the direct verifier remains", async ({ page }) => {
+  for (const path of ["/researchers/start", "/teams/start"]) {
+    const response = await page.goto(path);
+    expect(response?.status(), path).toBe(404);
+  }
+  const verifier = await page.goto("/verify");
+  expect(verifier?.status()).toBe(200);
+  await expect(page.getByRole("button", { name: /Verify PoC/ })).toBeVisible();
+  await page.goto("/opportunities/demo-vault");
+  await expect(page.getByRole("button", { name: /Verify PoC/ })).toBeVisible();
 });
 
 test("role steps and code remain readable without JavaScript", async ({ browser, baseURL }) => {
   const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
   try {
     const page = await context.newPage();
-    await page.goto("/researchers/start");
+    await page.goto("/opportunities/demo-vault");
     await expect(page.getByText("Read the scope", { exact: true })).toBeVisible();
     await expect(page.locator(".mobile-source").first()).toContainText("FixtureVault");
-    await expect(page.getByRole("link", { name: "Open verification console" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Open verifier" })).toBeVisible();
   } finally { await context.close(); }
 });

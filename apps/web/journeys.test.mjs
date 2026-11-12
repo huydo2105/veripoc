@@ -11,6 +11,9 @@ test("homepage has a centered product entry and vertical three-step story", () =
   assert.match(home, /Authorize/);
   assert.match(home, /Investigate/);
   assert.match(home, /Verify/);
+  assert.match(home, /FixtureCodeCard/);
+  assert.match(home, /DemoMetrics/);
+  assert.doesNotMatch(home, /01 \/ 03|02 \/ 03|03 \/ 03|SCROLL TO SEE HOW IT WORKS|Explore the demo/);
   assert.doesNotMatch(home, /Choose your path|Two perspectives|Explore workflow|scanner dashboard|scan contract|type="file"/i);
 });
 
@@ -19,20 +22,40 @@ test("opportunities list all entries and only the reviewed vault opens a detail 
   assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney role="researcher"/);
   const list = read("./components/opportunities/opportunity-list.tsx");
   assert.match(list, /href="\/opportunities\/demo-vault"/);
-  assert.match(list, /Runnable local demo/);
+  assert.match(list, /Runnable demo/);
   assert.match(list, /Preview · unavailable/);
-  assert.match(list, /No bounty offered/);
+  assert.match(list, /No bounty/);
+  assert.match(list, /Bounties/);
+  assert.match(list, /Competitions/);
+  assert.match(list, /Ended/);
+  assert.match(list, /directory-promo/);
   assert.doesNotMatch(list, /href="\/verify"|type="file"/);
 });
 
-test("both role routes use the same verifier and label authorization limits", () => {
-  assert.match(read("./app/teams/start/page.tsx"), /<RoleJourney role="team"/);
-  assert.match(read("./app/researchers/start/page.tsx"), /<RoleJourney role="researcher"/);
+test("interactive source and displayed figures are limited to the local demo", () => {
+  const editor = read("./components/landing/fixture-code-card.tsx");
+  const metrics = read("./components/landing/demo-metrics.tsx");
+  assert.match(editor, /VulnerableVault.sol/);
+  assert.match(editor, /PatchedVault.sol/);
+  assert.match(editor, /Code selection never runs Foundry/);
+  assert.doesNotMatch(editor, /fetch\(|POST|type="file"/);
+  assert.match(metrics, /Local demo figures/);
+  assert.doesNotMatch(metrics, /detail:|demo-metrics-caption/);
+  assert.match(metrics, /Payouts available/);
+  assert.match(metrics, /Known fixture vulnerability/);
+  assert.doesNotMatch(metrics, /Researchers registered|Total paid out|Customers/);
+});
+
+test("demo detail embeds the shared verifier and retains its direct route", () => {
+  assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney role="researcher"/);
   const journey = read("./components/journeys/role-journey.tsx");
-  assert.match(journey, /href="\/verify"/);
-  assert.match(journey, /Runnable local demo/);
-  assert.match(journey, /no external invitation/);
-  assert.match(journey, /Issue #35/);
+  assert.match(journey, /<VerificationConsole embedded/);
+  assert.match(journey, /href="#submission"/);
+  assert.match(journey, /Runnable fixture/);
+  assert.match(journey, /arbitrary uploads are not authorized/);
+  assert.match(read("./app/verify/page.tsx"), /<VerificationConsole/);
+  const footer = read("./components/layout/site-footer.tsx");
+  assert.doesNotMatch(footer, /\/teams\/start|\/researchers\/start|\/verify/);
 });
 
 test("team can preview an unsaved project draft without publishing it", () => {

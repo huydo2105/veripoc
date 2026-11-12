@@ -25,16 +25,14 @@ export function ThemeToggle() {
     window.dispatchEvent(new Event(eventName));
   }, []);
 
-  function toggle() {
-    const next: Theme = theme === "light" ? "dark" : "light";
+  function select(next: Theme) {
     document.documentElement.dataset.theme = next;
     try { window.localStorage.setItem("veripoc-theme", next); } catch { /* theme still works for this page */ }
     window.dispatchEvent(new Event(eventName));
   }
 
-  return <button type="button" className="theme-toggle focus-ring" onClick={toggle}
-    aria-label={theme === "light" ? "Switch to dark theme" : "Switch to light theme"}
-    aria-pressed={theme === "dark"} title={theme === "light" ? "Dark theme" : "Light theme"}>
-    {theme === "light" ? <Moon size={18} aria-hidden="true" /> : <Sun size={18} aria-hidden="true" />}
-  </button>;
+  return <div className="theme-switch" role="group" aria-label="Color theme">
+    <button type="button" className="focus-ring" onClick={() => select("light")} aria-pressed={theme === "light"}><Sun size={14} aria-hidden="true" /> Paper</button>
+    <button type="button" className="focus-ring" onClick={() => select("dark")} aria-pressed={theme === "dark"}><Moon size={14} aria-hidden="true" /> Charcoal</button>
+  </div>;
 }

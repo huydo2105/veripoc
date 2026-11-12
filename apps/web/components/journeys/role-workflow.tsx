@@ -112,7 +112,7 @@ export function RoleWorkflow({ role }: { role: Role }) {
           <pre><code>{source[shownCode]}</code></pre>
           <p className="source-hint">{shownCode === "patched" ? "Virtual shares change the rounding behavior in this fixture." : shownCode === "vulnerable" ? "Donation increases assets while supply stays low; integer division can round shares to zero." : shownCode === "oracle" ? "This is the trusted test assertion, not a live execution log." : "This is the local contract under review, not an external deployed target."}</p>
         </div>
-        <div className="source-preview-foot"><span>Code selection does not execute Foundry.</span><Link href="/verify" className="focus-ring">Run reviewed PoC <ArrowRight size={15} aria-hidden="true" /></Link></div>
+        <div className="source-preview-foot"><span>Code selection does not execute Foundry.</span><Link href="/opportunities/demo-vault#submission" className="focus-ring">Run reviewed PoC <ArrowRight size={15} aria-hidden="true" /></Link></div>
       </div>
     </div>
   </section>;

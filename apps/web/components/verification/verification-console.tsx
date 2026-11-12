@@ -17,7 +17,7 @@ const stages = [
 ] as const;
 const stageLabel = { done: "Complete", active: "Running", failed: "Failed", unavailable: "Unavailable", pending: "Pending" } as const;
 
-export function VerificationConsole() {
+export function VerificationConsole({ embedded = false }: { embedded?: boolean }) {
   const [fixture, setFixture] = useState<Fixture>("vulnerable");
   const [token, setToken] = useState("");
   const [jobs, setJobs] = useState<Record<string, Job>>({});
@@ -117,9 +117,11 @@ export function VerificationConsole() {
     catch { setCopyLabel("Clipboard failed — copy JSON manually"); }
   }
 
-  return <main id="main" className="site-shell pb-16">
+  const Container = embedded ? "section" : "main";
+  const Heading = embedded ? "h2" : "h1";
+  return <Container id={embedded ? undefined : "main"} className={embedded ? "embedded-console pb-16" : "site-shell pb-16"}>
     <section className="site-hero" aria-labelledby="verify-title">
-      <h1 id="verify-title" className="site-title">Verify a <span>PoC.</span></h1>
+      <Heading id="verify-title" className="site-title">Verify a <span>PoC.</span></Heading>
       <p className="mt-5 max-w-xl text-muted">Run a reviewed vault fixture in isolated Foundry and inspect the private receipt.</p>
     </section>
 
@@ -157,5 +159,5 @@ export function VerificationConsole() {
 
       <aside className="lg:sticky lg:top-6" aria-label="Run comparison"><Card className="p-5"><h2 className="mb-2 text-lg font-semibold">Run comparison</h2><p className="mb-4 text-xs text-muted">Both runs use the reviewed attack sequence and trusted fixture assertions.</p>{fixtures.map(key => { const job = lastByFixture[key] ? jobs[lastByFixture[key]!] : null; return <div key={key} className="border-t border-line py-3"><p className="text-xs font-semibold text-muted">{key === "vulnerable" ? "VULNERABLE VAULT" : "PATCHED CONTROL"}</p><strong className="mt-1 block text-sm">{job?.state === "finished" && job.result ? VERDICTS[job.result.status].label : job?.state === "running" ? "Running" : job?.state === "queued" ? "Queued" : "Not run"}</strong><span className="mono-data mt-1 block text-xs text-muted">{receiptDigest(job?.result) ?? "No receipt digest"}</span></div>; })}<p className="mt-3 text-xs text-muted">A not-reproduced control result is not a general security certification.</p></Card></aside>
     </div>
-  </main>;
+  </Container>;
 }

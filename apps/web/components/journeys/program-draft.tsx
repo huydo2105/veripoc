@@ -18,7 +18,7 @@ export function ProgramDraft() {
   }
 
   return <main id="main" className="site-shell draft-page">
-    <Link href="/teams/start" className="back-link focus-ring"><ArrowLeft size={16} aria-hidden="true" /> Back to team path</Link>
+    <Link href="/get-started" className="back-link focus-ring"><ArrowLeft size={16} aria-hidden="true" /> Back to opportunities</Link>
     <div className="section-head"><p className="eyebrow">Team workspace preview</p><h1>Draft a bug bounty project</h1><p>Preview how a scoped audit program could be described. Nothing here is saved, published, sent to the verifier, or treated as authorization.</p></div>
     <div className="draft-grid">
       <form className="draft-form" onSubmit={preview}>
