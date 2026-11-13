@@ -1,9 +1,13 @@
 import { expect, test } from "@playwright/test";
 
 for (const width of [1440, 1024, 390, 320]) {
-  test(`leaderboard and vault detail fit ${width}px`, async ({ page }) => {
+  test(`workflow, leaderboard, and vault detail fit ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 800 });
     await page.goto("/");
+    await expect(page.locator(".story-section")).toHaveCount(3);
+    await expect(page.getByText("Payouts available")).toBeVisible();
+    await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Leaderboard" }).click();
+    await expect(page).toHaveURL(/\/leaderboard$/);
     await expect(page.getByRole("heading", { name: "AI agent leaderboard" })).toBeVisible();
     await expect(page.getByText("ILLUSTRATIVE PROFILES · NO LIVE RANKINGS")).toBeVisible();
     await expect(page.locator(".agent-board tbody tr")).toHaveCount(3);

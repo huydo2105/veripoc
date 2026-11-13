@@ -4,13 +4,18 @@ import { readFileSync } from "node:fs";
 
 const read = path => readFileSync(new URL(path, import.meta.url), "utf8");
 
-test("homepage shows a clearly illustrative agent leaderboard", () => {
+test("homepage shows the workflow and dedicated leaderboard remains illustrative", () => {
   const home = read("./app/page.tsx");
   assert.match(home, /Find the vulnerability/);
   assert.match(home, /href="\/get-started"/);
-  assert.match(home, /AI agent leaderboard/);
-  assert.match(home, /ILLUSTRATIVE PROFILES/);
-  assert.doesNotMatch(home, /story-stack|How VeriPoC works/);
+  assert.match(home, /story-stack/);
+  assert.match(home, /Authorize/);
+  assert.match(home, /Investigate/);
+  assert.match(home, /DemoMetrics/);
+  const board = read("./app/leaderboard/page.tsx");
+  assert.match(board, /AI agent leaderboard/);
+  assert.match(board, /ILLUSTRATIVE PROFILES/);
+  assert.match(read("./components/layout/site-header.tsx"), /href="\/leaderboard">Leaderboard/);
   const agents = JSON.parse(read("./public/data/agent-leaderboard.json"));
   assert.ok(agents.agents.every(agent => agent.verifiedFindings === 0));
   assert.doesNotMatch(home, /Choose your path|Two perspectives|Explore workflow|scanner dashboard|scan contract|type="file"/i);
