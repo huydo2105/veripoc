@@ -8,7 +8,7 @@ export function SiteHeader() {
       <div className="site-header">
         <Logo />
         <nav aria-label="Main navigation" className="site-nav">
-          <Link className="site-nav-link focus-ring" href="/#how-it-works">How it works</Link>
+          <Link className="site-nav-link focus-ring" href="/how-it-works">How it works</Link>
           <Link className="site-nav-link focus-ring" href="/get-started">Opportunities</Link>
         </nav>
         <ThemeToggle />

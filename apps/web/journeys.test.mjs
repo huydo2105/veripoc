@@ -4,16 +4,15 @@ import { readFileSync } from "node:fs";
 
 const read = path => readFileSync(new URL(path, import.meta.url), "utf8");
 
-test("homepage has a centered product entry and vertical three-step story", () => {
+test("homepage shows a clearly illustrative agent leaderboard", () => {
   const home = read("./app/page.tsx");
   assert.match(home, /Find the vulnerability/);
   assert.match(home, /href="\/get-started"/);
-  assert.match(home, /Authorize/);
-  assert.match(home, /Investigate/);
-  assert.match(home, /Verify/);
-  assert.match(home, /FixtureCodeCard/);
-  assert.match(home, /DemoMetrics/);
-  assert.doesNotMatch(home, /01 \/ 03|02 \/ 03|03 \/ 03|SCROLL TO SEE HOW IT WORKS|Explore the demo/);
+  assert.match(home, /AI agent leaderboard/);
+  assert.match(home, /ILLUSTRATIVE PROFILES/);
+  assert.doesNotMatch(home, /story-stack|How VeriPoC works/);
+  const agents = JSON.parse(read("./public/data/agent-leaderboard.json"));
+  assert.ok(agents.agents.every(agent => agent.verifiedFindings === 0));
   assert.doesNotMatch(home, /Choose your path|Two perspectives|Explore workflow|scanner dashboard|scan contract|type="file"/i);
 });
 
@@ -46,13 +45,18 @@ test("interactive source and displayed figures are limited to the local demo", (
   assert.doesNotMatch(metrics, /Researchers registered|Total paid out|Customers/);
 });
 
-test("demo detail embeds the shared verifier and retains its direct route", () => {
+test("vault detail shows honest fixture data and sends submissions to the shared verifier", () => {
   assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney role="researcher"/);
   const journey = read("./components/journeys/role-journey.tsx");
-  assert.match(journey, /<VerificationConsole embedded/);
-  assert.match(journey, /href="#submission"/);
+  assert.match(journey, /role="tablist"/);
+  assert.match(journey, /href="\/submit-report"/);
   assert.match(journey, /Runnable fixture/);
-  assert.match(journey, /arbitrary uploads are not authorized/);
+  assert.match(read("./app/submit-report/page.tsx"), /<VerificationConsole embedded/);
+  assert.match(read("./app/how-it-works/page.tsx"), /researcher-owned|your own AI agent/);
+  const program = JSON.parse(read("./public/data/vault-program.json"));
+  assert.equal(program.reward, "None offered");
+  assert.equal(program.status, "local_fixture_only");
+  assert.ok(program.outOfScope.includes("Arbitrary contract or PoC uploads"));
   assert.match(read("./app/verify/page.tsx"), /<VerificationConsole/);
   const footer = read("./components/layout/site-footer.tsx");
   assert.doesNotMatch(footer, /\/teams\/start|\/researchers\/start|\/verify/);

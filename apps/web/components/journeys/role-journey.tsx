@@ -1,24 +1,18 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
-import { RoleWorkflow } from "@/components/journeys/role-workflow";
-import { VerificationConsole } from "@/components/verification/verification-console";
+import program from "@/public/data/vault-program.json";
 
-export function RoleJourney({ role }: { role: "researcher" | "team" }) {
+export function RoleJourney({ role: _role }: { role: "researcher" | "team" }) {
+  const [tab, setTab] = useState<"instructions" | "scope">("instructions");
   return <main id="main" className="site-shell opportunity-detail">
     <Link href="/get-started" className="back-link focus-ring"><ArrowLeft size={16} aria-hidden="true" /> All opportunities</Link>
-    <header className="opportunity-detail-header">
-      <div className="opportunity-identity"><span className="opportunity-identity-mark" aria-hidden="true">V</span><div><p className="eyebrow">Reviewed local fixture</p><h1>Vault Audit Program</h1><div className="opportunity-tags"><span><CheckCircle2 size={14} /> Runnable fixture</span><span>ERC-4626</span><span>No bounty</span></div></div></div>
-      <p>Examine the scoped vault and reproduce its share-inflation claim with the existing Foundry verifier.</p>
-    </header>
-    <div className="opportunity-detail-layout">
-      <div className="opportunity-detail-main">
-        <nav className="opportunity-detail-nav" aria-label="Program sections"><a href="#instructions">Instructions</a><a href="#scope">Scope</a><a href="#submission">Verify PoC</a></nav>
-        <section id="instructions" className="opportunity-copy"><h2>What to investigate</h2><p>The reviewed vault has vulnerable and patched implementations. An asset donation can change the vulnerable vault’s share calculation before a victim deposit. The same trusted PoC tests both implementations.</p><h3>Researcher path</h3><ol><li>Read the permitted scope and checked-in source.</li><li>Investigate with your own agent, tools, or manual review.</li><li>Run the reviewed PoC and compare the returned evidence.</li></ol><p className="opportunity-boundary"><LockKeyhole size={17} aria-hidden="true" /> External contracts and arbitrary uploads are not authorized.</p></section>
-        <section id="scope" className="opportunity-copy"><h2>Authorized scope</h2><dl className="opportunity-scope"><div><dt>Target</dt><dd>contracts/evm/FixtureVault.sol</dd></div><div><dt>PoC reference</dt><dd>test/TrustedVaultWorker.t.sol</dd></div><div><dt>Environment</dt><dd>Isolated local Foundry worker</dd></div><div><dt>Permitted input</dt><dd>Reviewed fixture references only</dd></div></dl></section>
-        <RoleWorkflow role={role} />
-      </div>
-      <aside className="opportunity-detail-aside" aria-label="Program summary"><p className="eyebrow">Verification access</p><h2>One claim. Two controls.</h2><p>Run the vulnerable and patched fixtures, then inspect the actual verdict and private evidence receipt.</p><dl><div><dt>Reward</dt><dd>None offered</dd></div><div><dt>Program</dt><dd>Local fixture only</dd></div><div><dt>Submission</dt><dd>API token required</dd></div><div><dt>Team review</dt><dd>Planned</dd></div></dl><a className="site-action site-action-dark focus-ring" href="#submission">Open verifier <ArrowRight size={16} aria-hidden="true" /></a></aside>
-    </div>
-    <VerificationConsole embedded />
+    <header className="opportunity-detail-header"><div className="opportunity-identity"><span className="opportunity-identity-mark" aria-hidden="true">V</span><div><p className="eyebrow">Reviewed local fixture</p><h1>{program.title}</h1><div className="opportunity-tags"><span><CheckCircle2 size={14} aria-hidden="true" /> Runnable fixture</span><span>ERC-4626</span><span>No bounty offered</span></div></div></div></header>
+    <div className="opportunity-detail-layout"><div className="opportunity-detail-main">
+      <div className="opportunity-detail-nav" role="tablist" aria-label="Program information"><button type="button" role="tab" aria-selected={tab === "instructions"} aria-controls="program-panel" onClick={() => setTab("instructions")}>Instructions</button><button type="button" role="tab" aria-selected={tab === "scope"} aria-controls="program-panel" onClick={() => setTab("scope")}>Scope</button></div>
+      <div id="program-panel" role="tabpanel" className="opportunity-copy">{tab === "instructions" ? <><h2>What we’re looking for</h2><p>Investigate donation-driven share inflation in the reviewed ERC-4626-style vault. The vulnerable implementation may mint zero shares for a victim deposit after an attacker donation; the patched control helps test the same claim.</p><h3>How researchers submit</h3><ol>{program.instructions.map(item => <li key={item}>{item}</li>)}</ol><p>Agent output is a claim until the trusted Foundry worker returns a verdict. A reproduced result applies only to tested conditions and does not decide bounty eligibility.</p><Link href="/how-it-works" className="focus-ring text-forest">Read the researcher workflow <ArrowRight size={15} aria-hidden="true" /></Link></> : <><h2>In scope</h2><ul>{program.inScope.map(item => <li key={item}>{item}</li>)}</ul><h3>Reviewed target</h3><dl className="opportunity-scope"><div><dt>Contract</dt><dd>{program.target}</dd></div><div><dt>PoC</dt><dd>{program.poc}</dd></div><div><dt>Environment</dt><dd>{program.environment}</dd></div><div><dt>Input</dt><dd>{program.permittedInput}</dd></div></dl><h3>Out of scope</h3><ul>{program.outOfScope.map(item => <li key={item}>{item}</li>)}</ul><p className="opportunity-boundary"><LockKeyhole size={17} aria-hidden="true" /> This public page grants no authority to test deployed contracts.</p></>}</div>
+    </div><aside className="opportunity-detail-aside" aria-label="Program summary"><p className="eyebrow">Local fixture program</p><h2>Verification details</h2><dl><div><dt>Maximum reward</dt><dd>{program.reward}</dd></div><div><dt>Target</dt><dd>ERC-4626 vault</dd></div><div><dt>Access</dt><dd>Reviewed fixtures only</dd></div><div><dt>Finding review</dt><dd>Planned</dd></div></dl><p>A local API token is required to submit the reviewed PoC. No live bounty enrollment or payout is available.</p><Link className="site-action site-action-dark focus-ring" href="/submit-report">Join bounty <ArrowRight size={16} aria-hidden="true" /></Link><small>Opens the local report and verification flow.</small></aside></div>
   </main>;
 }

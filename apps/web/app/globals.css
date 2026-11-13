@@ -547,3 +547,31 @@ summary { cursor: pointer; }
 .opportunity-detail-aside dl { margin: 24px 0; font-size: .85rem; }
 @media (max-width: 850px) { .opportunity-detail-layout { grid-template-columns: 1fr; gap: 0; } .opportunity-detail-aside { position: static; margin: 25px 0; grid-row: 1; } }
 @media (max-width: 420px) { .icon-flow { gap: 4px; } .icon-flow span { padding: 17px 2px; } .icon-flow span svg { width: 20px; height: 20px; } .icon-flow small { font-size: .58rem; } .icon-flow > svg { width: 10px; } .opportunity-identity { align-items: flex-start; gap: 10px; } .opportunity-identity-mark { width: 42px; height: 42px; font-size: 1.3rem; flex: none; } }
+
+.agent-board { padding-block: 70px 90px; }
+.agent-board-head { display: flex; justify-content: space-between; align-items: center; gap: 20px; text-align: center; flex-direction: column; }
+.agent-board-head h2 { font-size: clamp(2.5rem, 6vw, 4.5rem); letter-spacing: -.06em; line-height: 1.1; }
+.agent-board-head p:last-child { max-width: 34rem; color: var(--muted); }
+.agent-board-head > svg { color: var(--accent); }
+.agent-board-scroll { overflow-x: auto; margin-top: 48px; }
+.agent-board table { width: 100%; min-width: 570px; border-collapse: collapse; text-align: left; }
+.agent-board th, .agent-board td { padding: 19px 14px; border-bottom: 1px solid var(--line); }
+.agent-board th { color: var(--muted); font-size: .78rem; font-weight: 500; }
+.agent-board td { font-size: .92rem; }
+.agent-board td:nth-child(2), .agent-board td:last-child { display: flex; align-items: center; gap: 12px; }
+.agent-avatar { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--surface); color: var(--accent); }
+.agent-board-note { color: var(--muted); font-size: .78rem; margin-top: 16px; }
+.opportunity-detail-nav { gap: 0; padding: 0; }
+.opportunity-detail-nav button { padding: 20px 22px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); cursor: pointer; }
+.opportunity-detail-nav button[aria-selected="true"] { border-color: var(--accent); color: var(--ink); }
+.opportunity-copy ul { padding-left: 22px; }
+.opportunity-copy li { margin: 10px 0; }
+.opportunity-detail-aside small { display: block; margin-top: 12px; color: var(--muted); font-size: .75rem; }
+.workflow-guide { padding-block: 90px 120px; max-width: 880px; }
+.workflow-guide h1, .submit-report h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 1.05; letter-spacing: -.06em; }
+.workflow-guide ol { padding-left: 28px; margin: 50px 0; }
+.workflow-guide li { padding: 22px 0; border-bottom: 1px solid var(--line); }
+.workflow-guide h2 { font-size: 1.5rem; }
+.workflow-guide p, .submit-report > p { color: var(--muted); line-height: 1.7; }
+.submit-report { padding-block: 55px 100px; }
+.submit-report > p { margin: 20px 0 35px; }
