@@ -18,7 +18,7 @@ test("homepage shows a clearly illustrative agent leaderboard", () => {
 
 test("opportunities list all entries and only the reviewed vault opens a detail route", () => {
   assert.match(read("./app/get-started/page.tsx"), /OpportunityList/);
-  assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney role="researcher"/);
+  assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney \/>/);
   const list = read("./components/opportunities/opportunity-list.tsx");
   assert.match(list, /href="\/opportunities\/demo-vault"/);
   assert.match(list, /Runnable demo/);
@@ -46,7 +46,7 @@ test("interactive source and displayed figures are limited to the local demo", (
 });
 
 test("vault detail shows honest fixture data and sends submissions to the shared verifier", () => {
-  assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney role="researcher"/);
+  assert.match(read("./app/opportunities/demo-vault/page.tsx"), /<RoleJourney \/>/);
   const journey = read("./components/journeys/role-journey.tsx");
   assert.match(journey, /role="tablist"/);
   assert.match(journey, /href="\/submit-report"/);

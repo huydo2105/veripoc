@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowLeft, ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
 import program from "@/public/data/vault-program.json";
 
-export function RoleJourney({ role: _role }: { role: "researcher" | "team" }) {
+export function RoleJourney() {
   const [tab, setTab] = useState<"instructions" | "scope">("instructions");
   return <main id="main" className="site-shell opportunity-detail">
     <Link href="/get-started" className="back-link focus-ring"><ArrowLeft size={16} aria-hidden="true" /> All opportunities</Link>
