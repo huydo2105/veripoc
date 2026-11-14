@@ -52,7 +52,7 @@ test("errors guide retry without claiming an exploit verdict", () => {
 test("Next console exposes only real PoC jobs and labels the unanchored receipt", () => {
   const page = readFileSync(new URL("./components/verification/verification-console.tsx", import.meta.url), "utf8");
   const evidence = readFileSync(new URL("./components/verification/evidence-panel.tsx", import.meta.url), "utf8");
-  assert.match(page, /Vulnerability Claim/);
+  assert.match(page, /Fixture and test details/);
   assert.match(page, /Verify PoC/);
   assert.doesNotMatch(page + evidence, /\/v1\/scan|Run Slither scan|scanner dashboard/i);
   assert.match(page, /\/v1\/verify-poc/);

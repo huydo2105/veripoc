@@ -1,0 +1,18 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
+import program from "@/public/data/vault-program.json";
+
+export function RoleJourney() {
+  const [tab, setTab] = useState<"instructions" | "scope">("instructions");
+  return <main id="main" className="site-shell opportunity-detail">
+    <Link href="/get-started" className="back-link focus-ring"><ArrowLeft size={16} aria-hidden="true" /> All opportunities</Link>
+    <header className="opportunity-detail-header"><div className="opportunity-identity"><span className="opportunity-identity-mark" aria-hidden="true">V</span><div><p className="eyebrow">Reviewed local fixture</p><h1>{program.title}</h1><div className="opportunity-tags"><span><CheckCircle2 size={14} aria-hidden="true" /> Runnable fixture</span><span>ERC-4626</span><span>No bounty offered</span></div></div></div></header>
+    <div className="opportunity-detail-layout"><div className="opportunity-detail-main">
+      <div className="opportunity-detail-nav" role="tablist" aria-label="Program information"><button type="button" role="tab" aria-selected={tab === "instructions"} aria-controls="program-panel" onClick={() => setTab("instructions")}>Instructions</button><button type="button" role="tab" aria-selected={tab === "scope"} aria-controls="program-panel" onClick={() => setTab("scope")}>Scope</button></div>
+      <div id="program-panel" role="tabpanel" className="opportunity-copy">{tab === "instructions" ? <><h2>What we’re looking for</h2><p>Investigate donation-driven share inflation in the reviewed ERC-4626-style vault. The vulnerable implementation may mint zero shares for a victim deposit after an attacker donation; the patched control helps test the same claim.</p><h3>How researchers submit</h3><ol>{program.instructions.map(item => <li key={item}>{item}</li>)}</ol><p>Agent output is a claim until the trusted Foundry worker returns a verdict. A reproduced result applies only to tested conditions and does not decide bounty eligibility.</p><Link href="/how-it-works" className="focus-ring text-forest">Read the researcher workflow <ArrowRight size={15} aria-hidden="true" /></Link></> : <><h2>In scope</h2><ul>{program.inScope.map(item => <li key={item}>{item}</li>)}</ul><h3>Reviewed target</h3><dl className="opportunity-scope"><div><dt>Contract</dt><dd>{program.target}</dd></div><div><dt>PoC</dt><dd>{program.poc}</dd></div><div><dt>Environment</dt><dd>{program.environment}</dd></div><div><dt>Input</dt><dd>{program.permittedInput}</dd></div></dl><h3>Out of scope</h3><ul>{program.outOfScope.map(item => <li key={item}>{item}</li>)}</ul><p className="opportunity-boundary"><LockKeyhole size={17} aria-hidden="true" /> This public page grants no authority to test deployed contracts.</p></>}</div>
+    </div><aside className="opportunity-detail-aside" aria-label="Program summary"><p className="eyebrow">Local fixture program</p><h2>Verification details</h2><dl><div><dt>Maximum reward</dt><dd>{program.reward}</dd></div><div><dt>Target</dt><dd>ERC-4626 vault</dd></div><div><dt>Access</dt><dd>Reviewed fixtures only</dd></div><div><dt>Finding review</dt><dd>Planned</dd></div></dl><p>A local API token is required to submit the reviewed PoC. No live bounty enrollment or payout is available.</p><Link className="site-action site-action-dark focus-ring" href="/submit-report">Join bounty <ArrowRight size={16} aria-hidden="true" /></Link><small>Opens the local report and verification flow.</small></aside></div>
+  </main>;
+}

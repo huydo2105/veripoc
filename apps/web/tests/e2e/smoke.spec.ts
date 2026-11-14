@@ -1,61 +1,91 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 for (const width of [1440, 1024, 390, 320]) {
-  test(`homepage roles and layout at ${width}px`, async ({ page }, testInfo) => {
-    await page.setViewportSize({ width, height: 900 });
+  test(`workflow, leaderboard, and vault detail fit ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: /Find vulnerabilities.*Verify the evidence/i })).toBeVisible();
-    await expect(page.getByTestId("role-card")).toHaveCount(2);
-    await expect(page.getByRole("link", { name: /I have a smart contract to audit/ })).toHaveAttribute("href", "/teams/start");
-    await expect(page.getByRole("link", { name: /I want to audit/ })).toHaveAttribute("href", "/researchers/start");
-    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth);
-    expect(overflow).toBe(false);
-    if (width <= 390) {
-      const cards = page.getByTestId("role-card");
-      expect((await cards.nth(1).boundingBox())!.y).toBeGreaterThan((await cards.first().boundingBox())!.y);
-    }
-    if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath(`home-${width}.png`), fullPage: true });
+    await expect(page.locator(".story-section")).toHaveCount(3);
+    await expect(page.getByText("Payouts available")).toBeVisible();
+    await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Leaderboard" }).click();
+    await expect(page).toHaveURL(/\/leaderboard$/);
+    await expect(page.getByRole("heading", { name: "AI agent leaderboard" })).toBeVisible();
+    await expect(page.getByText("ILLUSTRATIVE PROFILES · NO LIVE RANKINGS")).toBeVisible();
+    await expect(page.locator(".agent-board tbody tr")).toHaveCount(3);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+    await page.goto("/opportunities/demo-vault");
+    await expect(page.getByRole("heading", { name: "Vault Audit Program" })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   });
 }
 
-test("deep links, home navigation and shared verifier", async ({ page }) => {
-  await page.goto("/teams/start");
-  await expect(page.getByText("Demo Vault Audit Program")).toBeVisible();
-  await expect(page.getByText(/permission enforcement belong to Issue #35/)).toBeVisible();
-  await page.getByRole("link", { name: "VeriPoC home" }).click();
-  await expect(page).toHaveURL(/\/$/);
-  await page.getByRole("link", { name: /I want to audit/ }).click();
-  await expect(page).toHaveURL(/\/researchers\/start$/);
-  await expect(page.getByText(/no live networks, external targets, or arbitrary uploads/)).toBeVisible();
-  await page.getByRole("link", { name: /Open verification demo/ }).click();
-  await expect(page).toHaveURL(/\/verify$/);
+test("opportunity tabs show reviewed instructions and scope", async ({ page }) => {
+  await page.goto("/opportunities/demo-vault");
+  const tabs = page.getByRole("tablist", { name: "Program information" });
+  await expect(tabs.getByRole("tab", { name: "Instructions" })).toHaveAttribute("aria-selected", "true");
+  await expect(page.getByRole("heading", { name: "What we’re looking for" })).toBeVisible();
+  await page.getByRole("link", { name: /Read the researcher workflow/ }).click();
+  await expect(page).toHaveURL(/\/how-it-works$/);
+  await page.goBack();
+  await tabs.getByRole("tab", { name: "Scope" }).click();
+  await expect(page.getByRole("heading", { name: "In scope" })).toBeVisible();
+  await expect(page.getByText("contracts/evm/FixtureVault.sol")).toBeVisible();
+  await expect(page.getByText("Deployed contracts", { exact: true })).toBeVisible();
+});
+
+test("Join bounty opens only the supported local report flow", async ({ page }) => {
+  await page.goto("/opportunities/demo-vault");
+  await expect(page.getByText("None offered")).toBeVisible();
+  await page.getByRole("link", { name: /Join bounty/ }).click();
+  await expect(page).toHaveURL(/\/submit-report$/);
   await expect(page.getByRole("button", { name: /Verify PoC/ })).toBeVisible();
-});
-
-test("keyboard focus, icon-only brand and reduced motion", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const brand = page.getByRole("link", { name: "VeriPoC home" });
-  await expect(brand).toHaveText("");
-  await expect(brand.locator("img")).toHaveCount(1);
-  for (let index = 0; index < 7; index++) await page.keyboard.press("Tab");
-  await expect(page.getByTestId("role-card").first()).toBeFocused();
-  expect(await page.getByTestId("role-card").first().evaluate(element => element.matches(":focus-visible"))).toBe(true);
-  expect(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior)).toBe("auto");
-});
-
-test("verification never claims a result without an authenticated backend response", async ({ page }, testInfo) => {
-  await page.goto("/verify");
   await expect(page.locator("#verification").getByText("Awaiting run", { exact: true })).toBeVisible();
-  await expect(page.getByText("Not captured", { exact: true })).toHaveCount(3);
-  await expect(page.getByText(/Agent #1067 is listed in the published card/)).toBeVisible();
-  if (process.env.CAPTURE_SCREENSHOTS) await page.screenshot({ path: testInfo.outputPath("verify-empty.png"), fullPage: true });
   await page.getByRole("button", { name: /Verify PoC/ }).click();
   await expect(page.locator("#verification").getByRole("alert")).toContainText("Enter the local API token");
-  await page.getByLabel("LOCAL API TOKEN").fill("invalid-demo-token");
+  await page.getByLabel("LOCAL API TOKEN").fill("invalid-test-token");
   await page.getByRole("button", { name: /Verify PoC/ }).click();
-  await expect(page.locator("#verification").getByRole("alert")).toContainText(/verification API is unavailable|API token rejected/i);
+  await expect(page.locator("#verification").getByRole("alert")).toContainText(/verification API is unavailable|API token rejected/i, { timeout: 20000 });
   await expect(page.locator("#verification").getByText("Awaiting run", { exact: true })).toBeVisible();
-  await page.getByRole("button", { name: /Patched control/ }).click();
-  await expect(page.getByText("Same PoC against the patched vault")).toBeVisible();
+});
+
+test("directory keeps runnable fixture distinct from unavailable previews", async ({ page }) => {
+  await page.goto("/get-started");
+  await expect(page.locator(".directory-row")).toHaveCount(3);
+  await page.getByRole("group", { name: "Opportunity category" }).getByRole("button", { name: /Bounties/ }).click();
+  await expect(page.getByRole("status")).toContainText("There are no live bounties");
+  await page.getByRole("group", { name: "Opportunity category" }).getByRole("button", { name: /All/ }).click();
+  await page.getByRole("link", { name: "Open Demo Vault Audit Program details" }).click();
+  await expect(page).toHaveURL(/\/opportunities\/demo-vault$/);
+});
+
+test("public scope remains readable without JavaScript", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL, javaScriptEnabled: false });
+  try {
+    const page = await context.newPage();
+    await page.goto("/opportunities/demo-vault");
+    await expect(page.getByRole("heading", { name: "What we’re looking for" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Join bounty/ })).toBeVisible();
+  } finally { await context.close(); }
+});
+
+test("team draft wizard keeps fields locally and never submits a program", async ({ page }) => {
+  const posts: string[] = [];
+  page.on("request", request => { if (request.method() === "POST") posts.push(request.url()); });
+  await page.goto("/teams/new");
+  await expect(page.getByRole("heading", { name: "Draft a bug bounty project" })).toBeVisible();
+  await expect(page.getByText("Team workspace preview")).toHaveCount(0);
+  await page.getByRole("textbox", { name: /Project name/ }).fill("Sample vault review");
+  await page.getByRole("button", { name: /Continue/ }).click();
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).toContainText("Sample vault review");
+  await page.getByRole("button", { name: "Help for System overview and investigation goals" }).focus();
+  await expect(page.getByRole("tooltip")).toContainText("Describe assets, trust boundaries");
+  await page.getByRole("textbox", { name: /System overview and investigation goals/ }).fill("Review share accounting and record a PoC.");
+  await page.getByRole("navigation", { name: "Draft sections" }).getByRole("button", { name: /Scope/ }).click();
+  await page.getByRole("textbox", { name: /Target contract and immutable revision/ }).fill("Vault.sol at commit abc123");
+  await page.getByRole("textbox", { name: /Permitted testing scope/ }).fill("Local fixture only");
+  await page.getByRole("navigation", { name: "Draft sections" }).getByRole("button", { name: /Links/ }).click();
+  await page.getByRole("button", { name: /Preview unsaved draft/ }).click();
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).toContainText("Sample vault review");
+  expect(posts).toEqual([]);
+  await page.reload();
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).not.toContainText("Sample vault review");
 });

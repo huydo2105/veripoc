@@ -29,6 +29,14 @@ jobs:
       - run: npm run web:build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e --workspace @veripoc/web
+        env:
+          CAPTURE_SCREENSHOTS: "1"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: web-screenshots
+          path: apps/web/test-results/**/*.png
+          if-no-files-found: ignore
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

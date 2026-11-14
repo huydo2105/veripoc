@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { SiteHeader } from "@/components/layout/site-header";
+import { SiteFooter } from "@/components/layout/site-footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,15 +14,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" data-scroll-behavior="smooth" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <body className="font-sans antialiased">
+      <body className="flex min-h-screen flex-col font-sans antialiased">
         <a href="#main" className="skip-link focus-ring">Skip to content</a>
         <SiteHeader />
         {children}
-        <footer className="border-t border-line text-sm text-muted">
-          <div className="mx-auto flex w-full max-w-[1160px] flex-wrap justify-between gap-2 px-5 py-6 md:px-6">
-            <span>VeriPoC</span><span>Local demo · No automatic audit certification or bounty decision</span>
-          </div>
-        </footer>
+        <SiteFooter />
       </body>
     </html>
   );
