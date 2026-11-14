@@ -41,7 +41,7 @@ test("interactive source and displayed figures are limited to the local demo", (
   const metrics = read("./components/landing/demo-metrics.tsx");
   assert.match(editor, /VulnerableVault.sol/);
   assert.match(editor, /PatchedVault.sol/);
-  assert.match(editor, /Code selection never runs Foundry/);
+  assert.match(editor, /READ ONLY/);
   assert.doesNotMatch(editor, /fetch\(|POST|type="file"/);
   assert.match(metrics, /Local demo figures/);
   assert.doesNotMatch(metrics, /detail:|demo-metrics-caption/);
@@ -70,7 +70,8 @@ test("vault detail shows honest fixture data and sends submissions to the shared
 test("team can preview an unsaved project draft without publishing it", () => {
   const draft = read("./components/journeys/program-draft.tsx");
   assert.match(read("./app/teams/new/page.tsx"), /ProgramDraft/);
-  assert.match(draft, /Nothing here is saved, published, sent to the verifier/);
+  assert.match(draft, /Nothing is saved, published, sent to the verifier/);
+  for (const section of ["Instructions", "Scope", "Exclusions", "Rewards", "Links"]) assert.match(draft, new RegExp(section));
   assert.match(draft, /Preview unsaved draft/);
   assert.doesNotMatch(draft, /fetch\(|localStorage|type="file"/);
 });

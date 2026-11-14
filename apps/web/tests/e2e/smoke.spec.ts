@@ -66,3 +66,23 @@ test("public scope remains readable without JavaScript", async ({ browser, baseU
     await expect(page.getByRole("link", { name: /Join bounty/ })).toBeVisible();
   } finally { await context.close(); }
 });
+
+test("team draft wizard keeps fields locally and never submits a program", async ({ page }) => {
+  const posts: string[] = [];
+  page.on("request", request => { if (request.method() === "POST") posts.push(request.url()); });
+  await page.goto("/teams/new");
+  await expect(page.getByRole("heading", { name: "Draft a bug bounty project" })).toBeVisible();
+  await expect(page.getByText("Team workspace preview")).toHaveCount(0);
+  await page.getByLabel("Project name").fill("Sample vault review");
+  await page.getByRole("button", { name: /Continue/ }).click();
+  await page.getByLabel("Researcher instructions").fill("Review share accounting and record a PoC.");
+  await page.getByRole("button", { name: /Continue/ }).click();
+  await page.getByLabel("Target contract and immutable revision").fill("Vault.sol at commit abc123");
+  await page.getByLabel("Permitted testing scope").fill("Local fixture only");
+  await page.getByRole("navigation", { name: "Draft sections" }).getByRole("button", { name: /Links/ }).click();
+  await page.getByRole("button", { name: /Preview unsaved draft/ }).click();
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).toContainText("Sample vault review");
+  expect(posts).toEqual([]);
+  await page.reload();
+  await expect(page.getByRole("complementary", { name: "Program draft preview" })).not.toContainText("Sample vault review");
+});
