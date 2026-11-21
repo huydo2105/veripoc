@@ -110,6 +110,32 @@ test("same-origin proxy forwards Concordium wallet auth, session cookies, and CS
     assert.equal(meRes.status, 200);
     assert.equal((await meRes.json()).account, address.address);
 
+    const programRes = await POST(new Request(`${origin}/v1/programs`, { method: "POST",
+      headers: { cookie, origin, "x-veripoc-csrf": verified.csrfToken, "content-type": "application/json" },
+      body: JSON.stringify({ name: "Proxy vault", sourceUrl: "https://github.com/example/vault",
+        sourceRevision: "a".repeat(40), chain: "evm-local", confidentiality: "members-only", visibility: "private",
+        contact: "", docsUrl: "", agentContext: "", rewardCurrency: "USD",
+        rewardTiers: ["critical", "high", "medium", "low", "informational"].map(severity => ({ severity, min: 0, max: 0 })),
+        references: [],
+        permittedTargets: ["contracts/Vault.sol"], rules: "Local only", exclusions: "Production",
+        runLimit: 2, invitedResearcherAccounts: [], invitedAgentBadges: [] }),
+    }), context("programs"));
+    assert.equal(programRes.status, 201);
+    const programId = (await programRes.json()).program.id;
+    const privateProgram = await GET(new Request(`${origin}/v1/programs/${programId}`, { headers: { cookie } }),
+      context("programs", programId));
+    assert.equal(privateProgram.status, 200);
+    assert.equal((await privateProgram.json()).program.ownerAccount, address.address);
+    assert.equal((await GET(new Request(`${origin}/v1/programs/${programId}`), context("programs", programId))).status, 404);
+    const publicList = await GET(new Request(`${origin}/v1/programs/public`), context("programs", "public"));
+    assert.equal(publicList.status, 200);
+    assert.deepEqual((await publicList.json()).programs, []);
+    const incompleteSetup = await POST(new Request(`${origin}/v1/programs/agent-setup`, { method: "POST",
+      headers: { cookie, origin, "x-veripoc-csrf": verified.csrfToken, "content-type": "application/json" },
+      body: JSON.stringify({}),
+    }), context("programs", "agent-setup"));
+    assert.equal(incompleteSetup.status, 400);
+
     const logoutRes = await POST(new Request(`${origin}/v1/auth/logout`, {
       method: "POST",
       headers: { cookie, origin, "x-veripoc-csrf": verified.csrfToken },

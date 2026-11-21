@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, ExternalLink, Search } from "lucide-react";
@@ -9,11 +9,12 @@ import publicSources from "@/public/data/public-sources.json";
 import { NetworkBadge } from "@/components/opportunities/network-badge";
 import { BrandMark } from "@/components/brand/brand-mark";
 
-type Category = "all" | "bounties" | "source" | "practice" | "fixture";
+type Category = "all" | "bounties" | "source" | "practice" | "fixture" | "programs";
 type Source = (typeof publicSources)[number];
+type PublicProgram = { id: string; name: string; chain: string; sourceRevision: string; verification: string };
 
 function TeamPromo() {
-  return <section className="directory-promo" aria-labelledby="promo-title"><p className="eyebrow">For DeFi teams</p><h2 id="promo-title">High-signal findings.<br />Evidence you can review.</h2><p>Preview how your project scope could look. Program publishing, invitations, and bounty payouts are not live yet.</p><Link href="/teams/new" className="site-action site-action-dark focus-ring">Preview an unsaved project <ArrowRight size={16} aria-hidden="true" /></Link></section>;
+  return <section className="directory-promo" aria-labelledby="promo-title"><p className="eyebrow">For DeFi teams</p><h2 id="promo-title">High-signal findings.<br />Evidence you can review.</h2><p>Define a scoped program and publish it through the local API. New programs do not yet run arbitrary PoCs or settle rewards.</p><Link href="/teams/new" className="site-action site-action-dark focus-ring">Create a program <ArrowRight size={16} aria-hidden="true" /></Link></section>;
 }
 
 function SourceRow({ source }: { source: Source }) {
@@ -28,21 +29,30 @@ function SourceRow({ source }: { source: Source }) {
 export function OpportunityList() {
   const [category, setCategory] = useState<Category>("all");
   const [query, setQuery] = useState("");
+  const [programs, setPrograms] = useState<PublicProgram[]>([]);
+  useEffect(() => {
+    let active = true;
+    fetch("/v1/programs/public", { cache: "no-store" }).then(response => response.ok ? response.json() : null)
+      .then(data => { if (active && Array.isArray(data?.programs)) setPrograms(data.programs); }).catch(() => {});
+    return () => { active = false; };
+  }, []);
   const needle = query.trim().toLowerCase();
   const matches = (value: string) => value.toLowerCase().includes(needle);
   const categories: { id: Category; label: string; count: number }[] = [
-    { id: "all", label: "All", count: bounties.length + publicSources.length + 1 },
+    { id: "all", label: "All", count: bounties.length + publicSources.length + programs.length + 1 },
     { id: "bounties", label: "Bug bounties", count: bounties.length },
+    { id: "programs", label: "VeriPoC programs", count: programs.length },
     { id: "source", label: "Public source", count: publicSources.filter(item => item.kind === "protocol").length },
     { id: "practice", label: "Practice labs", count: publicSources.filter(item => item.kind === "practice").length },
     { id: "fixture", label: "VeriPoC fixture", count: 1 },
   ];
   const visibleBounties = (category === "all" || category === "bounties") ? bounties.filter(item => matches(`${item.title} ${item.description} ${item.ecosystems.join(" ")}`)) : [];
+  const visiblePrograms = (category === "all" || category === "programs") ? programs.filter(item => matches(`${item.name} ${item.chain} ${item.sourceRevision}`)) : [];
   const showVault = (category === "all" || category === "fixture") && matches("Demo Vault Audit Program ERC-4626 local fixture VeriPoC Ethereum EVM");
   const visibleSources = publicSources.filter(item =>
     (category === "all" || category === "source" && item.kind === "protocol" || category === "practice" && item.kind === "practice") &&
     matches(`${item.title} ${item.owner} ${item.description} ${item.repository} ${item.ecosystem}`));
-  const count = visibleBounties.length + Number(showVault) + visibleSources.length;
+  const count = visibleBounties.length + visiblePrograms.length + Number(showVault) + visibleSources.length;
 
   return <main id="main" className="site-shell directory-page">
     <section className="directory-hero" aria-labelledby="directory-title"><h1 id="directory-title">Opportunities</h1><p>Browse published bug bounty programs, public source references, and VeriPoC&apos;s reviewed local vault fixture.</p></section>
@@ -59,6 +69,7 @@ export function OpportunityList() {
           <div className="directory-row-foot"><span>Bug bounty · Immunefi</span>{item.ecosystems.map(network => <NetworkBadge key={network} ecosystem={network} />)}<span>Read official terms before testing</span><span className="directory-date">View scope <ArrowRight size={16} aria-hidden="true" /></span></div>
         </Link>)}
         {visibleBounties.length > 0 && <TeamPromo />}
+        {visiblePrograms.map(item => <Link key={item.id} href={`/programs/${item.id}`} className="directory-row directory-bounty focus-ring" aria-label={`Open ${item.name} public VeriPoC program`}><div className="directory-row-main"><span className="directory-mark"><BrandMark size={30} /></span><div><strong>{item.name}</strong><small>Public VeriPoC scope · {item.chain}</small></div><span className="directory-reward">Program scope<small>{item.verification}</small></span></div><div className="directory-row-foot"><span>Public program</span><span>Revision {item.sourceRevision.slice(0, 12)}</span><span>Report intake not configured</span><span className="directory-date">View scope <ArrowRight size={16} aria-hidden="true" /></span></div></Link>)}
         {showVault && <Link href="/opportunities/demo-vault" className="directory-row directory-live focus-ring" aria-label="Open Demo Vault Audit Program details">
           <div className="directory-row-main"><span className="directory-mark"><BrandMark size={30} /></span><div><strong>Demo Vault Audit Program</strong><small>VeriPoC reviewed synthetic fixture</small></div><span className="directory-reward">No bounty<small>Runnable locally</small></span></div>
           <div className="directory-row-foot"><span>PoC verification</span><span className="directory-badge"><CheckCircle2 size={14} aria-hidden="true" /> Runnable fixture</span><NetworkBadge ecosystem="ethereum" /><span>ERC-4626-style vault</span><span className="directory-date">View fixture <ArrowRight size={16} aria-hidden="true" /></span></div>

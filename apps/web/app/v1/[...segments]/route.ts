@@ -14,6 +14,15 @@ async function forward(request: Request, context: Context, method: "GET" | "POST
       || (method === "POST" && segments.length === 2 && (segments[1] === "role" || segments[1] === "logout"))
       || (method === "POST" && segments.length === 3 && segments[1] === "concordium" && (segments[2] === "challenge" || segments[2] === "verify"))
     ) ? `/v1/${segments.join("/")}`
+    : segments[0] === "programs" && (
+      (method === "POST" && segments.length === 1)
+      || (method === "POST" && segments.length === 2 && segments[1] === "agent-setup")
+      || (method === "GET" && segments.length === 2 && ["mine", "invited", "public"].includes(segments[1]))
+      || (segments.length >= 2 && jobId.test(segments[1]) && (
+        (method === "GET" && (segments.length === 2 || (segments.length === 3 && ["submissions", "jobs"].includes(segments[2]))))
+        || (method === "POST" && segments.length === 3 && ["invitations", "status"].includes(segments[2]))
+      ))
+    ) ? `/v1/${segments.join("/")}`
     : segments[0] === "programs" && segments[1] === "demo-vault" && (
       (method === "GET" && segments.length === 2)
       || (method === "GET" && segments.length === 3 && segments[2] === "submissions")
@@ -47,7 +56,7 @@ async function forward(request: Request, context: Context, method: "GET" | "POST
         const { done, value } = await reader.read();
         if (done) break;
         size += value.byteLength;
-        if (size > 4096) { await reader.cancel(); return error(413, "request too large"); }
+        if (size > (path === "/v1/programs" ? 16_384 : path === "/v1/programs/agent-setup" ? 12_000 : 4096)) { await reader.cancel(); return error(413, "request too large"); }
         chunks.push(value);
       }
       const buffer = new Uint8Array(size);

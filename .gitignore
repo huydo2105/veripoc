@@ -16,3 +16,4 @@ coverage/
 lcov.info
 .DS_Store
 .agents/
+.local/

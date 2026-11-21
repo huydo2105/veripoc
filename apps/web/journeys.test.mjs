@@ -82,14 +82,15 @@ test("vault detail links to the protected program while preserving the fixed ver
   assert.doesNotMatch(footer, /\/teams\/start|\/researchers\/start|\/verify/);
 });
 
-test("team can preview an unsaved project draft without publishing it", () => {
+test("team wizard previews locally and has a final editable agent setup", () => {
   const draft = read("./components/journeys/program-draft.tsx");
   assert.match(read("./app/teams/new/page.tsx"), /ProgramDraft/);
   assert.match(draft, /Unsaved local preview/);
-  for (const section of ["Instructions", "Agent access", "Scope", "Exclusions", "Rewards", "Links"]) assert.match(draft, new RegExp(section));
+  for (const section of ["Instructions", "Agent setup", "Scope", "Exclusions", "Rewards", "Links"]) assert.match(draft, new RegExp(section));
   assert.match(draft, /role="tooltip"/);
   assert.match(draft, /Preview unsaved draft/);
-  assert.doesNotMatch(draft, /fetch\(|localStorage|type="file"/);
+  assert.match(draft, /Generate agent setup with AI/);
+  assert.doesNotMatch(draft, /localStorage|type="file"/);
 });
 
 test("reviewed source excerpts and light/dark themes remain separate from live execution", () => {

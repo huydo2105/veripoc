@@ -56,7 +56,9 @@ test("catalog cards never route external sources to VeriPoC submission or execut
   assert.match(component, /target="_blank" rel="noopener noreferrer"/);
   assert.doesNotMatch(component, /Filter by ecosystem/);
   assert.match(component, /Bug bounties/);
-  assert.doesNotMatch(component, /fetch\(|type="file"|href="\/submit-report"|href="\/verify"/);
+  const sourceRow = component.match(/function SourceRow\([\s\S]*?\n}\n/)?.[0];
+  assert.ok(sourceRow);
+  assert.doesNotMatch(sourceRow, /fetch\(|type="file"|href="\/submit-report"|href="\/verify"/);
 });
 
 test("external bounty joins through a guarded local draft, not the vault verifier", () => {

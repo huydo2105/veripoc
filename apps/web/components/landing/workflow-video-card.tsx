@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef } from "react";
-import { RotateCcw } from "lucide-react";
 
 type WorkflowVideoCardProps = {
   src?: string;
@@ -13,7 +12,6 @@ type WorkflowVideoCardProps = {
 export function WorkflowVideoCard({
   src = "/workflows/create-bounty.gif",
   ariaLabel = "DeFi team workflow: defining contract scope, pinned source revision, and testing rules",
-  replayLabel = "Replay DeFi team workflow animation",
 }: WorkflowVideoCardProps) {
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -94,15 +92,6 @@ export function WorkflowVideoCard({
             aria-label={ariaLabel}
           />
         )}
-        <button
-          type="button"
-          className="workflow-video-replay focus-ring"
-          onClick={restartMedia}
-          aria-label={replayLabel}
-        >
-          <RotateCcw size={15} aria-hidden="true" />
-          <span>Replay</span>
-        </button>
       </div>
     </div>
   );

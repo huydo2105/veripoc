@@ -278,6 +278,15 @@ export function createWalletAuthStore({
     return entry ? sessionSummary(entry.session) : { authenticated: false };
   }
 
+  function accountFromCookie({ cookieHeader, method, origin, csrfHeader }) {
+    const entry = readSessionFromCookie(cookieHeader);
+    if (!entry) return null;
+    if (method !== "GET" && method !== "HEAD") {
+      validateCsrf({ session: entry.session, origin, csrfHeader });
+    }
+    return entry.session.account;
+  }
+
   function programActorFromCookie({ cookieHeader, method, origin, csrfHeader, programId }) {
     const entry = readSessionFromCookie(cookieHeader);
     if (!entry) return null;
@@ -299,6 +308,7 @@ export function createWalletAuthStore({
     verifyLogin,
     readSessionFromCookie,
     getMe,
+    accountFromCookie,
     setOnboardingRole,
     logout,
     programActorFromCookie,

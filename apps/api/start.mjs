@@ -10,5 +10,6 @@ const server = createApiServer({ token: process.env.VERIPOC_API_TOKEN,
   invitedAgentBadges: listEnv(process.env.VERIPOC_INVITED_AGENT_BADGES),
   allowedOrigins: listEnv(process.env.VERIPOC_ALLOWED_ORIGINS),
   teamAccounts: listEnv(process.env.VERIPOC_TEAM_ACCOUNTS),
-  invitedResearcherAccounts: listEnv(process.env.VERIPOC_RESEARCHER_ACCOUNTS) });
+  invitedResearcherAccounts: listEnv(process.env.VERIPOC_RESEARCHER_ACCOUNTS),
+  programStorePath: process.env.VERIPOC_PROGRAM_STORE ?? ".local/programs.json" });
 server.listen(port, "127.0.0.1", () => console.log(`VeriPoC local API: http://127.0.0.1:${port}`));
