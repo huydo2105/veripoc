@@ -1,4 +1,4 @@
-# VeriPoC — Two-Sided Platform Milestones and GitHub Project
+# Auditor — Two-Sided Platform Milestones and GitHub Project
 **Reconciled:** November 10, 2026 | **Final deadline:** December 9, 2026, 23:59 UTC (verify the hackathon portal)
 
 ## Product
@@ -15,7 +15,7 @@
 **Note:** #12 is assigned to M2; if it slips it is an early M3 carry-over, not silently done. Optional items stay open/unscheduled unless individually approved.
 
 ## Current engineering evidence
-- #1–#8 and #20 are closed. PR #33 for #8 has **merged**, commit `ff1dbb5e3be69c1f72ed8e3fce25301fe591b00d`. [CI run 42899822745](https://github.com/huydo2105/veripoc/actions/runs/42899822745) completed successfully, with passing Foundry, Slither and isolated worker jobs.
+- #1–#8 and #20 are closed. PR #33 for #8 has **merged**, commit `ff1dbb5e3be69c1f72ed8e3fce25301fe591b00d`. [CI run 42899822745](https://github.com/huydo2105/auditor/actions/runs/42899822745) completed successfully, with passing Foundry, Slither and isolated worker jobs.
 - This is a **local fixed-fixture PoC console**, not yet a two-sided production application and not permission for arbitrary third-party uploads.
 - Next: #34 two-role homepage, #35 scoped demo program, #9 checkpoint, #12 signed request auth. Then #10 on-chain evidence, #13 external researcher-agent interface, and #36 private inbox/patch retest.
 - No new unfinished feature should be labeled completed merely because UI placeholder exists.
@@ -24,7 +24,7 @@
 The connected GitHub issue editor can maintain the **tracking issues** above but cannot directly configure **native GitHub Milestones** or **GitHub Projects v2 fields/views**. An idempotent CLI script is checked into the repository for an authorized GitHub account:
 
 ```bash
-cd ~/veripoc
+cd ~/auditor
 git switch main && git pull --ff-only
 gh auth login
 gh auth refresh -s project
@@ -33,10 +33,10 @@ python3 scripts/sync-github-planning.py
 
 The script:
 1. Creates/updates four native GitHub Milestones (reuses previous titles to avoid duplicates), with accurate due dates, and assigns all **23 engineering issues** without changing their open/closed status.
-2. Creates or reuses one VeriPoC GitHub Project, adds all 23 engineering issues without duplicates, sets planned **Start date** and **Target date** fields on dated core work, and sets completed items to **Done** where the project has a matching status option.
+2. Creates or reuses one Auditor GitHub Project, adds all 23 engineering issues without duplicates, sets planned **Start date** and **Target date** fields on dated core work, and sets completed items to **Done** where the project has a matching status option.
 3. Leaves optional/stretch work without a fabricated schedule. It preserves existing issue state and existing unrelated projects.
 
-**View after running:** [Native milestones](https://github.com/huydo2105/veripoc/milestones) · [User Projects](https://github.com/users/huydo2105/projects).
+**View after running:** [Native milestones](https://github.com/huydo2105/auditor/milestones) · [User Projects](https://github.com/users/huydo2105/projects).
 
 For the timeline matching a Gantt chart, open the Project and create a **Roadmap** view (new view -> Roadmap); use **Start date** and **Target date** as date fields. Also keep Table and Board views for issue tracking. Project view creation may require this one browser action.
 

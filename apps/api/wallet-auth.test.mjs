@@ -135,14 +135,14 @@ test("valid Concordium wallet login sets secure HttpOnly cookie, enforces server
     assert.equal(badCsrf.status, 403);
     const badOrigin = await fetch(`${base}/v1/auth/logout`, {
       method: "POST",
-      headers: { cookie, origin: "https://evil.example", "x-veripoc-csrf": login.body.csrfToken },
+      headers: { cookie, origin: "https://evil.example", "x-auditor-csrf": login.body.csrfToken },
     });
     assert.equal(badOrigin.status, 403);
 
     // Valid logout revokes the session and clears the cookie.
     const logout = await fetch(`${base}/v1/auth/logout`, {
       method: "POST",
-      headers: { cookie, origin, "x-veripoc-csrf": login.body.csrfToken, "x-forwarded-proto": "https" },
+      headers: { cookie, origin, "x-auditor-csrf": login.body.csrfToken, "x-forwarded-proto": "https" },
     });
     assert.equal(logout.status, 200);
     assert.match(logout.headers.get("set-cookie"), /Max-Age=0/);
@@ -247,7 +247,7 @@ test("client onboarding role picker cannot grant Demo Vault authority or bypass 
     // Requesting onboarding role with CSRF stores preference only; programRoles stays empty.
     const roleRes = await fetch(`${base}/v1/auth/role`, {
       method: "POST",
-      headers: { "content-type": "application/json", cookie, origin, "x-veripoc-csrf": login.body.csrfToken },
+      headers: { "content-type": "application/json", cookie, origin, "x-auditor-csrf": login.body.csrfToken },
       body: JSON.stringify({ requestedRole: "team" }),
     });
     assert.equal(roleRes.status, 200);
@@ -274,7 +274,7 @@ test("client onboarding role picker cannot grant Demo Vault authority or bypass 
         "content-type": "application/json",
         cookie: resCookie,
         origin,
-        "x-veripoc-csrf": resLogin.body.csrfToken,
+        "x-auditor-csrf": resLogin.body.csrfToken,
         "idempotency-key": "wallet-csrf-2",
       },
       body: JSON.stringify({ claim: "donation-share-inflation", targetSha256: DEMO_PROGRAM.targetSha256 }),

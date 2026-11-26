@@ -9,7 +9,7 @@ import { FAQ_ITEMS } from "@/lib/faq-data";
 const featuredQuestions = FAQ_ITEMS.filter(item => item.featured);
 
 export function HomeFaq() {
-  const [open, setOpen] = useState<Set<string>>(() => new Set([featuredQuestions[0]?.id ?? "what-is-veripoc"]));
+  const [open, setOpen] = useState<Set<string>>(() => new Set([featuredQuestions[0]?.id ?? "what-is-auditor"]));
 
   function toggle(id: string) {
     setOpen(previous => {
@@ -31,7 +31,7 @@ export function HomeFaq() {
         return <div className="faq-item" key={item.id}>
           <h3>
             <button type="button" className="faq-question focus-ring" aria-expanded={expanded} aria-controls={`faq-answer-${index}`} onClick={() => toggle(item.id)}>
-              <span>{item.id === "what-is-veripoc" ? <>What is <BrandMark size={23} /> VeriPoC?</> : item.question}</span>
+              <span>{item.id === "what-is-auditor" ? <>What is <BrandMark size={23} /> Auditor?</> : item.question}</span>
               <span className="faq-symbol" aria-hidden="true">{expanded ? "×" : "+"}</span>
             </button>
           </h3>

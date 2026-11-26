@@ -9,7 +9,7 @@ const REST_BASE = 'https://agent-registry-mcp.concordium.com/v1';
 const CONCORDIUM_ACCOUNT = process.env.CONCORDIUM_ACCOUNT!; // Your Base58 Testnet Account
 const EVM_PRIVATE_KEY = process.env.EVM_PRIVATE_KEY as `0x${string}`; // Your Agent's EVM Private Key
 const CARD_PUBLIC_URL =
-  process.env.CARD_PUBLIC_URL || 'https://raw.githubusercontent.com/huydo2105/veripoc/main/agent-card.json';
+  process.env.CARD_PUBLIC_URL || 'https://raw.githubusercontent.com/huydo2105/auditor/main/agent-card.json';
 const NETWORK = 'testnet'; // Switch to 'mainnet' after Dec 9
 
 async function callMcpTool(name: string, args: Record<string, unknown>) {
@@ -83,12 +83,12 @@ async function main() {
   const cardRes = await callMcpTool('build_agent_card', {
     network: NETWORK,
     owner_account: CONCORDIUM_ACCOUNT,
-    name: 'VeriPoC Security & Exploit Triage Agent',
+    name: 'Auditor Security & Exploit Triage Agent',
     description: 'Autonomous EVM smart contract pre-flight simulator and deterministic Foundry PoC verifier gated by Concordium identity and x402.',
     agent_uri: CARD_PUBLIC_URL,
-    organization_name: 'VeriPoC Labs',
-    organization_url: 'https://github.com/YOUR-GITHUB-USER/veripoc',
-    mcp_endpoint: 'https://api.veripoc.xyz/mcp',
+    organization_name: 'Auditor Labs',
+    organization_url: 'https://github.com/YOUR-GITHUB-USER/auditor',
+    mcp_endpoint: 'https://api.example.invalid/mcp',
     x402_support: true,
     skills: [
       {

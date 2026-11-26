@@ -1,9 +1,9 @@
-# VeriPoC — Roadmap: two-sided AI-agent security auditing
+# Auditor — Roadmap: two-sided AI-agent security auditing
 **Updated:** 2026-11-10 | **Encode Checkpoint 1:** 2026-11-22 | **Final submission:** 2026-12-09 23:59 UTC (verify with event portal)
 **Source of truth:** [TWO_SIDED_PLATFORM.md](TWO_SIDED_PLATFORM.md) | [PRODUCT_SCOPE.md](PRODUCT_SCOPE.md) | [MILESTONES.md](MILESTONES.md)
 
 ## Vision
-VeriPoC is a **two-sided, AI-agent-compatible security audit collaboration platform**:
+Auditor is a **two-sided, AI-agent-compatible security audit collaboration platform**:
 - **I have a smart contract to audit** — DeFi teams create authorized programs, invite researchers/agents, triage confidential reports and validate patches.
 - **I want to audit** — researchers use their own AI agents and preferred security tools, submit vulnerability claims and PoCs, and receive reproducible evidence.
 
@@ -13,7 +13,7 @@ The product does **not** provide a complete push-button autonomous audit, a sepa
 
 ## Frontend and interactive judge experience — decision Nov 11, 2026
 
-**User-approved direction:** migrate the buildless frontend to **Next.js App Router + TypeScript + Tailwind CSS**, use the new VeriPoC SVG mark instead of a text/V placeholder in the header, and replace long passive explanations with an accessible interactive walkthrough. The Node API/Foundry isolated verification service remains separate and unchanged.
+**User-approved direction:** migrate the buildless frontend to **Next.js App Router + TypeScript + Tailwind CSS**, use the new Auditor SVG mark instead of a text/V placeholder in the header, and replace long passive explanations with an accessible interactive walkthrough. The Node API/Foundry isolated verification service remains separate and unchanged.
 
 - **PR #37 / #34:** currently OPEN. Two-role homepage and onboarding, with the new icon-only logo committed on the PR branch. Review and merge with owner approval before broader migration.
 - **#38 (P0, after #34):** Next.js/Tailwind migration for `/`, `/teams/start`, `/researchers/start`, `/verify`; preserve real jobs, receipts and token handling. [Architecture](FRONTEND_ARCHITECTURE.md).
@@ -31,7 +31,7 @@ The product does **not** provide a complete push-button autonomous audit, a sepa
 Home -> **I have a smart contract to audit** -> Create/select authorized Audit Program -> pin contract/commit + scope -> invite researcher/agent -> receive private finding -> inspect real reproducible PoC verdict -> request clarification/mark accepted manually -> upload patched fixture -> re-test exploit.
 
 ### Security researcher / BYO agent
-Home -> **I want to audit** -> Select allowed Audit Program -> read scope and rules -> research manually / via own Codex/Claude/custom agent with optional Slither, fuzzing or LLM tools -> submit structured claim + executable PoC -> VeriPoC runs trusted Foundry worker -> receive private evidence and status -> await team triage.
+Home -> **I want to audit** -> Select allowed Audit Program -> read scope and rules -> research manually / via own Codex/Claude/custom agent with optional Slither, fuzzing or LLM tools -> submit structured claim + executable PoC -> Auditor runs trusted Foundry worker -> receive private evidence and status -> await team triage.
 
 ### Shared verification flow
 Authorized submission + pinned execution inputs -> validation/permissions -> isolated trusted Foundry test -> `reproduced`, `not_reproduced`, `inconclusive` or `tool_error` -> private evidence + safe SHA-256 digest -> proposed Concordium Testnet anchor -> human triage. A successful test never automatically triggers a bounty payment.
@@ -51,7 +51,7 @@ Authorized submission + pinned execution inputs -> validation/permissions -> iso
 
 ## Detailed schedule and issue gates
 ### M1 — Foundation, Nov 10–15 — **COMPLETE**
-#20, #1, #2, #3, #4. Complete identity, Foundry baseline, synthetic exploit/patch, optional Slither adapter. Existing tests and code must remain intact. [Tracking #24](https://github.com/huydo2105/veripoc/issues/24).
+#20, #1, #2, #3, #4. Complete identity, Foundry baseline, synthetic exploit/patch, optional Slither adapter. Existing tests and code must remain intact. [Tracking #24](https://github.com/huydo2105/auditor/issues/24).
 
 ### M2 — Two-sided MVP and Encode Checkpoint, Nov 16–22
 - [x] #5 controlled Foundry worker
@@ -63,7 +63,7 @@ Authorized submission + pinned execution inputs -> validation/permissions -> iso
 - [ ] #9 Encode checkpoint submission with honest architecture/progress
 - [ ] #12 agent signed authentication — desirable in M2, carry into early M3 if necessary
 
-**Exit:** In the same demo program, a DeFi team can review a vulnerability claim from an authorized researcher and watch real vulnerable/patched Foundry verification. The role switcher/program may be pre-seeded, but no security data or verdict is faked. [Tracking #25](https://github.com/huydo2105/veripoc/issues/25).
+**Exit:** In the same demo program, a DeFi team can review a vulnerability claim from an authorized researcher and watch real vulnerable/patched Foundry verification. The role switcher/program may be pre-seeded, but no security data or verdict is faked. [Tracking #25](https://github.com/huydo2105/auditor/issues/25).
 
 ### M3 — Trust, researcher agents and team triage, Nov 23–29
 - [ ] **#10** actual Concordium Testnet evidence hash anchor with explorer proof
@@ -73,7 +73,7 @@ Authorized submission + pinned execution inputs -> validation/permissions -> iso
 - [ ] #11 escrow **optional** only if safely adjudicated and no threat to demo
 - [ ] #14 / #15 **defer** unless hard evidence shows benefit
 
-**Exit:** A researcher or their agent submits evidence to an authorized program, owner sees private result and re-tests patch; at least one real receipt digest is checkable on Concordium Testnet. [Tracking #26](https://github.com/huydo2105/veripoc/issues/26).
+**Exit:** A researcher or their agent submits evidence to an authorized program, owner sees private result and re-tests patch; at least one real receipt digest is checkable on Concordium Testnet. [Tracking #26](https://github.com/huydo2105/auditor/issues/26).
 
 ### M4 — Integration, proof and submission, Nov 30–Dec 9
 - [ ] #19 final product demo, readme, risk/limitations, CI, architecture, screenshots and submission
@@ -82,7 +82,7 @@ Authorized submission + pinned execution inputs -> validation/permissions -> iso
 - [ ] Trial pricing as **per verification job or per audit program / platform API**, never claim validated economics before measurement
 - [ ] #16–#18 optional only if demo is fully reliable; no automatic bounty payout
 
-**Exit:** Judges can distinguish role-specific user flows, real PoC verification, independent evidence provenance and clear unimplemented production boundaries. [Tracking #27](https://github.com/huydo2105/veripoc/issues/27).
+**Exit:** Judges can distinguish role-specific user flows, real PoC verification, independent evidence provenance and clear unimplemented production boundaries. [Tracking #27](https://github.com/huydo2105/auditor/issues/27).
 
 ## Judge demo (<=3 min)
 1. **0:00–0:25** Home: two buttons. What team and researcher need.

@@ -1,4 +1,4 @@
-# VeriPoC UI Design System — Minimal, Evidence-First
+# Auditor UI Design System — Minimal, Evidence-First
 
 **Current visual implementation (Issue #39 onward):** the website uses a warm-white/charcoal palette with terracotta accent and a Paper/Charcoal theme toggle. The forest-green tokens below record the earlier design decision; use the live tokens in `apps/web/app/globals.css` and the [current brand mark guide](BRAND_MARK.md) for new visual work.
 **Decision:** 2026-11-11 | **Stage:** Minimalist brand and UI specification, updated for owner-requested Next.js/Tailwind migration and interactive education.
@@ -36,7 +36,7 @@ Default **light** interface for immediate judge readability, with a dark ink tex
 All foreground/background pairs need tested WCAG AA contrast; don't use muted low contrast for small essential labels.
 
 ### Brand identity
-- Use the original **two paths / one proof** vector mark. Header shows the mark ONLY, with screen-reader `aria-label="VeriPoC home"`; no visible placeholder V or wordmark text.
+- Use the original **two paths / one proof** vector mark. Header shows the mark ONLY, with screen-reader `aria-label="Auditor home"`; no visible placeholder V or wordmark text.
 - Master icon is `apps/web/logo.svg` (on PR #37 branch), square app icon `apps/web/app-icon.svg`. Keep vector, flat colors, no glow, gradient, shadow or unnecessary animation; next version copies assets into `apps/web/public/brand`.
 - Favicon uses square app icon. Product name remains accessible in document title and alt/label.
 
@@ -70,7 +70,7 @@ All foreground/background pairs need tested WCAG AA contrast; don't use muted lo
 6. **Team triage / patch retest (#36):** same visual language; separate test verdict from triage or bounty status.
 
 ## Judge usability acceptance
-- In <=10 seconds a judge can identify both audiences and VeriPoC's purpose.
+- In <=10 seconds a judge can identify both audiences and Auditor's purpose.
 - In <=2 clicks from either home card, a judge can reach the verified demo case (after authentication or explicit safe local setup).
 - One primary CTA per screen; no dead buttons, bogus stats or confusing dashboard widgets.
 - Viewport QA: 1440px, 1024px, 390px, 320px. No horizontal scroll.

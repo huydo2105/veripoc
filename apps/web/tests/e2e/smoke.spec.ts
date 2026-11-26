@@ -6,7 +6,7 @@ import { DEMO_PROGRAM } from "../../../api/program.mjs";
 test("brand mark keeps its accessible home link and adapts to both themes", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/");
-  const brand = page.locator("header").getByRole("link", { name: "VeriPoC home" });
+  const brand = page.locator("header").getByRole("link", { name: "Auditor home" });
   await expect(brand).toBeVisible();
   await expect(brand.locator("svg")).toHaveAttribute("aria-hidden", "true");
   const box = await brand.boundingBox();
@@ -38,7 +38,7 @@ test("brand mark keeps its accessible home link and adapts to both themes", asyn
   await page.screenshot({ path: testInfo.outputPath("brand-dark-390.png"), fullPage: false });
   await page.setViewportSize({ width: 320, height: 700 });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(320);
-  const favicon = await page.request.get("/brand/veripoc-app-icon.svg");
+  const favicon = await page.request.get("/brand/auditor-app-icon.svg");
   expect(favicon.ok()).toBe(true);
   expect(await favicon.text()).toContain("#ee9077");
 });
@@ -349,7 +349,7 @@ test("team draft wizard previews locally and shows saved state only after API su
   await page.route("**/v1/auth/me", route => route.fulfill({ status: 200, contentType: "application/json",
     body: JSON.stringify({ authenticated: true, account: "test-owner", csrfToken: "csrf" }) }));
   await page.route("**/v1/programs", async route => {
-    expect(route.request().headers()["x-veripoc-csrf"]).toBe("csrf");
+    expect(route.request().headers()["x-auditor-csrf"]).toBe("csrf");
     const body = route.request().postDataJSON();
     expect(body.contact).toBe("team@example.org");
     expect(body.docsUrl).toBe("https://docs.example.org/vault");
@@ -622,7 +622,7 @@ test("Concordium wallet connects and disconnects while the API is unavailable", 
   await walletButton.click();
   await expect(page.getByTestId("wallet-only-account")).toContainText(address.slice(0, 6));
   await expect(page.getByText("Wallet connected", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Sign in to VeriPoC" })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Sign in to Auditor" })).toHaveCount(0);
   await page.getByRole("button", { name: "Disconnect wallet from this page" }).click();
   await expect(page.getByRole("button", { name: "Connect Concordium wallet" })).toBeVisible();
   expect(authPosts).toEqual([]);

@@ -1,4 +1,4 @@
-# VeriPoC product scope — Two-sided, AI-agent-compatible security auditing
+# Auditor product scope — Two-sided, AI-agent-compatible security auditing
 
 **Decision:** November 10, 2026. This document **supersedes** the previous PoC-verification-only product strategy while **retaining independent PoC reproduction as the technical and evidentiary core**.
 
@@ -10,7 +10,7 @@ Read the comprehensive canonical specification: [TWO_SIDED_PLATFORM.md](TWO_SIDE
 
 These are **two roles in one security collaboration platform**, not two separate scanning/verification products.
 
-## What VeriPoC owns
+## What Auditor owns
 - Authorized program scope, invited researcher/agent participation, permissions and private disclosure lifecycle.
 - Single PoC verification pipeline using trusted Foundry/Anvil invariant tests with a strongly isolated worker.
 - Unambiguous verdicts: reproduced, not_reproduced, inconclusive, tool_error, never automatically "contract safe" or "bounty approved".

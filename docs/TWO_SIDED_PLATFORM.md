@@ -1,9 +1,9 @@
-# VeriPoC — Two-Sided Agentic Security Marketplace: Product Blueprint
+# Auditor — Two-Sided Agentic Security Marketplace: Product Blueprint
 **Decision date:** 2026-11-10 | **Status:** Product direction / proposed scope, not implemented features
 **Authoritative scope:** This document supersedes the previous *PoC-verification-only* commercial positioning. PoC verification remains the core trust layer of a broader two-sided agentic auditing workflow.
 
 ## 1. One-sentence thesis
-**VeriPoC connects DeFi teams that want smart-contract security reviews with security researchers and their own AI agents; those agents investigate authorized contracts, submit findings and reproducible PoCs, and VeriPoC independently validates evidence and records accountable, tamper-evident results using Concordium.**
+**Auditor connects DeFi teams that want smart-contract security reviews with security researchers and their own AI agents; those agents investigate authorized contracts, submit findings and reproducible PoCs, and Auditor independently validates evidence and records accountable, tamper-evident results using Concordium.**
 
 Two user entry points, **one verification and evidence backend**. Do not create two disconnected products.
 
@@ -15,7 +15,7 @@ Two user entry points, **one verification and evidence backend**. Do not create 
 
 ## 2. Homepage — EXACTLY two primary choices
 Hero: **Verifiable smart-contract security, powered by researchers and AI agents.**
-Subhead: **Request an authorized security review—or investigate a program with your own agent. VeriPoC reproduces vulnerability evidence and helps teams triage it with accountable provenance.**
+Subhead: **Request an authorized security review—or investigate a program with your own agent. Auditor reproduces vulnerability evidence and helps teams triage it with accountable provenance.**
 
 Primary cards/buttons:
 1. **I have a smart contract to audit** -> /teams/start
@@ -26,7 +26,7 @@ Primary cards/buttons:
 No standalone **Contract Scanner** homepage button. "Run Slither" is NOT the product; analyzers are internal tools available to authorized researchers/agents. Do not imply contracts automatically receive a complete human audit.
 
 Secondary: **How verification works**, **Explore demo program**, **View evidence example**.
-Header: VeriPoC | How It Works | For Teams | For Researchers | Sign in / Connect agent. Do not imply working wallet/SSO until implemented.
+Header: Auditor | How It Works | For Teams | For Researchers | Sign in / Connect agent. Do not imply working wallet/SSO until implemented.
 
 ## 3. Personas and outcomes
 
@@ -44,7 +44,7 @@ Team success criterion: "A researcher found a demonstrable exploit; our patch pr
 ### B. Security researcher / external AI agent operator (contributor)
 Goals:
 - View authorized programs / assigned scopes and rules.
-- Connect an existing agent via SDK, REST or MCP; use their **own choice of tools and models** (not locked to VeriPoC's AI stack).
+- Connect an existing agent via SDK, REST or MCP; use their **own choice of tools and models** (not locked to Auditor's AI stack).
 - Gather source/ABI/dependencies; generate hypotheses using personal tools (Slither, static analysis, fuzzers, LLMs, symbolic tools, manual review).
 - Submit a **structured claim plus a reproducible PoC** and expected invariant; see validation, execution and evidence receipt.
 - Iterate on inconclusive results, privately share evidence with the team, track disposition and patch verification.
@@ -52,7 +52,7 @@ Goals:
 
 Researcher success criterion: "I can use my existing agent and prove my finding with a portable, confidential verification receipt."
 
-### C. VeriPoC verification service (neutral evidence layer)
+### C. Auditor verification service (neutral evidence layer)
 - Authenticates submitter and checks audit scope + permissions.
 - Freezes inputs and versions, executes only allowed test workloads in isolated environment, and emits `reproduced / not_reproduced / inconclusive / tool_error`.
 - Produces private evidence and safe digest. Later anchors hashes on Concordium with explicit link to agent identity and process state.
@@ -62,7 +62,7 @@ Researcher success criterion: "I can use my existing agent and prove my finding 
 
 ### 4.1 Shared home
 - Two large CTA cards, side-by-side desktop / stacked mobile
-- A 3-step graphic: **Authorize scope -> Agents investigate -> VeriPoC verifies & records**
+- A 3-step graphic: **Authorize scope -> Agents investigate -> Auditor verifies & records**
 - One explainer on why a claim != exploit != bounty acceptance
 - Preview a sample redacted verification receipt and a real registry reference (only real data)
 
@@ -110,7 +110,7 @@ New **proposed** operations:
 Prefer smallest secure API consistent with this model; do NOT implement all endpoints immediately.
 
 ## 6. AI-agent architecture and tool policy
-**Agents are external, bring-your-own.** A researcher may use Codex, Claude, local LLMs, or their own automation, and can choose tools. VeriPoC should provide a stable agent-facing interface and verifiable execution results, **not require a centrally hosted auditing LLM**.
+**Agents are external, bring-your-own.** A researcher may use Codex, Claude, local LLMs, or their own automation, and can choose tools. Auditor should provide a stable agent-facing interface and verifiable execution results, **not require a centrally hosted auditing LLM**.
 
 Tool roles:
 - **Foundry/Anvil**: mandatory deterministic reproduction of a submitted PoC; already implemented for fixed local fixtures.
@@ -161,12 +161,12 @@ MVP DOES NOT require: automated discovery of unknown bugs, arbitrary public cont
 0:00–0:25 **Home**: Two buttons: “I have a smart contract to audit” / “I want to audit”.
 0:25–0:55 **Team**: Create/open the *Demo Vault Audit Program*, inspect authorized scope and invitation.
 0:55–1:20 **Researcher**: Open same program, agent identity context, submit a share-inflation claim plus the approved PoC.
-1:20–2:05 **VeriPoC**: Run real vulnerable fixture; show reproduced verdict with attacker and victim delta. Re-test patched fixture; show not reproduced. Distinguish test result from severity adjudication.
+1:20–2:05 **Auditor**: Run real vulnerable fixture; show reproduced verdict with attacker and victim delta. Re-test patched fixture; show not reproduced. Distinguish test result from severity adjudication.
 2:05–2:40 **Evidence + Concordium**: Compare private receipt and public digest; view real Testnet transaction for hash anchor only if it exists.
 2:40–3:00 **Team triage / business**: Show finding arrives in owner inbox; owner marks needs review/accepted *manually*; explain pay-per-verification API and researcher-owned agents.
 
 ### Product demo differentiation
-**Teams initiate a scoped audit; researchers bring any agent; VeriPoC validates actual PoCs and preserves provenance.** Our product is **not** a "push button, fully audited" service.
+**Teams initiate a scoped audit; researchers bring any agent; Auditor validates actual PoCs and preserves provenance.** Our product is **not** a "push button, fully audited" service.
 
 ## 10. Prioritization and milestones
 **Completed and preserve:** #1–#8 and #20, including the fixed-fixture PoC console delivered in merged PR #33 with successful CI. Reuse it for both product personas; do not rebuild from scratch.
@@ -187,7 +187,7 @@ MVP DOES NOT require: automated discovery of unknown bugs, arbitrary public cont
 - Defer #14–#18 unless core is complete and one concrete use case warrants them.
 
 ## 11. Learning checkpoints for founder and judges
-At each PR, explain one primary concept: audit program/authorization; researcher agent vs VeriPoC's trusted verifier; sandbox boundary; reproducible PoC verdict; private receipt vs public hash; CIS-8 key binding / CIS-8004 agent record; why manual triage and payment approval remain essential.
+At each PR, explain one primary concept: audit program/authorization; researcher agent vs Auditor's trusted verifier; sandbox boundary; reproducible PoC verdict; private receipt vs public hash; CIS-8 key binding / CIS-8004 agent record; why manual triage and payment approval remain essential.
 
 ## 12. Go / no-go checks
 - Can an independent reviewer tell what the researcher claims, what was **actually executed**, and what the trusted invariant measured?

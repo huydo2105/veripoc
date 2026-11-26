@@ -9,7 +9,7 @@ import { DEMO_PROGRAM } from "./program.mjs";
 const token = "operator-token-with-at-least-thirty-two-characters";
 const teamToken = "team-token-with-at-least-thirty-two-characters";
 const researcherToken = "researcher-token-with-at-least-thirty-two-characters";
-const domain = "veripoc.local";
+const domain = "auditor.local";
 const badge = "JyP9UhUtd9AeJywDRsg5q";
 const owner = "test-concordium-owner";
 const chain = "ccd:4221332d34e1694168c2a0c0b3fd0f27";
@@ -51,8 +51,8 @@ async function signed(base, path, { method = "GET", payload, signer = account,
   const signature = await signer.signMessage({ message: agentMessage({ domain: badDomain ? "other.local" : domain,
     method, path, body: Buffer.from(messageBody), nonce, expires }) });
   const response = await fetch(base + path, { method,
-    headers: { "x-veripoc-agent-badge": badge, "x-veripoc-agent-nonce": nonce,
-      "x-veripoc-agent-expires": String(expires), "x-veripoc-agent-signature": signature,
+    headers: { "x-auditor-agent-badge": badge, "x-auditor-agent-nonce": nonce,
+      "x-auditor-agent-expires": String(expires), "x-auditor-agent-signature": signature,
       ...(payload ? { "content-type": "application/json", "idempotency-key": idempotencyKey } : {}) },
     ...(payload ? { body } : {}) });
   return { status: response.status, data: await response.json() };

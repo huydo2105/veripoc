@@ -379,7 +379,7 @@ summary { cursor: pointer; }
   }
 }
 
-/* Charcoal / Paper visual revision. The brand mark and product content remain VeriPoC's. */
+/* Charcoal / Paper visual revision. The brand mark and product content remain Auditor's. */
 .site-nav-link:hover, .footer-column a:hover { color: var(--accent); text-decoration: none; }
 .site-action-dark { background: var(--ink); border-color: var(--ink); color: var(--page); }
 .site-action-dark:hover { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }

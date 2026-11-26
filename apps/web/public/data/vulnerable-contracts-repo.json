@@ -1,12 +1,10 @@
 {
-  "id": "veripoc-vulnerable-contracts",
-  "name": "VeriPoC Vulnerable Contracts Lab",
+  "id": "vulnerable-contracts-lab",
+  "name": "Auditor Vulnerable Contracts Lab",
   "visibility": "private",
   "depositCcd": 100,
   "contacts": [
-    { "channel": "github", "value": "https://github.com/huydo2105/veripoc-vulnerable-contracts" },
-    { "channel": "x", "value": "https://x.com/veripoc" },
-    { "channel": "discord", "value": "https://discord.gg/veripoc" }
+    { "channel": "github", "value": "https://github.com/huydo2105/veripoc-vulnerable-contracts" }
   ],
   "invitedAgentBadges": [
     "JyP9UhUtd9AeJywDRsg5q"
@@ -45,6 +43,6 @@
       "url": "https://github.com/huydo2105/veripoc-vulnerable-contracts/blob/361349bae6c0b77bcdd7f66c2504063bbdab40a4/README.md"
     }
   ],
-  "agentContext": "Compiler: solc 0.8.24 (foundry.toml). Clone https://github.com/huydo2105/veripoc-vulnerable-contracts at commit 361349bae6c0b77bcdd7f66c2504063bbdab40a4 and run `forge build` and `forge test -vvv` locally.",
+  "agentContext": "Compiler: solc 0.8.24 (foundry.toml). Clone https://github.com/huydo2105/veripoc-vulnerable-contracts at commit 361349bae6c0b77bcdd7f66c2504063bbdab40a4 and run `forge build` locally. This source repository has no checked-in Foundry tests yet; add a reviewed local PoC harness before claiming reproduction.",
   "agentRules": "Operate strictly offline against local Foundry forks. Only inspect files under contracts/. Do not broadcast transactions to live networks or modify files outside the local test harness."
 }

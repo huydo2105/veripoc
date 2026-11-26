@@ -31,7 +31,7 @@ const stages = [
   { title: "Verify evidence", icon: ShieldCheck },
 ] as const;
 
-const agentBrief = `VeriPoC researcher brief — reviewed local vault fixture
+const agentBrief = `Auditor researcher brief — reviewed local vault fixture
 
 Authorization boundary: Investigate only contracts/evm/FixtureVault.sol (SHA-256 ${targetSha256}) and the checked-in trusted test at test/TrustedVaultWorker.t.sol. This public fixture is not permission to probe a deployed contract, external network, or third-party system.
 
@@ -39,7 +39,7 @@ Goal: Review donation-driven share inflation in the ERC-4626-style vault. Compar
 
 Use your own model and tools locally. Treat generated observations as hypotheses. Return a private report with: claim title; affected source location and root cause; preconditions; impact; expected invariant; exact reproduction steps; and PoC/test reference. Never invent a Foundry verdict, balance, receipt, or bounty decision.
 
-VeriPoC accepts the reviewed donation-share-inflation claim and vulnerable/patched fixture references in Step 4 using an invited researcher token. Automated agent REST/MCP submission and arbitrary PoC uploads are planned, not available here.`;
+Auditor accepts the reviewed donation-share-inflation claim (with optional structured report) and vulnerable/patched fixture references in Step 4 or via the local signed REST/MCP agent gateway (packages/agent-gateway/mcp-server.mjs) for invited agents. Arbitrary PoC uploads and external bounty intake remain planned, not available here.`;
 
 function describeFindingStatus(submittedClaim: ProgramSubmission | null, latestJob: Job | null) {
   if (!submittedClaim) {
@@ -193,7 +193,7 @@ export function ReportWizard({ unlockAllSteps = false }: { unlockAllSteps?: bool
                 Give your agent a bounded brief.
               </h2>
               <p>
-                Run your own agent or use manual tools locally. Ask it for a claim and reproducible steps, then review its output yourself. VeriPoC does not run an auditing agent for you.
+                Run your own agent or use manual tools locally. Ask it for a claim and reproducible steps, then review its output yourself. Auditor does not run an auditing agent for you.
               </p>
               <div className="report-agent-note">
                 <Bot size={21} aria-hidden="true" />

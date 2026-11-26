@@ -28,7 +28,7 @@ jobs:
       - run: npm run web:lint
       - run: npm run web:build
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e --workspace @veripoc/web
+      - run: npm run test:e2e --workspace @auditor/web
         env:
           CAPTURE_SCREENSHOTS: "1"
       - uses: actions/upload-artifact@v4
@@ -119,7 +119,7 @@ jobs:
       - name: Worker controller tests
         run: node --test workers/sandbox/test.mjs workers/sandbox/report.test.mjs
       - name: Build trusted worker image
-        run: docker build -f infrastructure/docker/foundry-worker.Dockerfile -t veripoc-foundry-worker:issue-5 .
+        run: docker build -f infrastructure/docker/foundry-worker.Dockerfile -t auditor-foundry-worker:issue-5 .
       - name: Isolation smoke test
         run: bash workers/sandbox/isolation.sh
       - name: Positive and negative vault runs

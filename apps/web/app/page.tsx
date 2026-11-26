@@ -30,7 +30,7 @@ const steps = [
   },
   {
     label: "Verify", title: "Check the claim.",
-    description: "VeriPoC sends a reviewed PoC reference to an isolated Foundry worker, then returns a verdict and private evidence receipt.",
+    description: "Auditor sends a reviewed PoC reference to an isolated Foundry worker, then returns a verdict and private evidence receipt.",
     points: [],
     visual: (
       <WorkflowVideoCard
@@ -47,7 +47,7 @@ export default function HomePage() {
     <section className="landing-hero site-shell" aria-labelledby="hero-title">
       <p className="landing-overline">SMART-CONTRACT SECURITY · BACKED BY EVIDENCE</p>
       <h1 id="hero-title">Find the vulnerability.<br /><em>Verify the proof.</em></h1>
-      <p className="landing-lead">VeriPoC connects DeFi teams with independent security researchers.</p>
+      <p className="landing-lead">Auditor connects DeFi teams with independent security researchers.</p>
       <Link href="/get-started" className="site-action site-action-dark landing-hero-cta focus-ring">Get started <ArrowRight size={24} aria-hidden="true" /></Link>
     </section>
 

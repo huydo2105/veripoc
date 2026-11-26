@@ -21,7 +21,7 @@ export function validateAgentSetupInput(body) {
 }
 
 export async function generateAgentSetup(input, {
-  apiKey = process.env.OPENAI_API_KEY, model = process.env.VERIPOC_AGENT_SETUP_MODEL || "gpt-4o-mini",
+  apiKey = process.env.OPENAI_API_KEY, model = process.env.AUDITOR_AGENT_SETUP_MODEL || "gpt-4o-mini",
   fetcher = fetch,
 } = {}) {
   if (!apiKey) throw bad(503, "AI generation is not configured; enter agent setup manually");

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-export const IMAGE = "veripoc-foundry-worker:issue-5";
+export const IMAGE = "auditor-foundry-worker:issue-5";
 export const CASES = Object.freeze({
   vulnerable: { test: "testVulnerableDonationReproduces", verdict: "reproduced" },
   patched: { test: "testPatchedDonationDoesNotReproduce", verdict: "not_reproduced" }
@@ -15,10 +15,10 @@ export function manifestArgs(imageId) {
     "--security-opt", "no-new-privileges", "--user", "10001:10001",
     "--entrypoint", "cat", imageId, "/workspace/input.sha256"];
 }
-export function runArgs(imageId, test, containerName = "veripoc-fixture-00000000-0000-0000-0000-000000000000") {
+export function runArgs(imageId, test, containerName = "auditor-fixture-00000000-0000-0000-0000-000000000000") {
   if (!/^sha256:[a-f0-9]{64}$/.test(imageId)) throw new Error("invalid image ID");
   if (!Object.values(CASES).some(item => item.test === test)) throw new Error("untrusted test name");
-  if (!/^veripoc-fixture-[a-f0-9-]+$/.test(containerName)) throw new Error("invalid container name");
+  if (!/^auditor-fixture-[a-f0-9-]+$/.test(containerName)) throw new Error("invalid container name");
   return ["run", "--rm", "--name", containerName, "--init", "--network", "none", "--read-only", "--cap-drop", "ALL",
     "--security-opt", "no-new-privileges", "--pids-limit", "64", "--memory", "512m",
     "--cpus", "1", "--user", "10001:10001", "--tmpfs", "/tmp:rw,noexec,nosuid,size=64m,mode=1777",
@@ -34,8 +34,8 @@ function clean(output) {
 }
 export function parseFinancialEvidence(output) {
   const values = {};
-  for (const [field, marker] of [["attackerBefore", "VERIPOC_ATTACKER_BEFORE"],
-    ["attackerAfter", "VERIPOC_ATTACKER_AFTER"], ["victimShares", "VERIPOC_VICTIM_SHARES"]]) {
+  for (const [field, marker] of [["attackerBefore", "AUDITOR_ATTACKER_BEFORE"],
+    ["attackerAfter", "AUDITOR_ATTACKER_AFTER"], ["victimShares", "AUDITOR_VICTIM_SHARES"]]) {
     const matches = [...String(output ?? "").matchAll(new RegExp(`^  ${marker}: (0|[1-9][0-9]*)$`, "gm"))];
     if (matches.length !== 1) return null;
     values[field] = matches[0][1];
@@ -65,7 +65,7 @@ export function runFixture(caseName, { invoke = spawnSync, timeoutMs = 30_000 } 
   if (manifest.status !== 0 || !/^[a-f0-9]{64}$/.test(imageInputHash)) {
     return { ...classifyRun(caseName, { status: 1, stderr: "image input manifest unavailable" }), imageId };
   }
-  const containerName = `veripoc-fixture-${randomUUID()}`;
+  const containerName = `auditor-fixture-${randomUUID()}`;
   const result = invoke("docker", runArgs(imageId, CASES[caseName].test, containerName),
     { cwd: root, encoding: "utf8", timeout: timeoutMs, maxBuffer: 65536 });
   if (result.error?.code === "ETIMEDOUT" || result.error?.code === "ABORT_ERR") {

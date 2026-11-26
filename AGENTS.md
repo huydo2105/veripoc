@@ -1,9 +1,9 @@
-# Instructions for coding agents working in VeriPoC
+# Instructions for coding agents working in Auditor
 
 This file governs all Codex work in this monorepo. Read it **before** making changes, together with `docs/TWO_SIDED_PLATFORM.md`, `docs/PRODUCT_SCOPE.md`, `docs/ROADMAP.md` and `docs/CODEX_WORKFLOW.md`.
 
 ## Mission
-Deliver a **working and truthfully demonstrated VeriPoC MVP**: a **two-sided AI-agent security collaboration platform**: DeFi teams create authorized audit programs; independent researchers bring their own AI agents, submit claims and PoCs; a controlled Foundry worker checks reproduction under specified conditions, producing confidential evidence and future Concordium hash commitments. Never claim that a test passing is a mathematical proof or automatically qualifies a bounty payout.
+Deliver a **working and truthfully demonstrated Auditor MVP**: a **two-sided AI-agent security collaboration platform**: DeFi teams create authorized audit programs; independent researchers bring their own AI agents, submit claims and PoCs; a controlled Foundry worker checks reproduction under specified conditions, producing confidential evidence and future Concordium hash commitments. Never claim that a test passing is a mathematical proof or automatically qualifies a bounty payout.
 
 ## Non-negotiable human-in-the-loop protocol
 1. **One issue, one branch, one PR.** Completed issues #1–#7 are preserved. **Issue #8 is completed: PR #33 has merged with green CI, and Issue #8 is closed.** Next proposed engineering task is #34 (two-role homepage), followed by #35 scoped audit program, #9 checkpoint, #12 signed agent access, #10 anchoring, #13 BYO-agent gateway and #36 team triage. Start #34 only on explicit user authorization; preserve the one-PR-at-a-time gate. follow dependencies in `docs/ROADMAP.md`. The issue list is prioritized, not strictly numeric: do not implement all P2 options if the MVP is at risk.
@@ -24,9 +24,9 @@ Include:
 - **Evidence:** actual commands, reproducible test outputs, logs or CI URLs, and limitations. Never fabricate benchmark timings, exploit impact, or revenue.
 
 ## Engineering principles
-- Single repo `huydo2105/veripoc`; evolve gradually into apps/, packages/, contracts/, workers/, infrastructure/.
+- Single repo `huydo2105/auditor`; evolve gradually into apps/, packages/, contracts/, workers/, infrastructure/.
 - **One two-sided product with TWO home buttons**: `I have a smart contract to audit` (team) and `I want to audit` (researcher). Both enter the same program-scoped finding + PoC verification workflow. Read `docs/TWO_SIDED_PLATFORM.md` and `docs/PRODUCT_SCOPE.md`.
-- Researchers may bring **their own AI agents and tools** for authorized vulnerability investigation. VeriPoC is the neutral program, permission, verification and evidence infrastructure. Foundry/Anvil is core; Slither is an optional support/agent tool, NOT a standalone scan subscription or required PoC gate. Do not claim an AI agent automatically performs a comprehensive audit.
+- Researchers may bring **their own AI agents and tools** for authorized vulnerability investigation. Auditor is the neutral program, permission, verification and evidence infrastructure. Foundry/Anvil is core; Slither is an optional support/agent tool, NOT a standalone scan subscription or required PoC gate. Do not claim an AI agent automatically performs a comprehensive audit.
 - Fuzzing, symbolic execution, platform-provided AI suggestions, x402 and ZKP are optional. Basic REST/MCP **bring-your-own-agent** integration is a high-priority product workflow, but never at the expense of proven execution/authorization.
 - Pin compiler, dependency and fork versions in experiments; record environment, seed, input artifact hashes, and verifiable results.
 - Run only authorized audit-program targets. Separate protocol owner/team, invited researcher/agent, and trusted verifier roles. Do not expose private program reports, unpublished PoCs, keys, wallet credentials or privileged RPC endpoints.
@@ -41,6 +41,6 @@ MVP is only complete after: (a) two-button homepage and distinct DeFi team/resea
 
 ## Approved frontend direction (2026-11-11)
 - The owner requests a **Next.js App Router + TypeScript + Tailwind CSS** frontend after the open #34 / PR #37 is reviewed; see `docs/FRONTEND_ARCHITECTURE.md` and Issue #38.
-- Use the **icon-only VeriPoC vector mark** (available on PR #37) in the header and app icon. No visible text logo/letter-V placeholder; keep accessible name for the home link.
+- Use the **icon-only Auditor vector mark** (available on PR #37) in the header and app icon. No visible text logo/letter-V placeholder; keep accessible name for the home link.
 - Issue #39 adds an accessible interactive and scroll-assisted **Authorize → Investigate → Verify** explanation. See `docs/INTERACTIVE_LANDING.md`.
 - Do not merge PR #37 automatically or start Issue #38 before the owner's explicit approval. Migration must not change trusted Foundry worker, receipt hashes or API auth contracts.

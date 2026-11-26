@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/huydo2105/veripoc/packages/core/receipt.schema.json",
-  "title": "VeriPoC private verification receipt v1",
+  "$id": "https://github.com/huydo2105/auditor/packages/core/receipt.schema.json",
+  "title": "Auditor private verification receipt v1",
   "type": "object",
   "additionalProperties": false,
   "required": ["schemaVersion", "fixture", "verdict", "input", "tools", "chain", "evidence", "invariant"],

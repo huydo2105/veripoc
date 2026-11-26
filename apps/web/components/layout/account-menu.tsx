@@ -87,12 +87,12 @@ export function AccountMenu() {
         setWalletAccount(detail.account);
       }
     };
-    window.addEventListener("veripoc:session-changed", onSessionChanged);
+    window.addEventListener("auditor:session-changed", onSessionChanged);
 
     return () => {
       active = false;
       cleanupWallet?.();
-      window.removeEventListener("veripoc:session-changed", onSessionChanged);
+      window.removeEventListener("auditor:session-changed", onSessionChanged);
     };
   }, []);
 
@@ -160,7 +160,7 @@ export function AccountMenu() {
         credentials: "same-origin",
         headers: {
           "content-type": "application/json",
-          "x-veripoc-csrf": session.csrfToken,
+          "x-auditor-csrf": session.csrfToken,
         },
         body: JSON.stringify({ requestedRole }),
       });
@@ -185,17 +185,17 @@ export function AccountMenu() {
       const response = await fetch("/v1/auth/logout", {
         method: "POST",
         credentials: "same-origin",
-        headers: { "x-veripoc-csrf": session.csrfToken },
+        headers: { "x-auditor-csrf": session.csrfToken },
       });
       if (!response.ok) {
-        setError("Could not sign out. Your VeriPoC session is still active.");
+        setError("Could not sign out. Your Auditor session is still active.");
         return;
       }
       setSession(null);
       setWalletAccount(null);
       setMenuOpen(false);
     } catch {
-      setError("Could not sign out. Your VeriPoC session is still active.");
+      setError("Could not sign out. Your Auditor session is still active.");
     } finally {
       setBusy(false);
     }

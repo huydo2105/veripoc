@@ -4,7 +4,7 @@ import { createHash } from 'crypto';
 const BADGE = 'JyP9UYj3AwBDfz2yHCMgx';
 const ACCOUNT = '4kL7NH18ytDXaKsoHZi8mfRC9LfNC9meiATmoqs2n2NnBZskhm';
 // IMPORTANT: Set this to the exact public HTTPS URL where you will upload agent-card.json in Step 2!
-const AGENT_URI = process.env.AGENT_URI || 'https://raw.githubusercontent.com/huydo2105/veripoc/main/agent-card.json';
+const AGENT_URI = process.env.AGENT_URI || 'https://raw.githubusercontent.com/huydo2105/auditor/main/agent-card.json';
 
 async function main() {
   // 1. Fetch the exact normative badge block from Concordium for JyP9UXdZEugHqroAHnhbn
@@ -18,13 +18,13 @@ async function main() {
   // 2. Construct the combined ERC-8004 + A2A v1.0 Agent Card with the normative extension
   const agentCard = {
     type: 'https://eips.ethereum.org/EIPS/eip-8004#registration-v1',
-    name: 'VeriPoC Security & Exploit Triage Agent',
+    name: 'Auditor Security & Exploit Triage Agent',
     description:
       'Autonomous EVM smart contract pre-flight simulator and deterministic Foundry PoC verifier gated by Concordium identity and x402.',
     image: 'https://concordium.com/favicon.ico',
     version: '1.0.0',
     provider: {
-      organization: 'VeriPoC Labs',
+      organization: 'Auditor Labs',
       url: 'https://github.com',
     },
     supportedInterfaces: [

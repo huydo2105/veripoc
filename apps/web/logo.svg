@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-labelledby="title desc">
-  <title id="title">VeriPoC mark</title>
+  <title id="title">Auditor mark</title>
   <desc id="desc">Two paths converge on one evidence point.</desc>
   <path d="M18 23 39 48 18 73" fill="none" stroke="#181716" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M78 23 57 48 78 73" fill="none" stroke="#a84532" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>

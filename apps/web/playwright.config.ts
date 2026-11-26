@@ -1,6 +1,6 @@
 import { defineConfig } from "@playwright/test";
 
-const existingServer = process.env.VERIPOC_WEB_TEST_ORIGIN;
+const existingServer = process.env.AUDITOR_WEB_TEST_ORIGIN;
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -17,6 +17,6 @@ export default defineConfig({
     url: "http://127.0.0.1:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    env: { VERIPOC_API_ORIGIN: "http://127.0.0.1:1" },
+    env: { AUDITOR_API_ORIGIN: "http://127.0.0.1:1" },
   },
 });

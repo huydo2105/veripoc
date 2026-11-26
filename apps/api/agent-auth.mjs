@@ -37,17 +37,17 @@ export async function lookupConcordiumAgent(badge) {
 }
 
 export function agentMessage({ domain, method, path, body, nonce, expires }) {
-  return ["veripoc-agent-request-v1", domain, TESTNET_CHAIN, method, path,
+  return ["auditor-agent-request-v1", domain, TESTNET_CHAIN, method, path,
     sha256(body), nonce, String(expires)].join("\n");
 }
 
 /** Badge identity, CIS-8 key control, invitation and request signature are independent checks. */
 export async function authorizeAgentRequest({ headers, method, path, body, domain, invitedBadges,
   lookup = lookupConcordiumAgent, now = Date.now, usedNonces }) {
-  const badge = headers["x-veripoc-agent-badge"];
-  const nonce = headers["x-veripoc-agent-nonce"];
-  const expiresRaw = headers["x-veripoc-agent-expires"];
-  const signature = headers["x-veripoc-agent-signature"];
+  const badge = headers["x-auditor-agent-badge"];
+  const nonce = headers["x-auditor-agent-nonce"];
+  const expiresRaw = headers["x-auditor-agent-expires"];
+  const signature = headers["x-auditor-agent-signature"];
   if (typeof badge !== "string" || !invitedBadges.includes(badge)) return null;
   if (typeof domain !== "string" || !/^[a-zA-Z0-9.-]{3,100}$/.test(domain)
     || typeof nonce !== "string" || !/^[a-zA-Z0-9_-]{16,64}$/.test(nonce)

@@ -15,8 +15,8 @@ test("same-origin proxy forwards only allowed verification requests and backend 
   // @ts-expect-error token is required and validated by createApiServer at runtime.
   const server = createApiServer({ token, teamToken, researcherToken, execute: async () => ({ status: "tool_error", reason: "test executor" }) });
   await new Promise<void>(resolve => server.listen(0, "127.0.0.1", resolve));
-  const oldOrigin = process.env.VERIPOC_API_ORIGIN;
-  process.env.VERIPOC_API_ORIGIN = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
+  const oldOrigin = process.env.AUDITOR_API_ORIGIN;
+  process.env.AUDITOR_API_ORIGIN = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
   try {
     const request = (fixture: string, auth = token, key = "proxytestkey") => new Request("http://localhost:3000/v1/verify-poc", {
       method: "POST", headers: { authorization: `Bearer ${auth}`, "content-type": "application/json", "idempotency-key": key },
@@ -47,8 +47,8 @@ test("same-origin proxy forwards only allowed verification requests and backend 
     assert.equal(submitted.status, 201);
     assert.equal((await POST(request("vulnerable", researcherToken, "role-legacy-key"), context("verify-poc"))).status, 401);
   } finally {
-    if (oldOrigin === undefined) delete process.env.VERIPOC_API_ORIGIN;
-    else process.env.VERIPOC_API_ORIGIN = oldOrigin;
+    if (oldOrigin === undefined) delete process.env.AUDITOR_API_ORIGIN;
+    else process.env.AUDITOR_API_ORIGIN = oldOrigin;
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
 });
@@ -81,8 +81,8 @@ test("same-origin proxy forwards Concordium wallet auth, session cookies, and CS
   };
   const server = createApiServer(serverOptions as unknown as Parameters<typeof createApiServer>[0]);
   await new Promise<void>(resolve => server.listen(0, "127.0.0.1", resolve));
-  const oldOrigin = process.env.VERIPOC_API_ORIGIN;
-  process.env.VERIPOC_API_ORIGIN = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
+  const oldOrigin = process.env.AUDITOR_API_ORIGIN;
+  process.env.AUDITOR_API_ORIGIN = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
   try {
     const origin = "http://localhost:3000";
     const challengeRes = await POST(new Request(`${origin}/v1/auth/concordium/challenge`, {
@@ -111,7 +111,7 @@ test("same-origin proxy forwards Concordium wallet auth, session cookies, and CS
     assert.equal((await meRes.json()).account, address.address);
 
     const programRes = await POST(new Request(`${origin}/v1/programs`, { method: "POST",
-      headers: { cookie, origin, "x-veripoc-csrf": verified.csrfToken, "content-type": "application/json" },
+      headers: { cookie, origin, "x-auditor-csrf": verified.csrfToken, "content-type": "application/json" },
       body: JSON.stringify({ name: "Proxy vault", sourceUrl: "https://github.com/example/vault",
         sourceRevision: "a".repeat(40), chain: "evm-local", confidentiality: "members-only", visibility: "private",
         contact: "", docsUrl: "", agentContext: "", rewardCurrency: "USD",
@@ -131,20 +131,20 @@ test("same-origin proxy forwards Concordium wallet auth, session cookies, and CS
     assert.equal(publicList.status, 200);
     assert.deepEqual((await publicList.json()).programs, []);
     const incompleteSetup = await POST(new Request(`${origin}/v1/programs/agent-setup`, { method: "POST",
-      headers: { cookie, origin, "x-veripoc-csrf": verified.csrfToken, "content-type": "application/json" },
+      headers: { cookie, origin, "x-auditor-csrf": verified.csrfToken, "content-type": "application/json" },
       body: JSON.stringify({}),
     }), context("programs", "agent-setup"));
     assert.equal(incompleteSetup.status, 400);
 
     const logoutRes = await POST(new Request(`${origin}/v1/auth/logout`, {
       method: "POST",
-      headers: { cookie, origin, "x-veripoc-csrf": verified.csrfToken },
+      headers: { cookie, origin, "x-auditor-csrf": verified.csrfToken },
     }), context("auth", "logout"));
     assert.equal(logoutRes.status, 200);
     assert.match(logoutRes.headers.get("set-cookie") ?? "", /Max-Age=0/);
   } finally {
-    if (oldOrigin === undefined) delete process.env.VERIPOC_API_ORIGIN;
-    else process.env.VERIPOC_API_ORIGIN = oldOrigin;
+    if (oldOrigin === undefined) delete process.env.AUDITOR_API_ORIGIN;
+    else process.env.AUDITOR_API_ORIGIN = oldOrigin;
     await new Promise<void>((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
   }
 });

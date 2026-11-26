@@ -7,14 +7,14 @@ The existing Demo Vault is a preconfigured, working Foundry verification program
 Set the existing API token and wallet authentication environment, plus:
 
 ```text
-VERIPOC_TEAM_ACCOUNTS=<comma-separated Concordium team account addresses>
-VERIPOC_ALLOWED_ORIGINS=http://localhost:3000
-VERIPOC_PROGRAM_STORE=.local/programs.json
+AUDITOR_TEAM_ACCOUNTS=<comma-separated Concordium team account addresses>
+AUDITOR_ALLOWED_ORIGINS=http://localhost:3000
+AUDITOR_PROGRAM_STORE=.local/programs.json
 ```
 
-The API binds ownership to the account that signs its Concordium challenge, and allows creation only when that account appears in `VERIPOC_TEAM_ACCOUNTS`. Merely connecting a wallet in the header does not create a server session. On `/teams/new`, **Publish authorized program** requests a wallet signature when needed. A successful response shows a saved program link; a failed request leaves the local preview unsaved.
+The API binds ownership to the account that signs its Concordium challenge, and allows creation only when that account appears in `AUDITOR_TEAM_ACCOUNTS`. Merely connecting a wallet in the header does not create a server session. On `/teams/new`, **Publish authorized program** requests a wallet signature when needed. A successful response shows a saved program link; a failed request leaves the local preview unsaved.
 
-Optional AI drafting for either field in the final **Agent setup** step requires `OPENAI_API_KEY` on the API server. Each field has its own **Generate with AI** button. Draft generation needs no wallet sign-in; publishing still requires the team wallet. `VERIPOC_AGENT_SETUP_MODEL` can override the default model. The API checks the request origin, validates and bounds the preceding draft steps, and limits generation to five requests per minute per API client IP. It sends those steps to OpenAI with `store: false` and returns one editable field. The local limit is shared by visitors behind the same proxy and is not a production abuse-control solution. Generated text never expands program authority. Without a key, enter the setup manually.
+Optional AI drafting for either field in the final **Agent setup** step requires `OPENAI_API_KEY` on the API server. Each field has its own **Generate with AI** button. Draft generation needs no wallet sign-in; publishing still requires the team wallet. `AUDITOR_AGENT_SETUP_MODEL` can override the default model. The API checks the request origin, validates and bounds the preceding draft steps, and limits generation to five requests per minute per API client IP. It sends those steps to OpenAI with `store: false` and returns one editable field. The local limit is shared by visitors behind the same proxy and is not a production abuse-control solution. Generated text never expands program authority. Without a key, enter the setup manually.
 
 Run the API and web as in the existing local setup. Visit `/teams/new`, enter a full 40-character Git commit or 64-character digest, explicit target paths, rules and exclusions, one of `evm-local`, `evm-testnet`, or `solana-testnet`, and a run limit of 1–20. Add up to twelve named source, documentation, or deployment references, and proposed USD minimum and maximum rewards for each severity. Set the program to public or private. A public program appears in Opportunities and everyone may read its published scope. For a private program, invite a researcher account or badge. The owner can revisit programs through **Profile → Projects → Owned**; invited researchers use **Projects → Invited**. Owners manage invitations on each program page and may pause or resume. An invited researcher can open a private program link with their own wallet session. Pause and revocation remove researcher access. Closing a program is an API-only terminal action for now.
 

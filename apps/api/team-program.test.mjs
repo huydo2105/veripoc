@@ -61,14 +61,14 @@ async function login(base, person) {
 }
 async function call(base, path, credentials, body) {
   const response = await fetch(base + path, { method: body ? "POST" : "GET", headers: {
-    ...(credentials ? { cookie: credentials.cookie } : {}), ...(body ? { origin, "x-veripoc-csrf": credentials?.csrf ?? "",
+    ...(credentials ? { cookie: credentials.cookie } : {}), ...(body ? { origin, "x-auditor-csrf": credentials?.csrf ?? "",
       "content-type": "application/json" } : {}),
   }, ...(body ? { body: JSON.stringify(body) } : {}) });
   return { status: response.status, data: await response.json() };
 }
 
 test("team-owned program persists and grants only invited private reads", async () => {
-  const dir = mkdtempSync(join(tmpdir(), "veripoc-program-"));
+  const dir = mkdtempSync(join(tmpdir(), "auditor-program-"));
   const file = join(dir, "programs.json");
   try {
     let app = await server(file);
@@ -156,7 +156,7 @@ test("CSRF, operator bypass, paused access, and quota boundaries fail closed", a
 
 test("a signed agent reads only its invited active program", async () => {
   const badge = "JyP9UhUtd9AeJywDRsg5q";
-  const domain = "veripoc.local";
+  const domain = "auditor.local";
   const key = privateKeyToAccount(`0x${"11".repeat(32)}`);
   const ownerName = "test-concordium-owner";
   const chain = "ccd:4221332d34e1694168c2a0c0b3fd0f27";
@@ -183,9 +183,9 @@ test("a signed agent reads only its invited active program", async () => {
     const expires = Date.now() + 60_000;
     const signature = await key.signMessage({ message: agentMessage({ domain, method: "GET", path,
       body: Buffer.alloc(0), nonce, expires }) });
-    return fetch(base + path, { headers: { "x-veripoc-agent-badge": badge,
-      "x-veripoc-agent-nonce": nonce, "x-veripoc-agent-expires": String(expires),
-      "x-veripoc-agent-signature": signature } });
+    return fetch(base + path, { headers: { "x-auditor-agent-badge": badge,
+      "x-auditor-agent-nonce": nonce, "x-auditor-agent-expires": String(expires),
+      "x-auditor-agent-signature": signature } });
   }
   try {
     const o = await login(base, owner);

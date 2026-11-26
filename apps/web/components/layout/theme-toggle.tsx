@@ -4,7 +4,7 @@ import { useEffect, useSyncExternalStore } from "react";
 import { Moon, Sun } from "lucide-react";
 
 type Theme = "light" | "dark";
-const eventName = "veripoc-theme-change";
+const eventName = "auditor-theme-change";
 
 function getTheme(): Theme { return document.documentElement.dataset.theme === "dark" ? "dark" : "light"; }
 function subscribe(onChange: () => void) {
@@ -17,7 +17,7 @@ export function ThemeToggle() {
 
   useEffect(() => {
     let saved: string | null = null;
-    try { saved = window.localStorage.getItem("veripoc-theme"); } catch { /* preference storage may be disabled */ }
+    try { saved = window.localStorage.getItem("auditor-theme"); } catch { /* preference storage may be disabled */ }
     const preferred: Theme = saved === "light" || saved === "dark"
       ? saved
       : window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -27,7 +27,7 @@ export function ThemeToggle() {
 
   function select(next: Theme) {
     document.documentElement.dataset.theme = next;
-    try { window.localStorage.setItem("veripoc-theme", next); } catch { /* theme still works for this page */ }
+    try { window.localStorage.setItem("auditor-theme", next); } catch { /* theme still works for this page */ }
     window.dispatchEvent(new Event(eventName));
   }
 

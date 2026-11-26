@@ -1,4 +1,4 @@
-# VeriPoC brand mark
+# Auditor brand mark
 
 The refreshed mark shows two opposing paths meeting at a small diamond: DeFi teams and independent researchers contribute to one verifiable evidence point. It is a navigation and identity mark, not a security certification badge.
 
@@ -17,7 +17,7 @@ Against the page colors, the primary and accent strokes have calculated contrast
 
 ## Usage
 
-- Header: icon only, 48 px art inside a 48 × 48 px home link. The link carries `aria-label="VeriPoC home"`; the SVG is hidden from assistive technology to avoid a duplicate name.
+- Header: icon only, 48 px art inside a 48 × 48 px home link. The link carries `aria-label="Auditor home"`; the SVG is hidden from assistive technology to avoid a duplicate name.
 - Footer: 38 px mark beside the project name. Directory demo row: 30 px mark. Keep at least 6 px clear space around the painted shape at these sizes.
 - Favicon: use the square asset at 16 px or 32 px. Its three simple forms remain distinguishable without text. Do not add a glow, gradient, shield, checkmark, or “audited” implication.
 - Use the app's semantic tokens for inline marks. If the palette changes, update the static exports in `apps/web/public/brand`, `apps/web/app/icon.svg`, and the two root SVG copies together.

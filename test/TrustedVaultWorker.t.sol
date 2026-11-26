@@ -10,16 +10,16 @@ contract TrustedVaultTest is VaultFixtureTest {
     function testVulnerableDonationReproduces() public {
         (uint256 attackerBefore, uint256 shares, uint256 attackerAfter, uint256 victim) = _runAttack(false);
         require(attackerBefore == ATTACKER_START && shares == 0 && attackerAfter == 201 && victim == 0, "attack did not reproduce");
-        emit log_named_uint("VERIPOC_ATTACKER_BEFORE", attackerBefore);
-        emit log_named_uint("VERIPOC_ATTACKER_AFTER", attackerAfter);
-        emit log_named_uint("VERIPOC_VICTIM_SHARES", shares);
+        emit log_named_uint("AUDITOR_ATTACKER_BEFORE", attackerBefore);
+        emit log_named_uint("AUDITOR_ATTACKER_AFTER", attackerAfter);
+        emit log_named_uint("AUDITOR_VICTIM_SHARES", shares);
     }
 
     function testPatchedDonationDoesNotReproduce() public {
         (uint256 attackerBefore, uint256 shares, uint256 attackerAfter, uint256 victim) = _runAttack(true);
         require(attackerBefore == ATTACKER_START && shares > 0 && attackerAfter <= ATTACKER_START && victim == 0, "patch rejected by oracle");
-        emit log_named_uint("VERIPOC_ATTACKER_BEFORE", attackerBefore);
-        emit log_named_uint("VERIPOC_ATTACKER_AFTER", attackerAfter);
-        emit log_named_uint("VERIPOC_VICTIM_SHARES", shares);
+        emit log_named_uint("AUDITOR_ATTACKER_BEFORE", attackerBefore);
+        emit log_named_uint("AUDITOR_ATTACKER_AFTER", attackerAfter);
+        emit log_named_uint("AUDITOR_VICTIM_SHARES", shares);
     }
 }

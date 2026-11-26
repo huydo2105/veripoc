@@ -52,11 +52,11 @@ test("reported hash comes from the inspected image, never host checkout", () => 
 });
 
 test("measured financial evidence is parsed only from one complete successful trusted log", () => {
-  const log = "[PASS] testVulnerableDonationReproduces()\nLogs:\n  VERIPOC_ATTACKER_BEFORE: 101\n  VERIPOC_ATTACKER_AFTER: 201\n  VERIPOC_VICTIM_SHARES: 0\n";
+  const log = "[PASS] testVulnerableDonationReproduces()\nLogs:\n  AUDITOR_ATTACKER_BEFORE: 101\n  AUDITOR_ATTACKER_AFTER: 201\n  AUDITOR_VICTIM_SHARES: 0\n";
   assert.deepEqual(parseFinancialEvidence(log), { attackerBefore: "101", attackerAfter: "201", victimShares: "0" });
   assert.deepEqual(classifyRun("vulnerable", { status: 0, stdout: log }).financialEvidence,
     { attackerBefore: "101", attackerAfter: "201", victimShares: "0" });
   assert.equal(classifyRun("vulnerable", { status: 1, stdout: log }).financialEvidence, null);
-  assert.equal(parseFinancialEvidence(log.replace("  VERIPOC_VICTIM_SHARES: 0\n", "")), null);
-  assert.equal(parseFinancialEvidence(log + "  VERIPOC_ATTACKER_AFTER: 999\n"), null);
+  assert.equal(parseFinancialEvidence(log.replace("  AUDITOR_VICTIM_SHARES: 0\n", "")), null);
+  assert.equal(parseFinancialEvidence(log + "  AUDITOR_ATTACKER_AFTER: 999\n"), null);
 });

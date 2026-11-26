@@ -41,23 +41,23 @@ export function OpportunityList() {
   const categories: { id: Category; label: string; count: number }[] = [
     { id: "all", label: "All", count: bounties.length + publicSources.length + programs.length + 1 },
     { id: "bounties", label: "Bug bounties", count: bounties.length },
-    { id: "programs", label: "VeriPoC programs", count: programs.length },
+    { id: "programs", label: "Auditor programs", count: programs.length },
     { id: "source", label: "Public source", count: publicSources.filter(item => item.kind === "protocol").length },
     { id: "practice", label: "Practice labs", count: publicSources.filter(item => item.kind === "practice").length },
-    { id: "fixture", label: "VeriPoC fixture", count: 1 },
+    { id: "fixture", label: "Auditor fixture", count: 1 },
   ];
   const visibleBounties = (category === "all" || category === "bounties") ? bounties.filter(item => matches(`${item.title} ${item.description} ${item.ecosystems.join(" ")}`)) : [];
   const visiblePrograms = (category === "all" || category === "programs") ? programs.filter(item => matches(`${item.name} ${item.chain} ${item.sourceRevision}`)) : [];
-  const showVault = (category === "all" || category === "fixture") && matches("Demo Vault Audit Program ERC-4626 local fixture VeriPoC Ethereum EVM");
+  const showVault = (category === "all" || category === "fixture") && matches("Demo Vault Audit Program ERC-4626 local fixture Auditor Ethereum EVM");
   const visibleSources = publicSources.filter(item =>
     (category === "all" || category === "source" && item.kind === "protocol" || category === "practice" && item.kind === "practice") &&
     matches(`${item.title} ${item.owner} ${item.description} ${item.repository} ${item.ecosystem}`));
   const count = visibleBounties.length + visiblePrograms.length + Number(showVault) + visibleSources.length;
 
   return <main id="main" className="site-shell directory-page">
-    <section className="directory-hero" aria-labelledby="directory-title"><h1 id="directory-title">Opportunities</h1><p>Browse published bug bounty programs, public source references, and VeriPoC&apos;s reviewed local vault fixture.</p></section>
+    <section className="directory-hero" aria-labelledby="directory-title"><h1 id="directory-title">Opportunities</h1><p>Browse published bug bounty programs, public source references, and Auditor&apos;s reviewed local vault fixture.</p></section>
     <div className="directory-content">
-      <p className="directory-catalog-note">External programs are hosted by their owners on Immunefi. Read the current rules there and submit reports through the official program. VeriPoC runs only the local vault fixture.</p>
+      <p className="directory-catalog-note">External programs are hosted by their owners on Immunefi. Read the current rules there and submit reports through the official program. Auditor runs only the local vault fixture.</p>
       <div className="directory-tabs" role="group" aria-label="Opportunity category">
         {categories.map(item => <button key={item.id} type="button" className="focus-ring" aria-pressed={category === item.id} onClick={() => setCategory(item.id)}>{item.label} <span>{item.count}</span></button>)}
       </div>
@@ -69,15 +69,15 @@ export function OpportunityList() {
           <div className="directory-row-foot"><span>Bug bounty · Immunefi</span>{item.ecosystems.map(network => <NetworkBadge key={network} ecosystem={network} />)}<span>Read official terms before testing</span><span className="directory-date">View scope <ArrowRight size={16} aria-hidden="true" /></span></div>
         </Link>)}
         {visibleBounties.length > 0 && <TeamPromo />}
-        {visiblePrograms.map(item => <Link key={item.id} href={`/programs/${item.id}`} className="directory-row directory-bounty focus-ring" aria-label={`Open ${item.name} public VeriPoC program`}><div className="directory-row-main"><span className="directory-mark"><BrandMark size={30} /></span><div><strong>{item.name}</strong><small>Public VeriPoC scope · {item.chain}</small></div><span className="directory-reward">Program scope<small>{item.verification}</small></span></div><div className="directory-row-foot"><span>Public program</span><span>Revision {item.sourceRevision.slice(0, 12)}</span><span>Report intake not configured</span><span className="directory-date">View scope <ArrowRight size={16} aria-hidden="true" /></span></div></Link>)}
+        {visiblePrograms.map(item => <Link key={item.id} href={`/programs/${item.id}`} className="directory-row directory-bounty focus-ring" aria-label={`Open ${item.name} public Auditor program`}><div className="directory-row-main"><span className="directory-mark"><BrandMark size={30} /></span><div><strong>{item.name}</strong><small>Public Auditor scope · {item.chain}</small></div><span className="directory-reward">Program scope<small>{item.verification}</small></span></div><div className="directory-row-foot"><span>Public program</span><span>Revision {item.sourceRevision.slice(0, 12)}</span><span>Report intake not configured</span><span className="directory-date">View scope <ArrowRight size={16} aria-hidden="true" /></span></div></Link>)}
         {showVault && <Link href="/opportunities/demo-vault" className="directory-row directory-live focus-ring" aria-label="Open Demo Vault Audit Program details">
-          <div className="directory-row-main"><span className="directory-mark"><BrandMark size={30} /></span><div><strong>Demo Vault Audit Program</strong><small>VeriPoC reviewed synthetic fixture</small></div><span className="directory-reward">No bounty<small>Runnable locally</small></span></div>
+          <div className="directory-row-main"><span className="directory-mark"><BrandMark size={30} /></span><div><strong>Demo Vault Audit Program</strong><small>Auditor reviewed synthetic fixture</small></div><span className="directory-reward">No bounty<small>Runnable locally</small></span></div>
           <div className="directory-row-foot"><span>PoC verification</span><span className="directory-badge"><CheckCircle2 size={14} aria-hidden="true" /> Runnable fixture</span><NetworkBadge ecosystem="ethereum" /><span>ERC-4626-style vault</span><span className="directory-date">View fixture <ArrowRight size={16} aria-hidden="true" /></span></div>
         </Link>}
         {visibleSources.map(item => <SourceRow key={item.id} source={item} />)}
         {count === 0 && <div className="directory-empty" role="status"><h2>No matching entries</h2><p>Try another search or category.</p></div>}
       </div>
-      <p className="directory-limit">Published maximum rewards and scope summaries were checked on 17 November 2026 and may change. Immunefi&apos;s current program pages govern eligibility, authorization, testing and disclosure. External programs have no VeriPoC submission or verification integration.</p>
+      <p className="directory-limit">Published maximum rewards and scope summaries were checked on 17 November 2026 and may change. Immunefi&apos;s current program pages govern eligibility, authorization, testing and disclosure. External programs have no Auditor submission or verification integration.</p>
     </div>
   </main>;
 }

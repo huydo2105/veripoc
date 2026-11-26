@@ -7,9 +7,9 @@ import { SiteToaster } from "@/components/layout/site-toaster";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "VeriPoC | Smart-contract security evidence", template: "%s | VeriPoC" },
+  title: { default: "Auditor | Smart-contract security evidence", template: "%s | Auditor" },
   description: "A shared smart-contract security workspace for DeFi teams and independent researchers using their own AI agents.",
-  icons: { icon: "/brand/veripoc-app-icon.svg", apple: "/brand/veripoc-app-icon.svg" },
+  icons: { icon: "/brand/auditor-app-icon.svg", apple: "/brand/auditor-app-icon.svg" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

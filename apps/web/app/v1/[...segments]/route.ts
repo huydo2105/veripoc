@@ -33,12 +33,12 @@ async function forward(request: Request, context: Context, method: "GET" | "POST
   if (!path) return error(404, "not found");
 
   let origin: URL | null;
-  try { origin = backendOrigin(process.env.VERIPOC_API_ORIGIN, process.env.NODE_ENV === "production"); }
+  try { origin = backendOrigin(process.env.AUDITOR_API_ORIGIN, process.env.NODE_ENV === "production"); }
   catch { return error(503, "verification API origin is invalid"); }
   if (!origin) return error(503, "verification API is not configured");
 
   const headers = new Headers();
-  for (const name of ["authorization", "content-type", "idempotency-key", "cookie", "origin", "x-veripoc-csrf"]) {
+  for (const name of ["authorization", "content-type", "idempotency-key", "cookie", "origin", "x-auditor-csrf"]) {
     const value = request.headers.get(name);
     if (value) headers.set(name, value);
   }

@@ -1,4 +1,4 @@
-# VeriPoC developer setup (Issue #2)
+# Auditor developer setup (Issue #2)
 
 This branch creates a minimal **reproducible Foundry + Slither baseline**, not a working exploit scanner, backend API, or sandbox.
 
@@ -11,8 +11,8 @@ This branch creates a minimal **reproducible Foundry + Slither baseline**, not a
 
 ## Quick start
 ```bash
-git clone https://github.com/huydo2105/veripoc.git
-cd veripoc
+git clone https://github.com/huydo2105/auditor.git
+cd auditor
 forge --version
 forge build
 forge test -vvv

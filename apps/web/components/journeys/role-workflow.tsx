@@ -41,9 +41,9 @@ const source = {
         shares == 0 && attackerAfter == 201 &&
         victim == 0, "attack did not reproduce"
     );
-    emit log_named_uint("VERIPOC_ATTACKER_BEFORE", attackerBefore);
-    emit log_named_uint("VERIPOC_ATTACKER_AFTER", attackerAfter);
-    emit log_named_uint("VERIPOC_VICTIM_SHARES", shares);
+    emit log_named_uint("AUDITOR_ATTACKER_BEFORE", attackerBefore);
+    emit log_named_uint("AUDITOR_ATTACKER_AFTER", attackerAfter);
+    emit log_named_uint("AUDITOR_VICTIM_SHARES", shares);
 }`,
 } as const;
 

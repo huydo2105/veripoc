@@ -50,7 +50,7 @@ test("catalog has ten distinct pinned GitHub source references across two ecosys
   }
 });
 
-test("catalog cards never route external sources to VeriPoC submission or execution", () => {
+test("catalog cards never route external sources to Auditor submission or execution", () => {
   const component = readFileSync(new URL("./components/opportunities/opportunity-list.tsx", import.meta.url), "utf8");
   assert.match(component, /github\.com\/\$\{source\.repository\}\/tree\/\$\{source\.revision\}/);
   assert.match(component, /target="_blank" rel="noopener noreferrer"/);

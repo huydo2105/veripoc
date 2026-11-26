@@ -1,4 +1,4 @@
-# Codex delivery playbook: two-sided VeriPoC MVP
+# Codex delivery playbook: two-sided Auditor MVP
 
 ## Purpose
 Codex should implement as many MVP tasks as requested, **but only ONE PR at a time**. This is an intentionally human-gated process, not an unattended autonomous sprint. The agent cannot receive an answer while the project owner is away; work resumes when the owner explicitly responds and re-invokes Codex.
@@ -7,7 +7,7 @@ Codex should implement as many MVP tasks as requested, **but only ONE PR at a ti
 On Windows use WSL2 Ubuntu when practical, with Git, Foundry, Slither, Node, Docker and Codex installed. In the repository:
 
 ```bash
-cd ~/veripoc
+cd ~/auditor
 git switch main
 git pull --ff-only
 codex
@@ -46,7 +46,7 @@ The agent should not confuse 'green tests' with safety guarantees. If CI is unav
 
 **High-value M3:** #10 real Concordium Testnet evidence anchoring; #13 bring-your-own-agent REST/MCP for researcher; #36 team finding inbox / manual triage / patched retest. #11 bounty escrow is optional behind authorized settlement controls.
 
-**Stretch:** #14–#18 only if measurable value and core flows are complete. Slither, fuzzers and external LLMs may help researcher agents discover potential flaws but are not required in the VeriPoC trusted reproduction pipeline.
+**Stretch:** #14–#18 only if measurable value and core flows are complete. Slither, fuzzers and external LLMs may help researcher agents discover potential flaws but are not required in the Auditor trusted reproduction pipeline.
 
 **Product source:** docs/TWO_SIDED_PLATFORM.md and docs/PRODUCT_SCOPE.md. Every PR must document which persona it helps, which audit-program permissions are enforced, and how it strengthens the judge story.
 
@@ -86,7 +86,7 @@ After understanding a PR:
 
 After merge and closure:
 
-> Begin Issue #K only. Make one PR and stop for my review. Teach me the concepts I need to understand the change, manage VeriPoC, and present the new feature to judges.
+> Begin Issue #K only. Make one PR and stop for my review. Teach me the concepts I need to understand the change, manage Auditor, and present the new feature to judges.
 
 ## Deadline behavior
 If time is short, freeze nice-to-have features. Prefer correctness and demonstrated integration over breadth. Do not represent a prototype as audited or production secure.

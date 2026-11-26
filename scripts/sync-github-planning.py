@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Idempotently sync VeriPoC issues into native GitHub Milestones and a Projects v2 board.
+"""Idempotently sync Auditor issues into native GitHub Milestones and a Projects v2 board.
 
 Prerequisites: gh (authenticated with repo and project scopes), Python 3.
 Usage: python3 scripts/sync-github-planning.py [--dry-run | --milestones-only | --projects-only]
@@ -10,9 +10,9 @@ import json
 import subprocess
 import sys
 
-REPO = "huydo2105/veripoc"
+REPO = "huydo2105/auditor"
 OWNER = "huydo2105"
-PROJECT_TITLE = "VeriPoC — Two-Sided Agentic Security MVP"
+PROJECT_TITLE = "Auditor — Two-Sided Agentic Security MVP"
 
 # Keep each engineering issue in exactly one native milestone. Tracking issues
 # #24–27 are excluded to avoid counting them twice in native progress bars.
@@ -143,9 +143,9 @@ def sync_project():
     projects=gh("project","list","--owner",OWNER,"--limit","100","--format","json").get("projects",[])
     matching=[p for p in projects if p.get("title")==PROJECT_TITLE]
     if not matching:
-        matching=[p for p in projects if "veripoc" in p.get("title","").lower()]
+        matching=[p for p in projects if "auditor" in p.get("title","").lower()]
     if len(matching)>1:
-        raise RuntimeError("More than one VeriPoC project exists; pick one and rename to exact PROJECT_TITLE before syncing.")
+        raise RuntimeError("More than one Auditor project exists; pick one and rename to exact PROJECT_TITLE before syncing.")
     if matching:
         proj=matching[0]
     else:

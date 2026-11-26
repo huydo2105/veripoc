@@ -50,6 +50,25 @@ async function readRawBody(req, maxSize = 4096) {
   req.rawBody = Buffer.concat(chunks);
   return req.rawBody;
 }
+function validStructuredReport(report) {
+  if (!report || typeof report !== "object" || Array.isArray(report)) return false;
+  const required = ["title", "location", "rootCause", "impact", "invariant", "reproduction"];
+  const allowed = new Set([...required, "tools"]);
+  const keys = Object.keys(report);
+  if (keys.some(key => !allowed.has(key))) return false;
+  for (const key of required) {
+    if (typeof report[key] !== "string" || !report[key].trim() || report[key].trim().length > 600) return false;
+  }
+  if (report.tools !== undefined && (typeof report.tools !== "string" || report.tools.trim().length > 200)) return false;
+  return true;
+}
+function validSubmissionBody(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) return false;
+  const keys = Object.keys(body).sort().join();
+  if (keys !== "claim,targetSha256" && keys !== "claim,report,targetSha256") return false;
+  if (body.claim !== "donation-share-inflation" || body.targetSha256 !== DEMO_PROGRAM.targetSha256) return false;
+  return body.report === undefined || validStructuredReport(body.report);
+}
 function validBody(kind, body) {
   if (!body || typeof body !== "object" || Array.isArray(body)) return false;
   const keys = Object.keys(body).sort().join();
@@ -81,11 +100,11 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
   secureCookies = process.env.NODE_ENV === "production",
   execute = executeJob, now = Date.now, maxJobs = 16, programStorePath = null,
   generateSetup = generateAgentSetup } = {}) {
-  if (typeof token !== "string" || token.length < 32) throw new Error("VERIPOC_API_TOKEN must be at least 32 characters");
+  if (typeof token !== "string" || token.length < 32) throw new Error("AUDITOR_API_TOKEN must be at least 32 characters");
   const configured = [teamToken, researcherToken].filter(value => value !== undefined);
   if (configured.some(value => typeof value !== "string" || value.length < 32)
     || (configured.length && (configured.length !== 2 || new Set([token, teamToken, researcherToken]).size !== 3)))
-    throw new Error("distinct VERIPOC_TEAM_TOKEN and VERIPOC_RESEARCHER_TOKEN of at least 32 characters are required together");
+    throw new Error("distinct AUDITOR_TEAM_TOKEN and AUDITOR_RESEARCHER_TOKEN of at least 32 characters are required together");
   if (!Array.isArray(invitedAgentBadges) || invitedAgentBadges.some(badge => typeof badge !== "string")
     || (invitedAgentBadges.length && (!agentDomain || !teamToken || !researcherToken)))
     throw new Error("signed agent access requires an explicit domain, invitation, and both program tokens");
@@ -165,13 +184,13 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
             throw fail(400, "requestedRole is required");
           const session = walletAuth.setOnboardingRole({
             cookieHeader: req.headers.cookie, origin: req.headers.origin,
-            csrfHeader: req.headers["x-veripoc-csrf"], requestedRole: body.requestedRole,
+            csrfHeader: req.headers["x-auditor-csrf"], requestedRole: body.requestedRole,
           });
           return json(res, 200, session);
         }
         if (req.method === "POST" && path === "/v1/auth/logout") {
           const result = walletAuth.logout({
-            cookieHeader: req.headers.cookie, origin: req.headers.origin, csrfHeader: req.headers["x-veripoc-csrf"],
+            cookieHeader: req.headers.cookie, origin: req.headers.origin, csrfHeader: req.headers["x-auditor-csrf"],
           });
           return json(res, 200, result, { "set-cookie": formatClearSessionCookie({ secure }) });
         }
@@ -210,7 +229,7 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
           return json(res, 200, await generateSetup(input));
         }
         const account = walletAuth.accountFromCookie({ cookieHeader: req.headers.cookie, method: req.method,
-          origin: req.headers.origin, csrfHeader: req.headers["x-veripoc-csrf"] });
+          origin: req.headers.origin, csrfHeader: req.headers["x-auditor-csrf"] });
         if (path === "/v1/programs/mine" && req.method === "GET") {
           if (!account || !teamAccounts.includes(account)) throw fail(403, "team account required");
           return json(res, 200, { programs: programStore.list().filter(item => item.ownerAccount === account) });
@@ -236,7 +255,7 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
         const isInvited = item.status === "active" && account && item.invitedResearcherAccounts.includes(account);
         let isInvitedAgent = false;
         if (item.status === "active" && !account && req.method === "GET" && agentDomain
-          && item.invitedAgentBadges.includes(req.headers["x-veripoc-agent-badge"])) {
+          && item.invitedAgentBadges.includes(req.headers["x-auditor-agent-badge"])) {
           pruneExpiredNonces(usedAgentNonces, now());
           const actor = await authorizeAgentRequest({ headers: req.headers, method: req.method, path,
             body: Buffer.alloc(0), domain: agentDomain, invitedBadges: item.invitedAgentBadges,
@@ -250,7 +269,7 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
         if (!isOwner && !isInvited && !isInvitedAgent) return json(res, 404, { error: "program not found" });
         if (req.method === "GET" && programParts.length === 1)
           return json(res, 200, { program: isOwner ? item : programForMember(item, account,
-            isInvitedAgent ? req.headers["x-veripoc-agent-badge"] : null),
+            isInvitedAgent ? req.headers["x-auditor-agent-badge"] : null),
           actor: { role: isOwner ? "team" : "researcher" } });
         if (req.method === "GET" && programParts.length === 2 && programParts[1] === "submissions")
           return json(res, 200, { submissions: [] });
@@ -275,7 +294,7 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
     const isProgram = path.startsWith("/v1/programs/");
     let actor = equalToken(req.headers.authorization, teamToken) && teamToken ? { id: DEMO_PROGRAM.ownerId, role: "team" }
       : equalToken(req.headers.authorization, researcherToken) && researcherToken ? { id: DEMO_PROGRAM.invitedResearcherIds[0], role: "researcher" } : null;
-    if (isProgram && !req.headers.authorization && invitedAgentBadges.length && req.headers["x-veripoc-agent-badge"]) {
+    if (isProgram && !req.headers.authorization && invitedAgentBadges.length && req.headers["x-auditor-agent-badge"]) {
       let signedBody;
       try { signedBody = req.method === "POST" ? await readRawBody(req) : Buffer.alloc(0); }
       catch (error) { return json(res, error.status ?? 400, { error: error.message }); }
@@ -287,12 +306,12 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
           now, usedNonces: usedAgentNonces });
       } catch { actor = null; }
     }
-    if (isProgram && !actor && !req.headers.authorization && !req.headers["x-veripoc-agent-badge"] && req.headers.cookie) {
+    if (isProgram && !actor && !req.headers.authorization && !req.headers["x-auditor-agent-badge"] && req.headers.cookie) {
       const requestedProgramId = path.split("/")[3] ?? "";
       try {
         actor = walletAuth.programActorFromCookie({
           cookieHeader: req.headers.cookie, method: req.method, origin: req.headers.origin,
-          csrfHeader: req.headers["x-veripoc-csrf"], programId: requestedProgramId,
+          csrfHeader: req.headers["x-auditor-csrf"], programId: requestedProgramId,
         });
       } catch (error) {
         return json(res, error.status ?? 403, { error: error.message });
@@ -329,6 +348,25 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
           return json(res, 200, { id: job.id, programId: job.programId, submissionId: job.submissionId,
             actorId: job.authorId, kind: job.kind, state: job.state, fixture: job.body.fixture, result: job.result });
         }
+        if (req.method === "GET" && segments.length === 4 && segments[1] === "jobs" && segments[3] === "evidence") {
+          const job = jobs.get(segments[2]);
+          if (!job || job.programId !== DEMO_PROGRAM.id || (actor.role !== "team" && job.authorId !== actor.id))
+            return json(res, 404, { error: "job not found" });
+          if (job.state !== "finished" || !job.result)
+            return json(res, 409, { error: "verification job has not finished yet", state: job.state });
+          const submission = submissions.get(job.submissionId);
+          return json(res, 200, {
+            jobId: job.id,
+            programId: job.programId,
+            submissionId: job.submissionId,
+            actorId: job.authorId,
+            fixture: job.body.fixture,
+            claim: submission?.claim ?? null,
+            targetSha256: submission?.targetSha256 ?? DEMO_PROGRAM.targetSha256,
+            verdict: job.result.status,
+            evidence: job.result,
+          });
+        }
         if (req.method !== "POST") return json(res, 404, { error: "not found" });
         if (actor.role !== "researcher") return json(res, 403, { error: "researcher role required" });
         if (!fixtureRevisionMatches()) return json(res, 409, { error: "reviewed fixture revision changed" });
@@ -348,14 +386,21 @@ export function createApiServer({ token, teamToken, researcherToken, invitedRese
         if (prior) return prior.fingerprint === fingerprint ? json(res, isSubmission ? 201 : 202,
           isSubmission ? submissions.get(prior.id) : { id: prior.id, state: jobs.get(prior.id).state })
           : json(res, 409, { error: "idempotency key reused for a different request" });
-        if (isSubmission && (!body || typeof body !== "object" || Array.isArray(body)
-          || Object.keys(body).sort().join() !== "claim,targetSha256"
-          || body.claim !== "donation-share-inflation" || body.targetSha256 !== DEMO_PROGRAM.targetSha256))
-          throw fail(400, "only the reviewed vault claim and target revision are accepted");
+        if (isSubmission && !validSubmissionBody(body))
+          throw fail(400, "only the reviewed vault claim, target revision, and valid structured report are accepted");
         if (isRun && !validBody("verify", body)) throw fail(400, "only reviewed repository fixtures are accepted");
         if (isSubmission) {
+          const report = body.report ? {
+            title: body.report.title.trim(),
+            location: body.report.location.trim(),
+            rootCause: body.report.rootCause.trim(),
+            impact: body.report.impact.trim(),
+            invariant: body.report.invariant.trim(),
+            reproduction: body.report.reproduction.trim(),
+            ...(body.report.tools?.trim() ? { tools: body.report.tools.trim() } : {}),
+          } : undefined;
           const item = { id: randomUUID(), programId: DEMO_PROGRAM.id, authorId: actor.id,
-            claim: body.claim, targetSha256: body.targetSha256, jobIds: [] };
+            claim: body.claim, targetSha256: body.targetSha256, ...(report ? { report } : {}), jobIds: [] };
           submissions.set(item.id, item);
           idempotency.set(scopedKey, { fingerprint, id: item.id });
           return json(res, 201, item);

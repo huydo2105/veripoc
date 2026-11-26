@@ -56,7 +56,7 @@ export function SavedPrograms({ id, embedded = false }: { id?: string; embedded?
     setError("");
     try {
       const response = await fetch(`/v1/programs/${program.id}/${endpoint}`, { method: "POST",
-        credentials: "same-origin", headers: { "content-type": "application/json", "x-veripoc-csrf": session.csrfToken },
+        credentials: "same-origin", headers: { "content-type": "application/json", "x-auditor-csrf": session.csrfToken },
         body: JSON.stringify(body) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Could not update program.");

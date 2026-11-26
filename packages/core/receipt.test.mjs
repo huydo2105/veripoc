@@ -6,7 +6,7 @@ const run = { case: "vulnerable", status: "reproduced", inputHash: "a".repeat(64
   imageId: `sha256:${"b".repeat(64)}`, output: "trusted fixture passed" };
 test("receipt hash is reproducible and sensitive to evidence", () => {
   const receipt = receiptFromWorker(run);
-  assert.equal(receiptHash(receipt), "1bf26e54d392ca788f010ca8123eeb7432e9b12ee49af848aea290527f872e0e");
+  assert.equal(receiptHash(receipt), "eab305bd8aabfaa143dcf9f028052761d46ead6df92c4f1d430ca0875c90fd45");
   assert.equal(receiptHash(receipt), receiptHash(JSON.parse(JSON.stringify(receipt))));
   assert.notEqual(receiptHash(receipt), receiptHash(receiptFromWorker({ ...run, output: "different" })));
   assert.notEqual(receiptHash(receipt), receiptHash(receiptFromWorker({ ...run, errorOutput: "compile error" })));

@@ -22,19 +22,19 @@ export const FAQ_CATEGORIES: { id: "all" | FaqCategory; label: string }[] = [
 
 export const FAQ_ITEMS: FaqItem[] = [
   {
-    id: "what-is-veripoc",
+    id: "what-is-auditor",
     category: "general",
     featured: true,
-    question: "What is VeriPoC?",
+    question: "What is Auditor?",
     paragraphs: [
-      "VeriPoC is a shared security workspace for DeFi teams and independent researchers using their own AI agents. Teams set an authorized scope; researchers submit claims and supported proof references; a controlled Foundry worker returns private evidence for the tested conditions.",
+      "Auditor is a shared security workspace for DeFi teams and independent researchers using their own AI agents. Teams set an authorized scope; researchers submit claims and supported proof references; a controlled Foundry worker returns private evidence for the tested conditions.",
     ],
   },
   {
-    id: "how-defi-teams-use-veripoc",
+    id: "how-defi-teams-use-auditor",
     category: "teams",
     featured: true,
-    question: "How do DeFi teams use VeriPoC?",
+    question: "How do DeFi teams use Auditor?",
     steps: [
       "Define the contract, pinned source revision, severity reward tiers, and rules for an authorized audit program.",
       "Post the 100 CCD refundable anti-spam setup deposit and invite researchers or signed AI agent badges (for private scopes).",
@@ -45,10 +45,10 @@ export const FAQ_ITEMS: FaqItem[] = [
     ],
   },
   {
-    id: "how-researchers-use-veripoc",
+    id: "how-researchers-use-auditor",
     category: "researchers",
     featured: true,
-    question: "How do security researchers use VeriPoC?",
+    question: "How do security researchers use Auditor?",
     steps: [
       "Read the scope, invariants, and rules of a program they are invited to investigate.",
       "Use their own AI agent, Foundry, Slither, and manual review to prepare a reproducible claim.",
@@ -59,13 +59,13 @@ export const FAQ_ITEMS: FaqItem[] = [
     ],
   },
   {
-    id: "how-much-does-veripoc-cost",
+    id: "how-much-does-auditor-cost",
     category: "general",
     featured: true,
-    question: "How much does VeriPoC cost?",
+    question: "How much does Auditor cost?",
     paragraphs: [
       `Setting up a new bug bounty program requires a refundable ${BOUNTY_DEPOSIT_CCD} CCD anti-spam deposit on Concordium. This bond deters fake or abandoned listings and is separate from researcher reward pools.`,
-      "Running the local Foundry verification worker on your own machine has no VeriPoC fee. Per-verification-job metering (x402 on Testnet) is in development, and a reproduced result never automatically triggers a bounty payout.",
+      "Running the local Foundry verification worker on your own machine has no Auditor fee. Per-verification-job metering (x402 on Testnet) is in development, and a reproduced result never automatically triggers a bounty payout.",
     ],
   },
   {
@@ -81,7 +81,7 @@ export const FAQ_ITEMS: FaqItem[] = [
     id: "concordium-agent-badge",
     category: "researchers",
     featured: true,
-    question: "How does VeriPoC verify your AI agent using a Concordium badge?",
+    question: "How does Auditor verify your AI agent using a Concordium badge?",
     paragraphs: [
       "A Concordium CIS-8004 badge identifies an agent through an on-chain registry record. A verifier can check that the record is active and that the published Agent Card matches its on-chain SHA-256 hash. A CIS-8 binding connects the agent to an external public key.",
       "The local API can verify signed requests from specifically invited agent badges and keys. A valid badge establishes registry identity and card integrity; it does not prove audit skill or grant automatic access to uninvited programs.",

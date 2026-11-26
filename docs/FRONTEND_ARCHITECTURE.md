@@ -1,4 +1,4 @@
-# VeriPoC frontend — Next.js, Tailwind and interactive storytelling
+# Auditor frontend — Next.js, Tailwind and interactive storytelling
 **Decision:** 2026-11-11. Supersedes the earlier *"don't migrate from plain HTML"* guidance in UI_DESIGN_SYSTEM.md because the product owner explicitly requested Next.js + Tailwind.
 
 ## Architecture decision
@@ -33,8 +33,8 @@ apps/web/
     api-client.ts
     types.ts
   public/
-    brand/veripoc-mark.svg
-    brand/veripoc-app-icon.svg
+    brand/auditor-mark.svg
+    brand/auditor-app-icon.svg
   app/globals.css
   tailwind/postcss setup, tsconfig, eslint config and package.json
 ```
@@ -47,7 +47,7 @@ The current `apps/api/server.mjs` hosts old static HTML routes in addition to AP
 
 ### Logo usage
 Use the checked-in vector assets created in PR #37 at `apps/web/logo.svg` and `apps/web/app-icon.svg`; migrate them to `apps/web/public/brand/`.
-- Header: logo **mark only**, no visible fallback 'V' or 'VeriPoC' text lockup. The home link must retain accessible name `aria-label="VeriPoC home"`.
+- Header: logo **mark only**, no visible fallback 'V' or 'Auditor' text lockup. The home link must retain accessible name `aria-label="Auditor home"`.
 - Browser icon, touch icon and social previews derived from the square app icon; external source/favicons not required.
 - No glowing, gradient, 3D, or external generative art in shipping brand icon.
 - Keep entire logo clear at 24–44px, use aspect ratio 1:1 and no unnecessary logo animation.

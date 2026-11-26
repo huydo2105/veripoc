@@ -40,7 +40,7 @@ function canonical(value) {
 
 export function receiptHash(receipt) {
   validateReceipt(receipt);
-  return digest(`VeriPoC receipt v1\n${canonical(receipt)}`);
+  return digest(`Auditor receipt v1\n${canonical(receipt)}`);
 }
 
 export function publicAnchor(receipt) {

@@ -82,7 +82,7 @@ export async function publishProgram(
     invitedAgentBadges: agentBadges,
   };
   const response = await fetch("/v1/programs", { method: "POST", credentials: "same-origin",
-    headers: { "content-type": "application/json", "x-veripoc-csrf": session.csrfToken }, body: JSON.stringify(body) });
+    headers: { "content-type": "application/json", "x-auditor-csrf": session.csrfToken }, body: JSON.stringify(body) });
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || "Program could not be saved.");
   return result.program.id;

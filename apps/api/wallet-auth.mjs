@@ -1,7 +1,7 @@
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
 import { AccountAddress, ConcordiumGRPCWebClient, verifyMessageSignature } from "@concordium/web-sdk";
 
-export const SESSION_COOKIE = "veripoc_session";
+export const SESSION_COOKIE = "auditor_session";
 export const TESTNET_CHAIN = "ccd:4221332d34e1694168c2a0c0b3fd0f27";
 export const CHALLENGE_TTL_MS = 5 * 60_000;
 export const SESSION_TTL_MS = 12 * 60 * 60_000;
@@ -54,7 +54,7 @@ export function isValidAccountSignature(signature) {
 
 export function buildLoginMessage({ origin, account, nonce, expiresAt }) {
   return [
-    "VeriPoC Concordium Wallet Login",
+    "Auditor Concordium Wallet Login",
     `Origin: ${origin}`,
     `Network: ${TESTNET_CHAIN}`,
     `Account: ${account}`,

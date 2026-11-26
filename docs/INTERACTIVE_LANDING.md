@@ -1,9 +1,9 @@
-# VeriPoC — Interactive product education, not animation theater
+# Auditor — Interactive product education, not animation theater
 **Decision:** 2026-11-11 | Target after standard Next/Tailwind migration, Issue #39.
 **Purpose:** users and hackathon judges should understand the two-sided product in under 30 seconds and be able to explore it without accounts or wallet setup.
 
 ## Inspiration and transferable mechanisms
-- **Stripe Payment Links** (https://stripe.com/payments/payment-links): brief visual 3-step How It Works, followed by a **configurable interactive demo** on the same page. *Transfer:* each VeriPoC stage should be clickable and change the visible example UI, not just open more text.
+- **Stripe Payment Links** (https://stripe.com/payments/payment-links): brief visual 3-step How It Works, followed by a **configurable interactive demo** on the same page. *Transfer:* each Auditor stage should be clickable and change the visible example UI, not just open more text.
 - **Linear Start Guide** (https://linear.app/docs/start-guide): visitors can explore a demo workspace before signing up. *Transfer:* demo program and verifier preview are publicly discoverable, while authorized operations remain gated.
 - **Framer's interactive-site examples** (https://www.framer.com/blog/interactive-websites/): step-oriented storytelling, lightweight microinteractions, and scroll-triggered sections. *Transfer:* moving visuals should illustrate inputs, verification and evidence rather than distract.
 - **Motion** (https://motion.dev/docs/react): scroll-triggered `whileInView`, scroll-linked `useScroll`, reduced-motion `useReducedMotion`. *Transfer:* use motion for staged explanation with CSS transform/opacity; no autoplay exploit visualization masquerading as real work.

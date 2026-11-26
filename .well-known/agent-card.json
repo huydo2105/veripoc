@@ -1,7 +1,7 @@
 {
   "type": "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
-  "name": "VeriPoC Security Auditor",
-  "description": "VeriPoC is a smart-contract security research project developing reproducible EVM vulnerability analysis and proof-of-concept verification. Agent #1067 is its registered cross-chain identity on Concordium Testnet. Automated auditing, verification services, and bounty settlement are under development and are not yet publicly available.",
+  "name": "Auditor Security Agent",
+  "description": "Auditor is a smart-contract security research project developing reproducible EVM vulnerability analysis and proof-of-concept verification. Agent #1067 is its registered cross-chain identity on Concordium Testnet. Automated auditing, verification services, and bounty settlement are under development and are not yet publicly available.",
   "version": "0.1.0",
   "x402Support": false,
   "supportedInterfaces": [],
@@ -69,10 +69,10 @@
       "agentRegistry": "ccd:4221332d34e1694168c2a0c0b3fd0f27:12802.0"
     }
   ],
-  "url": "https://raw.githubusercontent.com/huydo2105/veripoc/main/.well-known/agent-card.json",
+  "url": "https://raw.githubusercontent.com/huydo2105/auditor/main/.well-known/agent-card.json",
   "provider": {
-    "organization": "VeriPoC",
-    "url": "https://github.com/huydo2105/veripoc"
+    "organization": "Auditor",
+    "url": "https://github.com/huydo2105/auditor"
   },
-  "documentationUrl": "https://github.com/huydo2105/veripoc"
+  "documentationUrl": "https://github.com/huydo2105/auditor"
 }
